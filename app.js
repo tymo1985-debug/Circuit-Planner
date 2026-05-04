@@ -1,5 +1,5 @@
 
-// Service Year Planner v9.4.3 calendar month/service-year view update
+// Service Year Planner v9.4.4 calendar year view day details + mobile fixes
 (function () {
   'use strict';
 
@@ -63,7 +63,14 @@
       delete_note_confirm: 'Удалить эту заметку?',
       delete_template_confirm: 'Удалить шаблон события',
       calendar_view_month: 'Вид: месяц',
-      calendar_view_year: 'Вид: служебный год'
+      calendar_view_year: 'Вид: служебный год',
+      day_details_title: 'День и неделя',
+      week_planned: 'План на неделю',
+      entries_on_day: 'События в этот день',
+      no_entries_day: 'Нет событий на этот день.',
+      open_week: 'Открыть неделю',
+      add_entry: 'Добавить событие',
+      edit_week_event: 'Редактировать план недели'
     },
     en: {
       appTitle: 'Service Year Planner',
@@ -76,7 +83,14 @@
       delete_note_confirm: 'Delete this note?',
       delete_template_confirm: 'Delete event template',
       calendar_view_month: 'View: month',
-      calendar_view_year: 'View: service year'
+      calendar_view_year: 'View: service year',
+      day_details_title: 'Day & week',
+      week_planned: 'Weekly plan',
+      entries_on_day: 'Events on this day',
+      no_entries_day: 'No events for this day.',
+      open_week: 'Open week',
+      add_entry: 'Add event',
+      edit_week_event: 'Edit weekly plan'
     },
     uk: {
       appTitle: 'Service Year Planner',
@@ -89,7 +103,14 @@
       delete_note_confirm: 'Видалити цю нотатку?',
       delete_template_confirm: 'Видалити шаблон події',
       calendar_view_month: 'Вигляд: місяць',
-      calendar_view_year: 'Вигляд: службовий рік'
+      calendar_view_year: 'Вигляд: службовий рік',
+      day_details_title: 'День і тиждень',
+      week_planned: 'План на тиждень',
+      entries_on_day: 'Події цього дня',
+      no_entries_day: 'Немає подій на цей день.',
+      open_week: 'Відкрити тиждень',
+      add_entry: 'Додати подію',
+      edit_week_event: 'Редагувати план тижня'
     },
     pl: {
       appTitle: 'Service Year Planner',
@@ -102,7 +123,14 @@
       delete_note_confirm: 'Usunąć tę notatkę?',
       delete_template_confirm: 'Usunąć szablon wydarzenia',
       calendar_view_month: 'Widok: miesiąc',
-      calendar_view_year: 'Widok: rok służbowy'
+      calendar_view_year: 'Widok: rok służbowy',
+      day_details_title: 'Dzień i tydzień',
+      week_planned: 'Plan tygodnia',
+      entries_on_day: 'Wydarzenia w tym dniu',
+      no_entries_day: 'Brak wydarzeń na ten dzień.',
+      open_week: 'Otwórz tydzień',
+      add_entry: 'Dodaj wydarzenie',
+      edit_week_event: 'Edytuj plan tygodnia'
     }
   };
 
@@ -151,7 +179,8 @@
       exportType: 'json',
       pdfExportType: 'month-grid',
       teamPanelHidden: false,
-      calendarView: 'month'
+      calendarView: 'month',
+      calendarSelectedDateIso: null
     },
 
     utils: {
@@ -238,10 +267,10 @@
         const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; return out;
       },
       createDefaultData() {
-        return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version:'9.4.3-calendar-view' } };
+        return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version:'9.4.4-year-day-details' } };
       },
       convertLegacyBackup(legacy) {
-        const app = this.createDefaultData(); app.events = []; app.meta = { version:'9.4.3-calendar-view', importedFrom: legacy.schema || 'legacy' }; app.settings = this.ensureSettingsDefaults({});
+        const app = this.createDefaultData(); app.events = []; app.meta = { version:'9.4.4-year-day-details', importedFrom: legacy.schema || 'legacy' }; app.settings = this.ensureSettingsDefaults({});
         const eventMap = new Map(); const legacyMeetings = Array.isArray(legacy.meetings) ? legacy.meetings : [];
         const ensureEvent = (name, source = {}) => { const cleanName = String(name || '').trim(); if (!cleanName) return ''; if (eventMap.has(cleanName)) return eventMap.get(cleanName); const id = `evt_${App.utils.slug(cleanName) || App.utils.uid('evt')}`; const scheduleParts = []; if (source.wd && source.tWD) scheduleParts.push(`${source.wd} ${source.tWD}`); if (source.we && source.tWE) scheduleParts.push(`${source.we} ${source.tWE}`); app.events.push({ id, name: cleanName, color: App.utils.clampColor(source.color, '#1f7a45'), address: source.addr || source.address || '', schedule: scheduleParts.join(', ') }); eventMap.set(cleanName, id); return id; };
         legacyMeetings.forEach((meeting) => ensureEvent(meeting?.name, meeting || {}));
@@ -266,7 +295,7 @@
       },
       normalizeApp(appData) {
         const app = appData && typeof appData === 'object' ? appData : this.createDefaultData();
-        app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version:'9.4.3-calendar-view' };
+        app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version:'9.4.4-year-day-details' };
         app.events = App.utils.uniqueBy(app.events.map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '' })), (item) => [item.name,item.color,item.address,item.schedule].join('|'));
         app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: item.title || '', note: item.note || '', flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => [item.eventId,item.title,item.note,item.start,item.end].join('|'));
         Object.keys(app.serviceYears).forEach((year) => {
@@ -274,7 +303,7 @@
           Object.keys(sy.weeks).forEach((weekId) => { const w = sy.weeks[weekId]; if (!w) return; const start = App.utils.iso(w.start || weekId); const end = App.utils.iso(w.end || App.utils.addDays(App.utils.parseLocalDate(start), 6)); sy.weeks[weekId] = { id: w.id || weekId, weekId, start, end, eventId: w.eventId || '', priority: w.priority || 'normal', flagLetter: !!w.flagLetter, flagS302: !!w.flagS302, note: w.note || '' }; });
           app.serviceYears[year] = sy;
         });
-        app.meta.version = '9.4.3-calendar-view';
+        app.meta.version = '9.4.4-year-day-details';
         return app;
       },
       migrate(appData) { return this.normalizeApp(appData && appData.schema === 'sp-backup-v2' ? this.convertLegacyBackup(appData) : appData); },
@@ -451,7 +480,7 @@
         const item = App.data.getCalendarItemById(itemId); if (!item) return; const event = App.data.getEventById(item.eventId); App.utils.downloadText(`${App.utils.slug(item.title || event?.name || 'event') || 'event'}.ics`, App.utils.makeSingleIcs(item, event), 'text/calendar;charset=utf-8');
       },
       importJson(file) {
-        if (!file) return; const reader = new FileReader(); reader.onload = () => { try { const parsed = JSON.parse(String(reader.result || '{}')); App.state.app = App.store.migrate(parsed); App.store.save(); const years = Object.keys(App.state.app.serviceYears).map(Number).sort((a,b) => a - b); if (years.length) App.state.selectedYear = years[0]; App.ui.renderAll(); App.utils.toast(parsed?.schema === 'sp-backup-v2' ? App.utils.t('imported_backup') : App.utils.t('imported_json')); } catch (error) { console.error(error); App.utils.toast(App.utils.t('import_failed')); } if (App.els.importInput) App.els.importInput.value = ''; }; reader.readAsText(file, 'utf-8');
+        if (!file) return; const reader = new FileReader(); reader.onload = () => { try { const parsed = JSON.parse(String(reader.result || '{}')); App.state.app = App.store.migrate(parsed); App.store.save(); const years = Object.keys(App.state.app.serviceYears).map(Number).sort((a,b) => a - b);\n            const currentSY = App.utils.getServiceYearForDate(new Date());\n            const preferredSY = years.includes(currentSY) ? currentSY : (years.length ? years[years.length - 1] : currentSY);\n            App.state.selectedYear = preferredSY;\n            // Make calendar show something from imported range\n            const bounds = App.utils.serviceYearBounds(preferredSY);\n            const now = new Date();\n            const inRange = now >= bounds.start && now <= bounds.end;\n            const showDate = inRange ? now : bounds.start;\n            App.state.calendarYear = showDate.getFullYear();\n            App.state.calendarMonth = showDate.getMonth();\n            if (!inRange) { App.state.calendarView = 'year'; App.state.app.settings.calendarView = 'year'; }\n            App.ui.renderAll(); App.utils.toast(parsed?.schema === 'sp-backup-v2' ? App.utils.t('imported_backup') : App.utils.t('imported_json')); } catch (error) { console.error(error); App.utils.toast(App.utils.t('import_failed')); } if (App.els.importInput) App.els.importInput.value = ''; }; reader.readAsText(file, 'utf-8');
       },
       resetApp() { App.state.app = App.store.createDefaultData(); const sy = App.utils.getServiceYearForDate(new Date()); App.data.addServiceYear(sy); App.store.save(); App.ui.renderAll(); App.utils.toast(App.utils.t('app_reset')); },
       openPdf() { if (App.els.pdfModal) App.els.pdfModal.hidden = false; },
@@ -504,8 +533,8 @@
         const q = (sel) => document.querySelector(sel);
         const qa = (sel) => Array.from(document.querySelectorAll(sel));
         const brandH1 = q('.brand h1'); if (brandH1) brandH1.textContent = App.utils.t('appTitle');
-        const brandP = q('.brand p'); if (brandP) brandP.textContent = `v9.4.3 • index.html + app.js`;
-        const versionBadge = q('.version-badge'); if (versionBadge) versionBadge.textContent = `${App.utils.t('version')}: v9.4.3`;
+        const brandP = q('.brand p'); if (brandP) brandP.textContent = `v9.4.4 • index.html + app.js`;
+        const versionBadge = q('.version-badge'); if (versionBadge) versionBadge.textContent = `${App.utils.t('version')}: v9.4.4`;
         if (App.els.themeBtn) App.els.themeBtn.textContent = App.utils.t('theme');
         if (App.els.exportBtn) App.els.exportBtn.textContent = App.utils.t('export');
         const importLabel = q('label[for="importInput"]'); if (importLabel) importLabel.textContent = App.utils.t('import_json');
@@ -651,7 +680,14 @@
           .sy-empty{min-height:30px}
           @media (max-width:1100px){.service-year-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
           @media (max-width:680px){.service-year-grid{grid-template-columns:1fr;padding:12px}.sy-day{min-height:34px}}
-        `;
+        
+          /* Mobile modal scrolling fix */
+          .modal{overflow:auto;-webkit-overflow-scrolling:touch;align-items:flex-start}
+          .modal-card{max-height:calc(100dvh - 36px);overflow:auto}
+          /* Mobile menu click-through reliability */
+          .app.menu-open .sidebar{z-index:2000 !important}
+          .mobile-overlay{z-index:1500 !important}
+`;
         document.head.appendChild(style);
       },
       buildServiceYearMonths(serviceYear) {
@@ -706,7 +742,8 @@
         if (App.els.calendarQuickList) App.els.calendarQuickList.innerHTML = quickItems.slice(0, 24).map((item) => `<button class="side-item" type="button" data-detail-calendar-item="${App.utils.escapeAttr(item.id)}"><strong>${App.utils.escapeHtml(item.title)}</strong><div class="small">${App.utils.prettyDate(item.start)} — ${App.utils.prettyDate(item.end)}</div><div class="small">${App.utils.escapeHtml(item.note || App.utils.t('no_note'))}</div></button>`).join('') || `<div class="empty">${App.utils.t('no_events_month')}</div>`;
         const detail = quickItems.find((item) => item.id === App.state.calendarDetailId) || quickItems[0] || null;
         this.renderCalendarDetails(detail);
-        document.querySelectorAll('[data-add-date]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.actions.openCalendarEditorForCreate(btn.dataset.addDate); }));
+        if (App.state.calendarSelectedDateIso) this.renderServiceYearDayDetails(App.state.calendarSelectedDateIso);
+        document.querySelectorAll('[data-add-date]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.state.calendarSelectedDateIso = btn.dataset.addDate; App.ui.renderServiceYearDayDetails(btn.dataset.addDate); }));
         document.querySelectorAll('[data-detail-calendar-item]').forEach((btn) => btn.addEventListener('click', () => { const item = quickItems.find((entry) => entry.id === btn.dataset.detailCalendarItem); App.state.calendarDetailId = item?.id || null; App.ui.renderCalendarDetails(item || null); }));
       },
       renderCalendar() {
@@ -730,7 +767,91 @@
         const itemData = App.data.getCalendarItemById(item.id) || item; const event = App.data.getEventById(itemData.eventId); App.els.calendarSideTitle.textContent = itemData.title; App.els.calendarSideMeta.textContent = `${App.utils.prettyDateLong(itemData.start)} — ${App.utils.prettyDateLong(itemData.end)}`;
         const addressHtml = event?.address ? `<a href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.escapeHtml(event.address)}</a>` : App.utils.escapeHtml(App.utils.t('no_address'));
         App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div><div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
-        const editBtn = document.getElementById('detailEditBtn'); if (editBtn) editBtn.addEventListener('click', () => App.actions.openCalendarEditorForItem(itemData.id));
+        const editBtn = document.getElementById('detailEditBtn'); if (editBtn) editBtn.addEventListener('click', () => App.actions.
+      renderServiceYearDayDetails(dateIso) {
+        if (!App.els.calendarSideTitle || !App.els.calendarSideMeta || !App.els.calendarSideDetails) return;
+        const date = App.utils.parseLocalDate(dateIso);
+        if (!date) return;
+        const sy = App.utils.getServiceYearForDate(date);
+        const weekId = App.utils.weekIdForDate(date);
+        const week = App.data.getWeek(sy, weekId);
+        const weekEvent = App.data.getEventById(week.eventId);
+        const weekStart = App.utils.parseLocalDate(week.start);
+        const weekEnd = App.utils.parseLocalDate(week.end);
+
+        const dayEntries = App.state.app.entries
+          .filter((entry) => {
+            const es = App.utils.parseLocalDate(entry.start);
+            const ee = App.utils.parseLocalDate(entry.end);
+            return es && ee && App.utils.overlaps(es, ee, date, date);
+          })
+          .map((entry) => {
+            const event = App.data.getEventById(entry.eventId);
+            return {
+              id: `entry:${entry.id}`,
+              title: entry.title || event?.name || App.utils.t('event'),
+              color: event?.color || '#1f7a45',
+              start: entry.start,
+              end: entry.end,
+              note: entry.note || ''
+            };
+          })
+          .sort((a,b) => (a.start || '').localeCompare(b.start || ''));
+
+        App.els.calendarSideTitle.textContent = App.utils.t('day_details_title');
+        App.els.calendarSideMeta.textContent = `${App.utils.prettyDateLong(date)} · W${App.utils.weekNumber(date)} · ${App.utils.prettyDate(weekStart)} — ${App.utils.prettyDate(weekEnd)}`;
+
+        const weekBlock = `
+          <div class="side-row">
+            <div class="side-label">${App.utils.t('week_planned')}</div>
+            <div class="side-value">
+              ${weekEvent ? `<span class="pill"><span class="dot" style="background:${App.utils.clampColor(weekEvent.color)}"></span>${App.utils.escapeHtml(weekEvent.name)}</span>` : App.utils.escapeHtml(App.utils.t('no_template'))}
+            </div>
+          </div>
+          <div class="side-row">
+            <div class="side-label">${App.utils.t('note')}</div>
+            <div class="side-value">${App.utils.escapeHtml(week.note || App.utils.t('no_note'))}</div>
+          </div>
+        `;
+
+        const entriesBlock = `
+          <div class="side-row">
+            <div class="side-label">${App.utils.t('entries_on_day')}</div>
+            <div class="side-value">${dayEntries.length ? '' : App.utils.escapeHtml(App.utils.t('no_entries_day'))}</div>
+          </div>
+          ${dayEntries.map((it) => `
+            <button class="side-item" type="button" data-edit-calendar-item="${App.utils.escapeAttr(it.id)}">
+              <strong>${App.utils.escapeHtml(it.title)}</strong>
+              <div class="small">${it.start} — ${it.end}</div>
+              <div class="small">${App.utils.escapeHtml(it.note || App.utils.t('no_note'))}</div>
+            </button>
+          `).join('')}
+        `;
+
+        App.els.calendarSideDetails.innerHTML = `${weekBlock}
+          <div style="display:grid;gap:10px;margin-top:12px">
+            <button class="btn" type="button" id="syAddEntryBtn">${App.utils.t('add_entry')}</button>
+            <button class="btn" type="button" id="syEditWeekBtn">${App.utils.t('edit_week_event')}</button>
+            <button class="btn" type="button" id="syOpenWeekBtn">${App.utils.t('open_week')}</button>
+          </div>
+          <div style="margin-top:12px">${entriesBlock}</div>
+        `;
+
+        document.getElementById('syAddEntryBtn')?.addEventListener('click', () => App.actions.openCalendarEditorForCreate(dateIso));
+        document.getElementById('syEditWeekBtn')?.addEventListener('click', () => App.actions.openCalendarEditorForItem(`week:${weekId}`));
+        document.getElementById('syOpenWeekBtn')?.addEventListener('click', () => {
+          App.state.selectedScreen = 'weeks';
+          App.state.selectedYear = sy;
+          App.state.selectedWeekId = weekId;
+          App.ui.renderAll();
+        });
+
+        document.querySelectorAll('[data-edit-calendar-item]').forEach((btn) => btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          App.actions.openCalendarEditorForItem(btn.dataset.editCalendarItem);
+        }));
+      },
+openCalendarEditorForItem(itemData.id));
         const icsBtn = document.getElementById('detailIcsBtn'); if (icsBtn) icsBtn.addEventListener('click', () => App.actions.exportSingleEventIcs(itemData.id));
       },
       openCalendarEditor(data, isEdit) {
@@ -859,6 +980,8 @@
       App.els.resetAppBtn?.addEventListener('click', () => { if (window.confirm(App.utils.t('reset_confirm'))) App.actions.resetApp(); });
       App.els.mobileMenuToggleBtn?.addEventListener('click', () => App.ui.toggleMobileMenu());
       App.els.mobileOverlay?.addEventListener('click', () => App.ui.closeMobileMenu());
+      // sidebarClickStopper: prevent overlay/pointer issues on small screens
+      document.querySelector('.sidebar')?.addEventListener('click', (e) => { e.stopPropagation(); });
       App.els.addYearBtn?.addEventListener('click', () => { if (App.data.addServiceYear(Number(App.els.addYearInput?.value))) App.ui.renderAll(); });
       App.els.addNextYearBtn?.addEventListener('click', () => { const years = Object.keys(App.state.app.serviceYears).map(Number); const nextYear = (years.length ? Math.max(...years) : App.utils.getServiceYearForDate(new Date())) + 1; if (App.data.addServiceYear(nextYear)) { if (App.els.addYearInput) App.els.addYearInput.value = String(nextYear + 1); App.ui.renderAll(); } });
       window.addEventListener('online', () => App.els.offlineBanner?.classList.remove('show'));
