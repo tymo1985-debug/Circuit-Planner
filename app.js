@@ -3,6 +3,14 @@
 (function () {
   'use strict';
 
+  // Inline favicon fallback: prevents /favicon.ico 404 when index.html has no icon.
+  if (!document.querySelector('link[rel~="icon"]')) {
+    const favicon = document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.href = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%231f7a45%22/%3E%3Ctext x=%2232%22 y=%2242%22 text-anchor=%22middle%22 font-size=%2234%22%3E%F0%9F%93%86%3C/text%3E%3C/svg%3E';
+    document.head.appendChild(favicon);
+  }
+
   const I18N = {
     ru: {
       appTitle: 'Service Year Planner',
@@ -480,7 +488,19 @@
         const item = App.data.getCalendarItemById(itemId); if (!item) return; const event = App.data.getEventById(item.eventId); App.utils.downloadText(`${App.utils.slug(item.title || event?.name || 'event') || 'event'}.ics`, App.utils.makeSingleIcs(item, event), 'text/calendar;charset=utf-8');
       },
       importJson(file) {
-        if (!file) return; const reader = new FileReader(); reader.onload = () => { try { const parsed = JSON.parse(String(reader.result || '{}')); App.state.app = App.store.migrate(parsed); App.store.save(); const years = Object.keys(App.state.app.serviceYears).map(Number).sort((a,b) => a - b);\n            const currentSY = App.utils.getServiceYearForDate(new Date());\n            const preferredSY = years.includes(currentSY) ? currentSY : (years.length ? years[years.length - 1] : currentSY);\n            App.state.selectedYear = preferredSY;\n            // Make calendar show something from imported range\n            const bounds = App.utils.serviceYearBounds(preferredSY);\n            const now = new Date();\n            const inRange = now >= bounds.start && now <= bounds.end;\n            const showDate = inRange ? now : bounds.start;\n            App.state.calendarYear = showDate.getFullYear();\n            App.state.calendarMonth = showDate.getMonth();\n            if (!inRange) { App.state.calendarView = 'year'; App.state.app.settings.calendarView = 'year'; }\n            App.ui.renderAll(); App.utils.toast(parsed?.schema === 'sp-backup-v2' ? App.utils.t('imported_backup') : App.utils.t('imported_json')); } catch (error) { console.error(error); App.utils.toast(App.utils.t('import_failed')); } if (App.els.importInput) App.els.importInput.value = ''; }; reader.readAsText(file, 'utf-8');
+        if (!file) return; const reader = new FileReader(); reader.onload = () => { try { const parsed = JSON.parse(String(reader.result || '{}')); App.state.app = App.store.migrate(parsed); App.store.save(); const years = Object.keys(App.state.app.serviceYears).map(Number).sort((a,b) => a - b);
+            const currentSY = App.utils.getServiceYearForDate(new Date());
+            const preferredSY = years.includes(currentSY) ? currentSY : (years.length ? years[years.length - 1] : currentSY);
+            App.state.selectedYear = preferredSY;
+            // Make calendar show something from imported range
+            const bounds = App.utils.serviceYearBounds(preferredSY);
+            const now = new Date();
+            const inRange = now >= bounds.start && now <= bounds.end;
+            const showDate = inRange ? now : bounds.start;
+            App.state.calendarYear = showDate.getFullYear();
+            App.state.calendarMonth = showDate.getMonth();
+            if (!inRange) { App.state.calendarView = 'year'; App.state.app.settings.calendarView = 'year'; }
+            App.ui.renderAll(); App.utils.toast(parsed?.schema === 'sp-backup-v2' ? App.utils.t('imported_backup') : App.utils.t('imported_json')); } catch (error) { console.error(error); App.utils.toast(App.utils.t('import_failed')); } if (App.els.importInput) App.els.importInput.value = ''; }; reader.readAsText(file, 'utf-8');
       },
       resetApp() { App.state.app = App.store.createDefaultData(); const sy = App.utils.getServiceYearForDate(new Date()); App.data.addServiceYear(sy); App.store.save(); App.ui.renderAll(); App.utils.toast(App.utils.t('app_reset')); },
       openPdf() { if (App.els.pdfModal) App.els.pdfModal.hidden = false; },
@@ -767,7 +787,9 @@
         const itemData = App.data.getCalendarItemById(item.id) || item; const event = App.data.getEventById(itemData.eventId); App.els.calendarSideTitle.textContent = itemData.title; App.els.calendarSideMeta.textContent = `${App.utils.prettyDateLong(itemData.start)} — ${App.utils.prettyDateLong(itemData.end)}`;
         const addressHtml = event?.address ? `<a href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.escapeHtml(event.address)}</a>` : App.utils.escapeHtml(App.utils.t('no_address'));
         App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div><div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
-        const editBtn = document.getElementById('detailEditBtn'); if (editBtn) editBtn.addEventListener('click', () => App.actions.
+        const editBtn = document.getElementById('detailEditBtn'); if (editBtn) editBtn.addEventListener('click', () => App.actions.openCalendarEditorForItem(itemData.id));
+        const icsBtn = document.getElementById('detailIcsBtn'); if (icsBtn) icsBtn.addEventListener('click', () => App.actions.exportSingleEventIcs(itemData.id));
+      },
       renderServiceYearDayDetails(dateIso) {
         if (!App.els.calendarSideTitle || !App.els.calendarSideMeta || !App.els.calendarSideDetails) return;
         const date = App.utils.parseLocalDate(dateIso);
@@ -850,9 +872,6 @@
           e.stopPropagation();
           App.actions.openCalendarEditorForItem(btn.dataset.editCalendarItem);
         }));
-      },
-openCalendarEditorForItem(itemData.id));
-        const icsBtn = document.getElementById('detailIcsBtn'); if (icsBtn) icsBtn.addEventListener('click', () => App.actions.exportSingleEventIcs(itemData.id));
       },
       openCalendarEditor(data, isEdit) {
         this.ensureEditorNoteField();
