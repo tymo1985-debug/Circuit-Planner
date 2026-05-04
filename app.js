@@ -1,5 +1,5 @@
 
-// Service Year Planner v9.4.4 calendar year view day details + mobile fixes
+// Service Year Planner v9.4.5 calendar year legend + compact fixes
 (function () {
   'use strict';
 
@@ -78,7 +78,8 @@
       no_entries_day: 'Нет событий на этот день.',
       open_week: 'Открыть неделю',
       add_entry: 'Добавить событие',
-      edit_week_event: 'Редактировать план недели'
+      edit_week_event: 'Редактировать план недели',
+      compact_year_hint: 'На маленьком экране включён компактный вид: нажмите день, чтобы увидеть детали недели и события.'
     },
     en: {
       appTitle: 'Service Year Planner',
@@ -98,7 +99,8 @@
       no_entries_day: 'No events for this day.',
       open_week: 'Open week',
       add_entry: 'Add event',
-      edit_week_event: 'Edit weekly plan'
+      edit_week_event: 'Edit weekly plan',
+      compact_year_hint: 'Compact view is enabled on small screens: tap a day to see week details and events.'
     },
     uk: {
       appTitle: 'Service Year Planner',
@@ -118,7 +120,8 @@
       no_entries_day: 'Немає подій на цей день.',
       open_week: 'Відкрити тиждень',
       add_entry: 'Додати подію',
-      edit_week_event: 'Редагувати план тижня'
+      edit_week_event: 'Редагувати план тижня',
+      compact_year_hint: 'На малому екрані ввімкнено компактний вигляд: натисніть день, щоб побачити деталі тижня та події.'
     },
     pl: {
       appTitle: 'Service Year Planner',
@@ -138,7 +141,8 @@
       no_entries_day: 'Brak wydarzeń na ten dzień.',
       open_week: 'Otwórz tydzień',
       add_entry: 'Dodaj wydarzenie',
-      edit_week_event: 'Edytuj plan tygodnia'
+      edit_week_event: 'Edytuj plan tygodnia',
+      compact_year_hint: 'Na małym ekranie włączony jest widok kompaktowy: stuknij dzień, aby zobaczyć szczegóły tygodnia i wydarzenia.'
     }
   };
 
@@ -275,10 +279,10 @@
         const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; return out;
       },
       createDefaultData() {
-        return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version:'9.4.4-year-day-details' } };
+        return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version:'9.4.5-legend-compact' } };
       },
       convertLegacyBackup(legacy) {
-        const app = this.createDefaultData(); app.events = []; app.meta = { version:'9.4.4-year-day-details', importedFrom: legacy.schema || 'legacy' }; app.settings = this.ensureSettingsDefaults({});
+        const app = this.createDefaultData(); app.events = []; app.meta = { version:'9.4.5-legend-compact', importedFrom: legacy.schema || 'legacy' }; app.settings = this.ensureSettingsDefaults({});
         const eventMap = new Map(); const legacyMeetings = Array.isArray(legacy.meetings) ? legacy.meetings : [];
         const ensureEvent = (name, source = {}) => { const cleanName = String(name || '').trim(); if (!cleanName) return ''; if (eventMap.has(cleanName)) return eventMap.get(cleanName); const id = `evt_${App.utils.slug(cleanName) || App.utils.uid('evt')}`; const scheduleParts = []; if (source.wd && source.tWD) scheduleParts.push(`${source.wd} ${source.tWD}`); if (source.we && source.tWE) scheduleParts.push(`${source.we} ${source.tWE}`); app.events.push({ id, name: cleanName, color: App.utils.clampColor(source.color, '#1f7a45'), address: source.addr || source.address || '', schedule: scheduleParts.join(', ') }); eventMap.set(cleanName, id); return id; };
         legacyMeetings.forEach((meeting) => ensureEvent(meeting?.name, meeting || {}));
@@ -303,7 +307,7 @@
       },
       normalizeApp(appData) {
         const app = appData && typeof appData === 'object' ? appData : this.createDefaultData();
-        app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version:'9.4.4-year-day-details' };
+        app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version:'9.4.5-legend-compact' };
         app.events = App.utils.uniqueBy(app.events.map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '' })), (item) => [item.name,item.color,item.address,item.schedule].join('|'));
         app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: item.title || '', note: item.note || '', flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => [item.eventId,item.title,item.note,item.start,item.end].join('|'));
         Object.keys(app.serviceYears).forEach((year) => {
@@ -311,7 +315,7 @@
           Object.keys(sy.weeks).forEach((weekId) => { const w = sy.weeks[weekId]; if (!w) return; const start = App.utils.iso(w.start || weekId); const end = App.utils.iso(w.end || App.utils.addDays(App.utils.parseLocalDate(start), 6)); sy.weeks[weekId] = { id: w.id || weekId, weekId, start, end, eventId: w.eventId || '', priority: w.priority || 'normal', flagLetter: !!w.flagLetter, flagS302: !!w.flagS302, note: w.note || '' }; });
           app.serviceYears[year] = sy;
         });
-        app.meta.version = '9.4.4-year-day-details';
+        app.meta.version = '9.4.5-legend-compact';
         return app;
       },
       migrate(appData) { return this.normalizeApp(appData && appData.schema === 'sp-backup-v2' ? this.convertLegacyBackup(appData) : appData); },
@@ -553,8 +557,8 @@
         const q = (sel) => document.querySelector(sel);
         const qa = (sel) => Array.from(document.querySelectorAll(sel));
         const brandH1 = q('.brand h1'); if (brandH1) brandH1.textContent = App.utils.t('appTitle');
-        const brandP = q('.brand p'); if (brandP) brandP.textContent = `v9.4.4 • index.html + app.js`;
-        const versionBadge = q('.version-badge'); if (versionBadge) versionBadge.textContent = `${App.utils.t('version')}: v9.4.4`;
+        const brandP = q('.brand p'); if (brandP) brandP.textContent = `v9.4.5 • index.html + app.js`;
+        const versionBadge = q('.version-badge'); if (versionBadge) versionBadge.textContent = `${App.utils.t('version')}: v9.4.5`;
         if (App.els.themeBtn) App.els.themeBtn.textContent = App.utils.t('theme');
         if (App.els.exportBtn) App.els.exportBtn.textContent = App.utils.t('export');
         const importLabel = q('label[for="importInput"]'); if (importLabel) importLabel.textContent = App.utils.t('import_json');
@@ -642,6 +646,7 @@
         }
       },
       renderAll() {
+        this.ensureCalendarViewStyles();
         this.ensureEditorNoteField();
         this.localizeStaticTexts();
         this.applyTheme();
@@ -698,8 +703,19 @@
           .sy-event-dots{display:flex;gap:2px;justify-content:center;min-height:4px}
           .sy-event-dot{width:4px;height:4px;border-radius:999px;display:block}
           .sy-empty{min-height:30px}
+          .sy-day.selected{outline:2px solid var(--accent);outline-offset:1px;background:rgba(20,83,45,.10)}
+          .sy-day .sy-count{position:absolute;right:3px;top:2px;font-size:9px;color:var(--muted)}
+          .sy-month-summary{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;min-height:16px}
+          .sy-month-summary .dot{width:7px;height:7px}
+          .sy-legend{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 18px 0;background:var(--surface2)}
+          .sy-legend-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--text)}
+          .sy-legend-sample{width:12px;height:12px;border-radius:999px;display:inline-block;background:var(--accent)}
+          .sy-legend-sample.outline{background:transparent;border:2px solid rgba(20,83,45,.35)}
+          .sy-legend-sample.today{background:var(--accent)}
+          .sy-compact-hint{display:none;padding:8px 18px 0;background:var(--surface2)}
           @media (max-width:1100px){.service-year-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
-          @media (max-width:680px){.service-year-grid{grid-template-columns:1fr;padding:12px}.sy-day{min-height:34px}}
+          @media (max-width:680px){.service-year-grid{grid-template-columns:1fr;padding:10px;gap:10px}.sy-month-card{padding:10px;border-radius:16px}.sy-day{min-height:30px;font-size:10px}.sy-dow span{font-size:9px}.sy-legend{padding:10px 10px 0;gap:6px}.sy-legend-chip{font-size:11px;padding:5px 8px}.sy-compact-hint{display:block;padding:8px 10px 0}.calendar-side{gap:10px}.side-card{padding:14px}}
+          @media (max-width:420px){.sy-days,.sy-dow{gap:2px}.sy-day{min-height:26px;border-radius:7px}.sy-month-title{font-size:13px;margin-bottom:6px}.sy-event-dot{width:3px;height:3px}.sy-day .sy-count{display:none}.service-year-grid{padding:8px}.sy-month-card{padding:8px}}
         
           /* Mobile modal scrolling fix */
           .modal{overflow:auto;-webkit-overflow-scrolling:touch;align-items:flex-start}
@@ -753,17 +769,21 @@
             const iso = App.utils.iso(date);
             const dayItems = items.filter((item) => App.utils.overlaps(item.start, item.end, date, date));
             const dots = dayItems.slice(0, 3).map((item) => `<span class="sy-event-dot" style="background:${App.utils.clampColor(item.color)}"></span>`).join('');
-            days.push(`<button class="sy-day ${iso === todayIso ? 'today' : ''} ${(date.getDay() === 0 || date.getDay() === 6) ? 'weekend' : ''} ${dayItems.length ? 'has-events' : ''}" type="button" data-add-date="${App.utils.escapeAttr(iso)}" title="${App.utils.escapeAttr(App.utils.t('add_on_date'))}"><span>${day}</span><span class="sy-event-dots">${dots}</span></button>`);
+            const count = dayItems.length > 3 ? `<span class="sy-count">+${dayItems.length - 3}</span>` : '';
+            days.push(`<button class="sy-day ${iso === todayIso ? 'today' : ''} ${(date.getDay() === 0 || date.getDay() === 6) ? 'weekend' : ''} ${dayItems.length ? 'has-events' : ''} ${App.state.calendarSelectedDateIso === iso ? 'selected' : ''}" type="button" data-add-date="${App.utils.escapeAttr(iso)}" title="${App.utils.escapeAttr(App.utils.t('add_on_date'))}"><span>${day}</span>${count}<span class="sy-event-dots">${dots}</span></button>`);
           }
-          return `<section class="sy-month-card"><div class="sy-month-title"><span>${App.utils.monthName(month)}</span><small>${year}</small></div><div class="sy-dow">${dayNames.map((name) => `<span>${name}</span>`).join('')}</div><div class="sy-days">${days.join('')}</div></section>`;
+          const monthLegend = App.utils.uniqueBy(items, (item) => item.eventId).slice(0, 6).map((item) => `<span class="dot" title="${App.utils.escapeAttr(item.title)}" style="background:${App.utils.clampColor(item.color)}"></span>`).join('');
+          return `<section class="sy-month-card"><div class="sy-month-title"><span>${App.utils.monthName(month)}</span><small>${year}</small></div><div class="sy-dow">${dayNames.map((name) => `<span>${name}</span>`).join('')}</div><div class="sy-days">${days.join('')}</div><div class="sy-month-summary">${monthLegend}</div></section>`;
         }).join('');
-        if (App.els.calendarGrid) App.els.calendarGrid.innerHTML = `<div class="service-year-grid">${html}</div>`;
+        const eventLegend = App.state.app.events.slice(0, 8).map((event) => `<span class="sy-legend-chip"><span class="sy-legend-sample" style="background:${App.utils.clampColor(event.color)}"></span>${App.utils.escapeHtml(event.name)}</span>`).join('');
+        const legendHtml = `<div class="sy-legend"><span class="sy-legend-chip"><span class="sy-legend-sample today"></span>${App.utils.t('today_label')}</span><span class="sy-legend-chip"><span class="sy-legend-sample outline"></span>${App.utils.t('week_planned')} / ${App.utils.t('entries_on_day')}</span>${eventLegend}</div><div class="sy-compact-hint small">${App.utils.t('compact_year_hint')}</div>`;
+        if (App.els.calendarGrid) App.els.calendarGrid.innerHTML = `${legendHtml}<div class="service-year-grid">${html}</div>`;
         const quickItems = filteredYearItems.sort((a,b) => a.start - b.start || a.end - b.end);
         if (App.els.calendarQuickList) App.els.calendarQuickList.innerHTML = quickItems.slice(0, 24).map((item) => `<button class="side-item" type="button" data-detail-calendar-item="${App.utils.escapeAttr(item.id)}"><strong>${App.utils.escapeHtml(item.title)}</strong><div class="small">${App.utils.prettyDate(item.start)} — ${App.utils.prettyDate(item.end)}</div><div class="small">${App.utils.escapeHtml(item.note || App.utils.t('no_note'))}</div></button>`).join('') || `<div class="empty">${App.utils.t('no_events_month')}</div>`;
         const detail = quickItems.find((item) => item.id === App.state.calendarDetailId) || quickItems[0] || null;
         this.renderCalendarDetails(detail);
         if (App.state.calendarSelectedDateIso) this.renderServiceYearDayDetails(App.state.calendarSelectedDateIso);
-        document.querySelectorAll('[data-add-date]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.state.calendarSelectedDateIso = btn.dataset.addDate; App.ui.renderServiceYearDayDetails(btn.dataset.addDate); }));
+        document.querySelectorAll('[data-add-date]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.state.calendarSelectedDateIso = btn.dataset.addDate; App.ui.renderCalendar(); App.ui.renderServiceYearDayDetails(btn.dataset.addDate); }));
         document.querySelectorAll('[data-detail-calendar-item]').forEach((btn) => btn.addEventListener('click', () => { const item = quickItems.find((entry) => entry.id === btn.dataset.detailCalendarItem); App.state.calendarDetailId = item?.id || null; App.ui.renderCalendarDetails(item || null); }));
       },
       renderCalendar() {
