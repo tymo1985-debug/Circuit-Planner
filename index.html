@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.4.7</title>
+  <title>Service Year Planner v9.4.8</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
   <style>
@@ -72,7 +72,7 @@
  @media (max-width:1200px){body::before{display:none!important}}
  @media print{body::before,.sidebar,.topbar,.calendar-side,.bottom-nav,.mobile-overlay,.toast-wrap,.editor,.modal{display:none !important}.app{grid-template-columns:1fr !important}.main{padding:0 !important}.calendar-shell,.card{box-shadow:none !important;border:1px solid #ccc !important}}
  
- /* v9.4.7 cleanup: no team panel, reliable menu, side details panel, dynamic accent */
+ /* v9.4.8 cleanup: no team panel, reliable menu, side details panel, dynamic accent */
  .mobile-overlay{display:none !important;pointer-events:none !important;z-index:0 !important;background:transparent !important}
  .app.menu-open .sidebar{left:0 !important;z-index:2500 !important;pointer-events:auto !important}
  .calendar-layout{grid-template-columns:minmax(0,1fr) minmax(320px,380px) !important;align-items:start}
@@ -90,11 +90,43 @@
  @media (max-width:767px){.mobile-overlay.show{display:none !important;pointer-events:none !important}.app.menu-open .sidebar{left:0 !important;z-index:2500 !important}}
 
  
-/* v9.4.7 compatibility: details panel must stay visible when team panel is removed */
+/* v9.4.8 compatibility: details panel must stay visible when team panel is removed */
 .calendar-side .team-panel-card{display:none !important}
 .calendar-side .calendar-details-card{display:block !important}
 .calendar-layout{grid-template-columns:minmax(0,1fr) minmax(320px,380px) !important}
 .mobile-overlay,.mobile-overlay.show{display:none !important;pointer-events:none !important}
+
+ 
+/* v9.4.8 layout cleanup: drawer sidebar, larger calendar, clean top area, UI font size */
+:root{--ui-font-scale:1;--sidebar-width:280px;--calendar-side-width:360px}
+html{font-size:calc(16px * var(--ui-font-scale))}
+body::before{display:none !important}
+.app{grid-template-columns:1fr !important}
+.main{padding:18px 22px 30px !important;width:100%;max-width:none !important}
+.topbar{position:sticky;top:0;z-index:1200;background:var(--bg);padding:8px 0 12px;margin-bottom:14px}
+.mobile-menu-btn{display:inline-flex !important}
+.sidebar{position:fixed !important;left:calc(-1 * var(--sidebar-width) - 20px) !important;top:0 !important;bottom:0 !important;width:var(--sidebar-width) !important;z-index:2500 !important;transition:left .22s ease !important;box-shadow:0 20px 60px rgba(0,0,0,.24);display:flex !important;pointer-events:auto !important}
+.app.menu-open .sidebar{left:0 !important}
+.mobile-overlay,.mobile-overlay.show{display:none !important;pointer-events:none !important}
+.calendar-layout{grid-template-columns:minmax(0,1fr) minmax(320px,var(--calendar-side-width)) !important;gap:22px !important;align-items:start}
+.calendar-shell{border-radius:26px;overflow:visible}
+.calendar-toolbar{padding:18px 22px 14px !important}
+.legend,.sy-legend,.sy-compact-hint{display:none !important}
+.service-year-grid{padding:18px !important;gap:18px !important;grid-template-columns:repeat(3,minmax(190px,1fr)) !important}
+.sy-month-card{padding:14px !important;border-radius:22px !important}
+.sy-day{min-height:34px !important;font-size:.78rem !important}
+.sy-dow span{font-size:.72rem !important}
+.sy-month-title{font-size:1.02rem !important}
+.calendar-side{position:sticky !important;top:88px !important;max-height:calc(100dvh - 106px) !important;overflow:auto !important;-webkit-overflow-scrolling:touch !important;display:block !important}
+.calendar-side .calendar-details-card{display:block !important}
+.day-cell{min-height:108px}
+@media (min-width:1600px){:root{--calendar-side-width:390px}.service-year-grid{grid-template-columns:repeat(4,minmax(190px,1fr)) !important}}
+@media (max-width:1180px){.calendar-layout{grid-template-columns:1fr !important}.calendar-side{position:static !important;max-height:none !important;overflow:visible !important}.service-year-grid{grid-template-columns:repeat(2,minmax(180px,1fr)) !important}}
+@media (max-width:680px){.main{padding:14px 12px 92px !important}.service-year-grid{grid-template-columns:1fr !important;padding:10px !important;gap:12px !important}.calendar-toolbar{padding:14px !important}.calendar-title{font-size:1.2rem}.sidebar{width:86vw !important;left:-90vw !important}.app.menu-open .sidebar{left:0 !important}}
+[data-font-size="small"]{--ui-font-scale:.92}
+[data-font-size="normal"]{--ui-font-scale:1}
+[data-font-size="large"]{--ui-font-scale:1.08}
+[data-font-size="xlarge"]{--ui-font-scale:1.16}
 
  </style>
 </head>
@@ -102,7 +134,7 @@
   <div class="mobile-overlay" id="mobileOverlay" hidden></div>
   <div class="app" id="appRoot">
     <aside class="sidebar">
-      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.4.7 • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.4.8 • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
@@ -110,7 +142,7 @@
       <div class="offline-banner" id="offlineBanner">Вы офлайн. Изменения сохраняются локально.</div>
       <header class="topbar">
         <div>
-          <div class="version-badge">Версия: v9.4.7</div>
+          <div class="version-badge">Версия: v9.4.8</div>
           <h2 id="screenTitle">Календарь</h2>
           <p id="screenSubtitle"></p>
         </div>
@@ -130,8 +162,7 @@
                 <select id="calendarYearSelect"></select>
               </div>
             </div>
-            <div class="legend"><span class="legend-chip"><span class="dot" style="background:var(--accent)"></span>Событие</span><span class="legend-chip"><span class="dot" style="background:#cbd5e1"></span>Выходные</span><span class="legend-chip"><span class="dot" style="background:var(--accent)"></span>Сегодня</span></div>
-            <div id="calendarGrid"></div>
+        <div id="calendarGrid"></div>
             <div class="editor" id="calendarEditor" hidden>
               <div class="editor-head"><div><h4 class="editor-title" id="editorTitle">Событие</h4><div class="editor-sub" id="editorMeta">—</div></div><button class="icon-btn" id="editorCloseBtn" type="button">✕</button></div>
               <div class="editor-grid"><label style="grid-column:1 / -1"><span>Событие</span><select id="editorEventSelect"></select></label><label><span>Начало</span><input id="editorStart" type="date" /></label><label><span>Конец</span><input id="editorEnd" type="date" /></label></div>
@@ -183,6 +214,16 @@
  <option value="slate">Графитовый</option>
 </select>
 <div class="accent-preview"><span></span><em>Применяется к меню, кнопкам и календарю.</em></div>
+</div>
+<div>
+<label class="small">Размер шрифта интерфейса</label>
+<select id="fontSizeSelect">
+ <option value="small">Маленький</option>
+ <option value="normal">Обычный</option>
+ <option value="large">Крупный</option>
+ <option value="xlarge">Очень крупный</option>
+</select>
+<div class="layout-help">Меняет размер текста, кнопок и календаря.</div>
 </div><div><label class="small">Макет календаря</label><select id="layoutPresetSelect"></select><div class="layout-help">Доступно 10 вариантов отображения календаря.</div></div></div></div><div class="card"><h3>Управление данными</h3><div class="grid"><button class="btn full" id="settingsPdfBtn" type="button">PDF / Печать</button>
 <div class="actions settings-actions" style="margin-top:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
   <button class="btn" id="themeBtn" type="button">Тема</button>
