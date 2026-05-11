@@ -1,5 +1,5 @@
 
-// Service Year Planner v9.5.2-fix2 color names for meetings
+// Service Year Planner v9.5.2-fix3 color names for meetings
 (function () {
   'use strict';
 
@@ -79,7 +79,8 @@
       open_week: 'Открыть неделю',
       add_entry: 'Добавить собрание',
       edit_week_event: 'Редактировать план недели',
-      compact_year_hint: 'На маленьком экране включён компактный вид: нажмите день, чтобы увидеть детали недели и события.'
+      compact_year_hint: 'На маленьком экране включён компактный вид: нажмите день, чтобы увидеть детали недели и события.',
+ sent_status: 'Контроль отправки', letter_short: 'Письмо', s302_short: 'S-302', send_control: 'Контроль отправки', needs_sending: 'Нужно отправить', sent_done: 'Отправлено', deadline: 'Срок', before_visit_hint: 'Рекомендуемый срок: до начала недели посещения.'
     },
     en: {
       appTitle: 'Service Year Planner',
@@ -100,7 +101,8 @@
       open_week: 'Open week',
       add_entry: 'Add meeting',
       edit_week_event: 'Edit weekly plan',
-      compact_year_hint: 'Compact view is enabled on small screens: tap a day to see week details and events.'
+      compact_year_hint: 'Compact view is enabled on small screens: tap a day to see week details and events.',
+ sent_status: 'Sending control', letter_short: 'Letter', s302_short: 'S-302', send_control: 'Sending control', needs_sending: 'Needs sending', sent_done: 'Sent', deadline: 'Deadline', before_visit_hint: 'Recommended deadline: before the visit week starts.'
     },
     uk: {
       appTitle: 'Service Year Planner',
@@ -121,7 +123,8 @@
       open_week: 'Відкрити тиждень',
       add_entry: 'Додати зібрання',
       edit_week_event: 'Редагувати план тижня',
-      compact_year_hint: 'На малому екрані ввімкнено компактний вигляд: натисніть день, щоб побачити деталі тижня та події.'
+      compact_year_hint: 'На малому екрані ввімкнено компактний вигляд: натисніть день, щоб побачити деталі тижня та події.',
+ sent_status: 'Контроль надсилання', letter_short: 'Лист', s302_short: 'S-302', send_control: 'Контроль надсилання', needs_sending: 'Потрібно надіслати', sent_done: 'Надіслано', deadline: 'Термін', before_visit_hint: 'Рекомендований термін: до початку тижня відвідування.'
     },
     pl: {
       appTitle: 'Service Year Planner',
@@ -142,7 +145,8 @@
       open_week: 'Otwórz tydzień',
       add_entry: 'Dodaj zebranie',
       edit_week_event: 'Edytuj plan tygodnia',
-      compact_year_hint: 'Na małym ekranie włączony jest widok kompaktowy: stuknij dzień, aby zobaczyć szczegóły tygodnia i wydarzenia.'
+      compact_year_hint: 'Na małym ekranie włączony jest widok kompaktowy: stuknij dzień, aby zobaczyć szczegóły tygodnia i wydarzenia.',
+ sent_status: 'Kontrola wysyłki', letter_short: 'List', s302_short: 'S-302', send_control: 'Kontrola wysyłki', needs_sending: 'Do wysłania', sent_done: 'Wysłano', deadline: 'Termin', before_visit_hint: 'Zalecany termin: przed początkiem tygodnia wizyty.'
     }
   };
 
@@ -638,8 +642,8 @@
         const qa = (sel) => Array.from(document.querySelectorAll(sel));
         this.localizeColorOptions();
         const brandH1 = q('.brand h1'); if (brandH1) brandH1.textContent = App.utils.t('appTitle');
-        const brandP = q('.brand p'); if (brandP) brandP.textContent = `v9.5.2-fix2 • index.html + app.js`;
-        const versionBadge = q('.version-badge'); if (versionBadge) versionBadge.textContent = `${App.utils.t('version')}: v9.5.2-fix2`;
+        const brandP = q('.brand p'); if (brandP) brandP.textContent = `v9.5.2-fix3 • index.html + app.js`;
+        const versionBadge = q('.version-badge'); if (versionBadge) versionBadge.textContent = `${App.utils.t('version')}: v9.5.2-fix3`;
         if (App.els.themeBtn) App.els.themeBtn.textContent = App.utils.t('theme');
         if (App.els.exportBtn) App.els.exportBtn.textContent = App.utils.t('export');
         const importLabel = q('label[for="importInput"]'); if (importLabel) importLabel.textContent = App.utils.t('import_json');
@@ -934,7 +938,7 @@
  .flag-badge{display:inline-flex;align-items:center;border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:2px 6px;font-size:10px;font-weight:700;color:var(--text)}
  .calendar-action-grid{display:grid;gap:8px;margin-top:12px}.entry-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.entry-actions .btn{padding:8px 10px;border-radius:12px;font-size:12px;box-shadow:none}.side-item-card{padding:10px 12px;border-radius:14px;background:var(--surface2);border:1px solid var(--line)}
  
- /* v9.5.2-fix2: day popover for service-year mini calendar */
+ /* v9.5.2-fix3: day popover for service-year mini calendar */
  .day-popover{position:fixed;z-index:3200;min-width:260px;max-width:min(340px,calc(100vw - 24px));background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:18px;box-shadow:0 22px 55px rgba(0,0,0,.22);padding:14px;font-size:13px;line-height:1.35}
  .day-popover[hidden]{display:none !important}
  .day-popover-title{font-weight:800;font-size:14px;margin-bottom:3px}
@@ -947,6 +951,26 @@
  .day-popover-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
  .day-popover-actions .btn{padding:8px 10px;border-radius:12px;font-size:12px;box-shadow:none}
  .sy-day.has-events:hover{outline:2px solid var(--accent);outline-offset:1px}
+ 
+ /* v9.5.2-fix3: stable popover + sending workflow */
+ .calendar-details-card #calendarSideDetails .side-item-card:has(.entry-actions){display:none !important}
+
+ .day-popover{pointer-events:auto !important}
+ .day-popover.is-hovered{box-shadow:0 24px 60px rgba(0,0,0,.26) !important}
+ .send-control{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface2)}
+ .send-control-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+ .send-control-title{font-weight:800;font-size:13px}
+ .send-control-hint{color:var(--muted);font-size:11px;margin-top:2px}
+ .send-control-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .send-card{display:grid;gap:6px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+ .send-card.is-pending{border-color:rgba(185,28,28,.45);background:rgba(185,28,28,.07)}
+ .send-card.is-done{border-color:rgba(var(--accent-rgb),.35);background:rgba(var(--accent-rgb),.08)}
+ .send-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700;font-size:12px}
+ .send-status{font-size:11px;color:var(--muted)}
+ .send-toggle{display:inline-flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;user-select:none}
+ .send-toggle input{width:auto;margin:0;accent-color:var(--accent)}
+ @media (max-width:680px){.send-control-grid{grid-template-columns:1fr}}
+ 
  @media (max-width:680px){.day-popover{left:12px !important;right:12px !important;top:auto !important;bottom:86px !important;max-width:none;width:auto}.day-popover-actions .btn{flex:1 1 auto}}
  
 
@@ -987,16 +1011,24 @@ ensureDayPopover() {
 },
 hideDayPopover(force = false) {
  const popover = document.getElementById('dayPopover'); if (!popover) return;
- if (!force && App.state.dayPopoverPinned) return;
+ if (!force && (App.state.dayPopoverPinned || popover.matches(':hover') || popover.dataset.keepOpen === '1')) return;
  popover.hidden = true; App.state.dayPopoverPinned = false;
 },
 showServiceYearDayPopover(anchor, dateIso, pinned = false) {
  const info = this.getServiceYearDayInfo(dateIso); if (!info || !anchor) return;
  App.state.dayPopoverPinned = !!pinned;
  const popover = this.ensureDayPopover();
+ if (popover.dataset.fix3Bound !== '1') {
+ popover.dataset.fix3Bound = '1';
+ popover.addEventListener('mouseenter', () => { popover.dataset.keepOpen = '1'; popover.classList.add('is-hovered'); });
+ popover.addEventListener('mouseleave', () => { delete popover.dataset.keepOpen; popover.classList.remove('is-hovered'); if (!App.state.dayPopoverPinned) window.setTimeout(() => App.ui.hideDayPopover(true), 180); });
+ popover.addEventListener('click', (e) => e.stopPropagation());
+ popover.addEventListener('mousedown', (e) => e.stopPropagation());
+ }
  const rows = [];
  if (info.weekItem) rows.push({ kind: App.utils.t('week_planned'), title: info.weekItem.title, color: info.weekItem.color, range: `${App.utils.prettyDate(info.weekStart)} — ${App.utils.prettyDate(info.weekEnd)}`, note: info.week.note || App.utils.t('no_note'), schedule: info.weekEvent?.schedule || App.utils.t('no_schedule') });
- info.dayEntries.forEach((entry) => rows.push({ kind: App.utils.t('type_entry'), title: entry.title, color: entry.color, range: `${App.utils.prettyDate(entry.start)} — ${App.utils.prettyDate(entry.end)}`, note: entry.note || App.utils.t('no_note'), schedule: entry.schedule || App.utils.t('no_schedule') }));
+ const popoverDayEntries = (info.dayEntries || []).filter((entry) => !(info.weekItem && entry.eventId === info.weekItem.eventId)); 
+ popoverDayEntries.forEach((entry) => rows.push({ kind: App.utils.t('type_entry'), title: entry.title, color: entry.color, range: `${App.utils.prettyDate(entry.start)} — ${App.utils.prettyDate(entry.end)}`, note: entry.note || App.utils.t('no_note'), schedule: entry.schedule || App.utils.t('no_schedule') }));
  const listHtml = rows.length ? rows.map((row) => `<div class="day-popover-event"><i class="day-popover-dot" style="background:${App.utils.clampColor(row.color)}"></i><div><strong>${App.utils.escapeHtml(row.title)}</strong><span>${App.utils.escapeHtml(row.kind)} · ${App.utils.escapeHtml(row.range)}</span><span>${App.utils.escapeHtml(row.schedule)}</span>${row.note && row.note !== App.utils.t('no_note') ? `<span>${App.utils.escapeHtml(row.note)}</span>` : ''}</div></div>`).join('') : `<div class="empty" style="padding:12px">${App.utils.escapeHtml(App.utils.t('no_entries_day'))}</div>`;
  popover.innerHTML = `<div class="day-popover-title">${App.utils.escapeHtml(App.utils.prettyDateLong(info.date))}</div><div class="day-popover-meta">W${App.utils.weekNumber(info.date)} · ${App.utils.escapeHtml(App.utils.prettyDate(info.weekStart))} — ${App.utils.escapeHtml(App.utils.prettyDate(info.weekEnd))}</div><div class="day-popover-list">${listHtml}</div><div class="day-popover-actions"><button class="btn primary" type="button" data-popover-details="${App.utils.escapeAttr(dateIso)}">${App.utils.t('open')}</button><button class="btn" type="button" data-popover-add="${App.utils.escapeAttr(dateIso)}">${App.utils.t('add_entry')}</button>${info.weekItem ? `<button class="btn" type="button" data-popover-edit-week="${App.utils.escapeAttr(info.weekItem.id)}">${App.utils.t('edit')}</button>` : `<button class="btn" type="button" data-popover-open-week="${App.utils.escapeAttr(info.weekId)}" data-popover-year="${info.sy}">${App.utils.t('open_week')}</button>`}</div>`;
  const rect = anchor.getBoundingClientRect(); const margin = 12;
@@ -1075,7 +1107,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
  });
  btn.addEventListener('mouseleave', () => {
  if (!window.matchMedia('(hover:hover)').matches) return;
- window.setTimeout(() => App.ui.hideDayPopover(false), 120);
+ window.setTimeout(() => App.ui.hideDayPopover(false), 260);
  });
 });
         document.querySelectorAll('[data-detail-calendar-item]').forEach((btn) => btn.addEventListener('click', () => { const item = quickItems.find((entry) => entry.id === btn.dataset.detailCalendarItem); App.state.calendarDetailId = item?.id || null; App.ui.renderCalendarDetails(item || null); }));
@@ -1133,12 +1165,21 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           if (flags.letter) out.push(`<span class="flag-badge">✉</span>`);
           return out.length ? `<span class="flag-badges">${out.join('')}</span>` : '';
         };
-        const flagToggles = (scope, id, flags = {}) => `
-          <div class="sent-flags" aria-label="${App.utils.escapeAttr(App.utils.t('sent_status'))}">
-            <span class="small">${App.utils.t('sent_status')}:</span>
-            <label class="flag-toggle"><input type="checkbox" data-${scope}-flag="s302" data-${scope}-id="${App.utils.escapeAttr(id)}" ${flags.f302 ? 'checked' : ''}> ${App.utils.t('s302_short')}</label>
-            <label class="flag-toggle"><input type="checkbox" data-${scope}-flag="letter" data-${scope}-id="${App.utils.escapeAttr(id)}" ${flags.letter ? 'checked' : ''}> ${App.utils.t('letter_short')}</label>
-          </div>`;
+        const flagToggles = (scope, id, flags = {}) => { 
+ const s302Done = !!flags.f302; 
+ const letterDone = !!flags.letter; 
+ const status = (done) => done ? App.utils.t('sent_done') : App.utils.t('needs_sending'); 
+ const card = (flag, label, done) => ` 
+ <div class="send-card ${done ? 'is-done' : 'is-pending'}"> 
+ <div class="send-card-top"><span>${label}</span><span class="send-status">${status(done)}</span></div> 
+ <label class="send-toggle"><input type="checkbox" data-${scope}-flag="${flag}" data-${scope}-id="${App.utils.escapeAttr(id)}" ${done ? 'checked' : ''}> ${App.utils.t('sent_done')}</label> 
+ </div>`; 
+ return ` 
+ <div class="send-control" aria-label="${App.utils.escapeAttr(App.utils.t('sent_status'))}"> 
+ <div class="send-control-head"><div><div class="send-control-title">${App.utils.t('send_control')}</div><div class="send-control-hint">${App.utils.t('before_visit_hint')}</div></div></div> 
+ <div class="send-control-grid">${card('letter', App.utils.t('letter_short'), letterDone)}${card('s302', App.utils.t('s302_short'), s302Done)}</div> 
+ </div>`; 
+};
         const dayEntries = App.state.app.entries
           .filter((entry) => {
             const es = App.utils.parseLocalDate(entry.start);
@@ -1207,7 +1248,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
               </div>
             </div>`;
           }).join('')}`;
-        App.els.calendarSideDetails.innerHTML = `${weekBlock}<div style="margin-top:14px">${entriesBlock}</div>`;
+        App.els.calendarSideDetails.innerHTML = `${weekBlock}`;
         document.getElementById('syAddEntryBtn')?.addEventListener('click', () => App.actions.openCalendarEditorForCreate(dateIso));
         document.getElementById('syEditWeekBtn')?.addEventListener('click', () => App.actions.openCalendarEditorForItem(`week:${weekId}`));
         document.getElementById('syOpenWeekBtn')?.addEventListener('click', () => {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.5.2-fix2</title>
+  <title>Service Year Planner v9.5.2-fix3</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
   <style>
@@ -146,7 +146,7 @@ body::before{display:none !important}
 /* Fix: hide service-year month summary dots at the bottom of each month card */
 .sy-month-summary{display:none !important}
  
-/* v9.5.2-fix2: day popover for service-year mini calendar */
+/* v9.5.2-fix3: day popover for service-year mini calendar */
 .day-popover{position:fixed;z-index:3200;min-width:260px;max-width:min(340px,calc(100vw - 24px));background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:18px;box-shadow:0 22px 55px rgba(0,0,0,.22);padding:14px;font-size:13px;line-height:1.35}
 .day-popover[hidden]{display:none !important}
 .day-popover-title{font-weight:800;font-size:14px;margin-bottom:3px}
@@ -161,13 +161,32 @@ body::before{display:none !important}
 .sy-day.has-events:hover{outline:2px solid var(--accent);outline-offset:1px}
 @media (max-width:680px){.day-popover{left:12px !important;right:12px !important;top:auto !important;bottom:86px !important;max-width:none;width:auto}.day-popover-actions .btn{flex:1 1 auto}}
 
+
+/* v9.5.2-fix3: stable popover + sending workflow */
+.day-popover{pointer-events:auto !important}
+.day-popover.is-hovered{box-shadow:0 24px 60px rgba(0,0,0,.26) !important}
+.send-control{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface2)}
+.send-control-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.send-control-title{font-weight:800;font-size:13px}
+.send-control-hint{color:var(--muted);font-size:11px;margin-top:2px}
+.send-control-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.send-card{display:grid;gap:6px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.send-card.is-pending{border-color:rgba(185,28,28,.45);background:rgba(185,28,28,.07)}
+.send-card.is-done{border-color:rgba(var(--accent-rgb),.35);background:rgba(var(--accent-rgb),.08)}
+.send-card-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700;font-size:12px}
+.send-status{font-size:11px;color:var(--muted)}
+.send-toggle{display:inline-flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;user-select:none}
+.send-toggle input{width:auto;margin:0;accent-color:var(--accent)}
+@media (max-width:680px){.send-control-grid{grid-template-columns:1fr}}
+
+.calendar-details-card #calendarSideDetails .side-item-card:has(.entry-actions){display:none !important}
 </style>
 </head>
 <body>
   <div class="mobile-overlay" id="mobileOverlay" hidden></div>
   <div class="app" id="appRoot">
     <aside class="sidebar">
-      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.5.2-fix2 • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.5.2-fix3 • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
@@ -175,7 +194,7 @@ body::before{display:none !important}
       <div class="offline-banner" id="offlineBanner">Вы офлайн. Изменения сохраняются локально.</div>
       <header class="topbar">
         <div>
-          <div class="version-badge">Версия: v9.5.2-fix2</div>
+          <div class="version-badge">Версия: v9.5.2-fix3</div>
           <h2 id="screenTitle">Календарь</h2>
           <p id="screenSubtitle"></p>
         </div>
