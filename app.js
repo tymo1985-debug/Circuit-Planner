@@ -1,5 +1,5 @@
 
-// Service Year Planner v9.5.5-year-labels-send-audit color names for meetings
+// Service Year Planner v9.5.6-year-bars-send-alert color names for meetings
 (function () {
   'use strict';
 
@@ -70,7 +70,7 @@
       delete_template: 'Удалить собрание',
       delete_note_confirm: 'Удалить эту заметку?',
       delete_all_notes: 'Удалить все заметки', delete_all_notes_confirm: 'Удалить все заметки во всех служебных годах? Это действие нельзя отменить.', delete_all_notes_done: 'Все заметки удалены.',
-      auto_check_summary: 'Проверка отправки: нужно отправить — S-302: {s302}, письмо: {letter}.', send_not_yet_due: 'Пока не требуется', send_due_now: 'Нужно отправить', send_overdue: 'Просрочено', s302_deadline_hint: 'S-302: примерно за 6 месяцев до начала события.', letter_deadline_hint: 'Письмо: примерно за 60 дней до начала события.',
+      auto_check_summary: 'Проверка отправки: нужно отправить — S-302: {s302}, письмо: {letter}.', auto_check_ok: 'Проверка отправки выполнена: сейчас ничего не требуется.', send_not_yet_due: 'Пока не требуется', send_due_now: 'Нужно отправить', send_overdue: 'Просрочено', s302_deadline_hint: 'S-302: примерно за 6 месяцев до начала события.', letter_deadline_hint: 'Письмо: примерно за 60 дней до начала события.',
       delete_template_confirm: 'Удалить собрание',
       calendar_view_month: 'Вид: месяц',
       calendar_view_year: 'Вид: служебный год',
@@ -94,7 +94,7 @@
       delete_template: 'Delete meeting',
       delete_note_confirm: 'Delete this note?',
       delete_all_notes: 'Delete all notes', delete_all_notes_confirm: 'Delete all notes in all service years? This action cannot be undone.', delete_all_notes_done: 'All notes deleted.',
-      auto_check_summary: 'Sending check: pending — S-302: {s302}, letter: {letter}.', send_not_yet_due: 'Not due yet', send_due_now: 'Needs sending', send_overdue: 'Overdue', s302_deadline_hint: 'S-302: about 6 months before the event starts.', letter_deadline_hint: 'Letter: about 60 days before the event starts.',
+      auto_check_summary: 'Sending check: pending — S-302: {s302}, letter: {letter}.', auto_check_ok: 'Sending check complete: nothing is due now.', send_not_yet_due: 'Not due yet', send_due_now: 'Needs sending', send_overdue: 'Overdue', s302_deadline_hint: 'S-302: about 6 months before the event starts.', letter_deadline_hint: 'Letter: about 60 days before the event starts.',
       delete_template_confirm: 'Delete event template',
       calendar_view_month: 'View: month',
       calendar_view_year: 'View: service year',
@@ -118,7 +118,7 @@
       delete_template: 'Видалити зібрання',
       delete_note_confirm: 'Видалити цю нотатку?',
       delete_all_notes: 'Видалити всі нотатки', delete_all_notes_confirm: 'Видалити всі нотатки в усіх службових роках? Цю дію не можна скасувати.', delete_all_notes_done: 'Усі нотатки видалено.',
-      auto_check_summary: 'Перевірка надсилання: потрібно надіслати — S-302: {s302}, лист: {letter}.', send_not_yet_due: 'Поки не потрібно', send_due_now: 'Потрібно надіслати', send_overdue: 'Прострочено', s302_deadline_hint: 'S-302: приблизно за 6 місяців до початку події.', letter_deadline_hint: 'Лист: приблизно за 60 днів до початку події.',
+      auto_check_summary: 'Перевірка надсилання: потрібно надіслати — S-302: {s302}, лист: {letter}.', auto_check_ok: 'Перевірку надсилання виконано: зараз нічого не потрібно.', send_not_yet_due: 'Поки не потрібно', send_due_now: 'Потрібно надіслати', send_overdue: 'Прострочено', s302_deadline_hint: 'S-302: приблизно за 6 місяців до початку події.', letter_deadline_hint: 'Лист: приблизно за 60 днів до початку події.',
       delete_template_confirm: 'Видалити шаблон події',
       calendar_view_month: 'Вигляд: місяць',
       calendar_view_year: 'Вигляд: службовий рік',
@@ -142,7 +142,7 @@
       delete_template: 'Usuń zebranie',
       delete_note_confirm: 'Usunąć tę notatkę?',
       delete_all_notes: 'Usuń wszystkie notatki', delete_all_notes_confirm: 'Usunąć wszystkie notatki we wszystkich latach służbowych? Tej czynności nie można cofnąć.', delete_all_notes_done: 'Wszystkie notatki usunięte.',
-      auto_check_summary: 'Kontrola wysyłki: do wysłania — S-302: {s302}, list: {letter}.', send_not_yet_due: 'Jeszcze nie trzeba', send_due_now: 'Do wysłania', send_overdue: 'Po terminie', s302_deadline_hint: 'S-302: około 6 miesięcy przed początkiem wydarzenia.', letter_deadline_hint: 'List: około 60 dni przed początkiem wydarzenia.',
+      auto_check_summary: 'Kontrola wysyłki: do wysłania — S-302: {s302}, list: {letter}.', auto_check_ok: 'Kontrola wysyłki zakończona: teraz nic nie jest wymagane.', send_not_yet_due: 'Jeszcze nie trzeba', send_due_now: 'Do wysłania', send_overdue: 'Po terminie', s302_deadline_hint: 'S-302: około 6 miesięcy przed początkiem wydarzenia.', letter_deadline_hint: 'List: około 60 dni przed początkiem wydarzenia.',
       delete_template_confirm: 'Usunąć szablon wydarzenia',
       calendar_view_month: 'Widok: miesiąc',
       calendar_view_year: 'Widok: rok służbowy',
@@ -320,7 +320,7 @@
       sendDueInfo(startIso, flags = {}) {
         const start = this.parseLocalDate(startIso);
         const today = this.parseLocalDate(this.iso(new Date()));
-        if (!start || !today) return { s302:{ due:false, overdue:false, done:!!flags.f302, deadline:null }, letter:{ due:false, overdue:false, done:!!flags.letter, deadline:null } };
+        if (!start || !today) return { s302:{ due:false, overdue:false, done:!!flags.f302, deadline:null, pending:false, statusKey:'send_not_yet_due' }, letter:{ due:false, overdue:false, done:!!flags.letter, deadline:null, pending:false, statusKey:'send_not_yet_due' } };
         const s302Deadline = this.addMonths(start, -6);
         const letterDeadline = this.addDays(start, -60);
         const make = (deadline, done) => {
@@ -338,10 +338,10 @@
         const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; return out;
       },
       createDefaultData() {
-        return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version:'9.5.5-year-labels-send-audit' } };
+        return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version:'9.5.6-year-bars-send-alert' } };
       },
       convertLegacyBackup(legacy) {
-        const app = this.createDefaultData(); app.events = []; app.meta = { version:'9.5.5-year-labels-send-audit', importedFrom: legacy.schema || 'legacy' }; app.settings = this.ensureSettingsDefaults({});
+        const app = this.createDefaultData(); app.events = []; app.meta = { version:'9.5.6-year-bars-send-alert', importedFrom: legacy.schema || 'legacy' }; app.settings = this.ensureSettingsDefaults({});
         const eventMap = new Map(); const legacyMeetings = Array.isArray(legacy.meetings) ? legacy.meetings : [];
         const ensureEvent = (name, source = {}) => { const cleanName = String(name || '').trim(); if (!cleanName) return ''; if (eventMap.has(cleanName)) return eventMap.get(cleanName); const id = `evt_${App.utils.slug(cleanName) || App.utils.uid('evt')}`; const scheduleParts = []; if (source.wd && source.tWD) scheduleParts.push(`${source.wd} ${source.tWD}`); if (source.we && source.tWE) scheduleParts.push(`${source.we} ${source.tWE}`); app.events.push({ id, name: cleanName, color: App.utils.clampColor(source.color, '#1f7a45'), address: source.addr || source.address || '', schedule: scheduleParts.join(', ') }); eventMap.set(cleanName, id); return id; };
         legacyMeetings.forEach((meeting) => ensureEvent(meeting?.name, meeting || {}));
@@ -366,7 +366,7 @@
       },
       normalizeApp(appData) {
         const app = appData && typeof appData === 'object' ? appData : this.createDefaultData();
-        app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version:'9.5.5-year-labels-send-audit' };
+        app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version:'9.5.6-year-bars-send-alert' };
         app.events = App.utils.uniqueBy(app.events.map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '' })), (item) => [item.name,item.color,item.address,item.schedule].join('|'));
         app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: item.title || '', note: item.note || '', flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => [item.eventId,item.title,item.note,item.start,item.end].join('|'));
         Object.keys(app.serviceYears).forEach((year) => {
@@ -374,7 +374,7 @@
           Object.keys(sy.weeks).forEach((weekId) => { const w = sy.weeks[weekId]; if (!w) return; const start = App.utils.iso(w.start || weekId); const end = App.utils.iso(w.end || App.utils.addDays(App.utils.parseLocalDate(start), 6)); sy.weeks[weekId] = { id: w.id || weekId, weekId, start, end, eventId: w.eventId || '', priority: w.priority || 'normal', flagLetter: !!w.flagLetter, flagS302: !!w.flagS302, note: w.note || '' }; });
           app.serviceYears[year] = sy;
         });
-        app.meta.version = '9.5.5-year-labels-send-audit';
+        app.meta.version = '9.5.6-year-bars-send-alert';
         return app;
       },
       migrate(appData) { return this.normalizeApp(appData && appData.schema === 'sp-backup-v2' ? this.convertLegacyBackup(appData) : appData); },
@@ -610,7 +610,10 @@
         App.state.app.meta = App.state.app.meta || {};
         App.state.app.meta.lastSendChecklistAudit = App.state.sendAudit.checkedAt;
         App.store.save();
-        if (showToast && (counts.s302 || counts.letter)) App.utils.toast(App.utils.t('auto_check_summary', counts));
+        if (showToast) {
+          const message = (counts.s302 || counts.letter) ? App.utils.t('auto_check_summary', counts) : App.utils.t('auto_check_ok');
+          window.setTimeout(() => App.utils.toast(message), 500);
+        }
         return counts;
       },
       exportJson() { App.utils.downloadText(`service-year-planner-${App.utils.iso(new Date())}.json`, JSON.stringify(App.state.app, null, 2), 'application/json;charset=utf-8'); },
@@ -791,8 +794,8 @@
         const qa = (sel) => Array.from(document.querySelectorAll(sel));
         this.localizeColorOptions();
         const brandH1 = q('.brand h1'); if (brandH1) brandH1.textContent = App.utils.t('appTitle');
-        const brandP = q('.brand p'); if (brandP) brandP.textContent = `v9.5.5-year-labels-send-audit • index.html + app.js`;
-        const versionBadge = q('.version-badge'); if (versionBadge) versionBadge.textContent = `${App.utils.t('version')}: v9.5.5-year-labels-send-audit`;
+        const brandP = q('.brand p'); if (brandP) brandP.textContent = `v9.5.6-year-bars-send-alert • index.html + app.js`;
+        const versionBadge = q('.version-badge'); if (versionBadge) versionBadge.textContent = `${App.utils.t('version')}: v9.5.6-year-bars-send-alert`;
         if (App.els.themeBtn) App.els.themeBtn.textContent = App.utils.t('theme');
         if (App.els.exportBtn) App.els.exportBtn.textContent = App.utils.t('export');
         const importLabel = q('label[for="importInput"]'); if (importLabel) importLabel.textContent = App.utils.t('import_json');
@@ -1088,7 +1091,7 @@
  .flag-badge{display:inline-flex;align-items:center;border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:2px 6px;font-size:10px;font-weight:700;color:var(--text)}
  .calendar-action-grid{display:grid;gap:8px;margin-top:12px}.entry-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.entry-actions .btn{padding:8px 10px;border-radius:12px;font-size:12px;box-shadow:none}.side-item-card{padding:10px 12px;border-radius:14px;background:var(--surface2);border:1px solid var(--line)}
  
- /* v9.5.5-year-labels-send-audit: day popover for service-year mini calendar */
+ /* v9.5.6-year-bars-send-alert: day popover for service-year mini calendar */
  .day-popover{position:fixed;z-index:3200;min-width:260px;max-width:min(340px,calc(100vw - 24px));background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:18px;box-shadow:0 22px 55px rgba(0,0,0,.22);padding:14px;font-size:13px;line-height:1.35}
  .day-popover[hidden]{display:none !important}
  .day-popover-title{font-weight:800;font-size:14px;margin-bottom:3px}
@@ -1102,7 +1105,7 @@
  .day-popover-actions .btn{padding:8px 10px;border-radius:12px;font-size:12px;box-shadow:none}
  .sy-day.has-events:hover{outline:2px solid var(--accent);outline-offset:1px}
  
- /* v9.5.5-year-labels-send-audit: stable popover + sending workflow */
+ /* v9.5.6-year-bars-send-alert: stable popover + sending workflow */
  .calendar-details-card #calendarSideDetails .side-item-card:has(.entry-actions){display:none !important}
 
  .day-popover{pointer-events:auto !important}
@@ -1125,13 +1128,9 @@
  
 
 
-          /* v9.5.5: visible event names directly in service-year calendar */
-          .sy-day.has-events{min-height:54px !important;align-content:start !important;place-items:stretch !important;padding:3px !important;overflow:hidden !important}
-          .sy-day-number{display:block;text-align:center;line-height:1.05}
-          .sy-event-labels{display:grid;gap:2px;width:100%;margin-top:2px;pointer-events:none}
-          .sy-event-label{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;border-left:3px solid var(--accent);background:rgba(var(--accent-rgb,20,83,45),.08);border-radius:5px;padding:1px 3px;font-size:9px;line-height:1.15;color:var(--text)}
-          .sy-day.today .sy-event-label{background:rgba(255,255,255,.22);color:#fff;border-left-color:#fff !important}
-          @media (max-width:680px){.sy-day.has-events{min-height:48px !important}.sy-event-label{font-size:8px}.sy-event-labels{gap:1px}}
+          /* v9.5.6: service-year bars instead of dots */
+          .sy-days,.sy-event-dots,.sy-event-dot,.sy-event-labels,.sy-event-label{display:none !important}
+          .sy-weeks{display:grid;gap:4px}.sy-week-row{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;min-height:52px;align-items:start}.sy-week-row .sy-day,.sy-week-row .sy-empty{min-height:34px}.sy-period-bar{position:absolute;z-index:3;left:calc((100% / 7) * var(--bar-left) + 2px);width:calc((100% / 7) * var(--bar-span) - 4px);top:calc(21px + (var(--bar-lane) * 15px));height:14px;border:0;border-radius:999px;background:color-mix(in srgb, var(--bar-color) 28%, white);color:#163024;padding:0 7px;font-size:9px;line-height:14px;box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--bar-color) 50%, transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;cursor:pointer}.sy-period-bar span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sy-period-bar:hover{filter:brightness(.98);box-shadow:0 2px 8px rgba(0,0,0,.14), inset 0 0 0 1px var(--bar-color)}.sy-bar-more{position:absolute;right:4px;bottom:0;font-size:9px;color:var(--muted)}@supports not (background: color-mix(in srgb, red 20%, white)){.sy-period-bar{background:#dff1d7}}@media (max-width:680px){.sy-week-row{min-height:48px}.sy-period-bar{font-size:8px;height:13px;line-height:13px;padding:0 5px;top:calc(20px + (var(--bar-lane) * 14px))}}
 `;
         document.head.appendChild(style);
       },
@@ -1206,9 +1205,7 @@ showServiceYearDayPopover(anchor, dateIso, pinned = false) {
         this.renderLayoutOptions();
         const bounds = App.utils.serviceYearBounds(serviceYear);
         const yearItems = [];
-        this.buildServiceYearMonths(serviceYear).forEach(({ month, year }) => {
-          yearItems.push(...App.data.buildCalendarItemsForMonth(month, year));
-        });
+        this.buildServiceYearMonths(serviceYear).forEach(({ month, year }) => { yearItems.push(...App.data.buildCalendarItemsForMonth(month, year)); });
         const filteredYearItems = App.utils.uniqueBy(yearItems, (item) => [item.id,item.eventId,item.start.toISOString().slice(0,10),item.end.toISOString().slice(0,10)].join('|'));
         if (App.els.monthLabel) App.els.monthLabel.textContent = `${App.utils.t('service_year')} ${App.utils.serviceYearLabel(serviceYear)}`;
         if (App.els.calendarServiceYearLabel) App.els.calendarServiceYearLabel.textContent = `${App.utils.t('service_year')}: ${App.utils.serviceYearLabel(serviceYear)}`;
@@ -1218,58 +1215,60 @@ showServiceYearDayPopover(anchor, dateIso, pinned = false) {
         const filterOptions = ['<option value="all">' + App.utils.t('all_events') + '</option>'].concat(App.state.app.events.map((event) => `<option value="${App.utils.escapeAttr(event.id)}">${App.utils.escapeHtml(event.name)}</option>`));
         if (App.els.calendarEventQuickFilter) { App.els.calendarEventQuickFilter.innerHTML = filterOptions.join(''); App.els.calendarEventQuickFilter.value = App.state.calendarEventFilter; }
         if (App.els.eventFilter) { App.els.eventFilter.innerHTML = filterOptions.join(''); App.els.eventFilter.value = App.state.calendarEventFilter; }
-        if (App.els.calendarYearSelect) {
-          App.els.calendarYearSelect.innerHTML = Array.from({ length: 9 }, (_, i) => serviceYear - 4 + i).map((y) => `<option value="${y}">${App.utils.serviceYearLabel(y)}</option>`).join('');
-          App.els.calendarYearSelect.value = String(serviceYear);
-        }
+        if (App.els.calendarYearSelect) { App.els.calendarYearSelect.innerHTML = Array.from({ length: 9 }, (_, i) => serviceYear - 4 + i).map((y) => `<option value="${y}">${App.utils.serviceYearLabel(y)}</option>`).join(''); App.els.calendarYearSelect.value = String(serviceYear); }
         const dayNames = App.utils.dayNames();
         const todayIso = App.utils.iso(new Date());
-        const html = this.buildServiceYearMonths(serviceYear).map(({ month, year }) => {
+        const renderMonth = ({ month, year }) => {
           const monthStart = new Date(year, month, 1);
           const monthEnd = new Date(year, month + 1, 0);
-          const firstOffset = (monthStart.getDay() + 6) % 7;
-          const days = [];
-          for (let i = 0; i < firstOffset; i += 1) days.push('<div class="sy-empty"></div>');
           const items = App.data.buildCalendarItemsForMonth(month, year);
-          for (let day = 1; day <= monthEnd.getDate(); day += 1) {
-            const date = new Date(year, month, day);
-            const iso = App.utils.iso(date);
-            const dayItems = items.filter((item) => App.utils.overlaps(item.start, item.end, date, date));
-            const dots = dayItems.slice(0, 3).map((item) => `<span class="sy-event-dot" style="background:${App.utils.clampColor(item.color)}"></span>`).join('');
-            const labels = dayItems.slice(0, 2).map((item) => `<span class="sy-event-label" style="border-left-color:${App.utils.clampColor(item.color)}">${App.utils.escapeHtml(item.title)}</span>`).join('');
-            const count = dayItems.length > 2 ? `<span class="sy-count">+${dayItems.length - 2}</span>` : '';
-            days.push(`<button class="sy-day ${iso === todayIso ? 'today' : ''} ${(date.getDay() === 0 || date.getDay() === 6) ? 'weekend' : ''} ${dayItems.length ? 'has-events' : ''} ${App.state.calendarSelectedDateIso === iso ? 'selected' : ''}" type="button" data-add-date="${App.utils.escapeAttr(iso)}" title="${App.utils.escapeAttr(dayItems.length ? dayItems.map((item) => item.title).join(' · ') : App.utils.t('add_on_date'))}"><span class="sy-day-number">${day}</span>${count}<span class="sy-event-dots">${dots}</span>${labels ? `<span class="sy-event-labels">${labels}</span>` : ''}</button>`);
+          const rows = [];
+          let weekStart = App.utils.startOfWeek(monthStart);
+          const lastWeekStart = App.utils.startOfWeek(monthEnd);
+          while (weekStart <= lastWeekStart) {
+            const weekEnd = App.utils.addDays(weekStart, 6);
+            const dayCells = [];
+            for (let i = 0; i < 7; i += 1) {
+              const date = App.utils.addDays(weekStart, i);
+              const iso = App.utils.iso(date);
+              if (date.getMonth() !== month) dayCells.push('<div class="sy-empty"></div>');
+              else {
+                const hasEvents = items.some((item) => App.utils.overlaps(item.start, item.end, date, date));
+                dayCells.push(`<button class="sy-day ${iso === todayIso ? 'today' : ''} ${(date.getDay() === 0 || date.getDay() === 6) ? 'weekend' : ''} ${hasEvents ? 'has-events' : ''} ${App.state.calendarSelectedDateIso === iso ? 'selected' : ''}" type="button" data-add-date="${App.utils.escapeAttr(iso)}" title="${App.utils.escapeAttr(hasEvents ? App.utils.t('day_details_title') : App.utils.t('add_on_date'))}"><span>${date.getDate()}</span></button>`);
+              }
+            }
+            const overlapping = items.filter((item) => {
+              const segmentStart = new Date(Math.max(item.start.getTime(), monthStart.getTime(), weekStart.getTime()));
+              const segmentEnd = new Date(Math.min(item.end.getTime(), monthEnd.getTime(), weekEnd.getTime()));
+              return segmentStart <= segmentEnd;
+            });
+            const weekBars = overlapping.slice(0, 3).map((item, lane) => {
+              const segmentStart = new Date(Math.max(item.start.getTime(), monthStart.getTime(), weekStart.getTime()));
+              const segmentEnd = new Date(Math.min(item.end.getTime(), monthEnd.getTime(), weekEnd.getTime()));
+              const left = Math.max(0, App.utils.daysDiff(segmentStart, weekStart));
+              const right = Math.min(6, App.utils.daysDiff(segmentEnd, weekStart));
+              const span = Math.max(1, right - left + 1);
+              const color = App.utils.clampColor(item.color);
+              return `<button class="sy-period-bar" data-detail-calendar-item="${App.utils.escapeAttr(item.id)}" type="button" style="--bar-left:${left};--bar-span:${span};--bar-lane:${lane};--bar-color:${color};" title="${App.utils.escapeAttr(item.title)}"><span>${App.utils.escapeHtml(item.title)}</span></button>`;
+            }).join('');
+            const overflow = Math.max(0, overlapping.length - 3);
+            rows.push(`<div class="sy-week-row">${dayCells.join('')}${weekBars}${overflow ? `<span class="sy-bar-more">+${overflow}</span>` : ''}</div>`);
+            weekStart = App.utils.addDays(weekStart, 7);
           }
-          // Monthly summary dots removed: the bottom row of colored dots under each month is intentionally hidden.
-          return `<section class="sy-month-card"><div class="sy-month-title"><span>${App.utils.monthName(month)}</span><small>${year}</small></div><div class="sy-dow">${dayNames.map((name) => `<span>${name}</span>`).join('')}</div><div class="sy-days">${days.join('')}</div></section>`;
-        }).join('');
-        const legendHtml = '';
-        if (App.els.calendarGrid) App.els.calendarGrid.innerHTML = `${legendHtml}<div class="service-year-grid">${html}</div>`;
+          return `<section class="sy-month-card"><div class="sy-month-title"><span>${App.utils.monthName(month)}</span><small>${year}</small></div><div class="sy-dow">${dayNames.map((name) => `<span>${name}</span>`).join('')}</div><div class="sy-weeks">${rows.join('')}</div></section>`;
+        };
+        if (App.els.calendarGrid) App.els.calendarGrid.innerHTML = `<div class="service-year-grid">${this.buildServiceYearMonths(serviceYear).map(renderMonth).join('')}</div>`;
         const quickItems = filteredYearItems.sort((a,b) => a.start - b.start || a.end - b.end);
         if (App.els.calendarQuickList) App.els.calendarQuickList.innerHTML = quickItems.slice(0, 24).map((item) => `<button class="side-item" type="button" data-detail-calendar-item="${App.utils.escapeAttr(item.id)}"><strong>${App.utils.escapeHtml(item.title)}</strong><div class="small">${App.utils.prettyDate(item.start)} — ${App.utils.prettyDate(item.end)}</div><div class="small">${App.utils.escapeHtml(item.note || App.utils.t('no_note'))}</div></button>`).join('') || `<div class="empty">${App.utils.t('no_events_month')}</div>`;
         const detail = quickItems.find((item) => item.id === App.state.calendarDetailId) || quickItems[0] || null;
         this.renderCalendarDetails(detail);
         if (App.state.calendarSelectedDateIso) this.renderServiceYearDayDetails(App.state.calendarSelectedDateIso);
-        
-document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
- btn.addEventListener('click', (e) => {
- e.stopPropagation();
- const dateIso = btn.dataset.addDate;
- App.state.calendarSelectedDateIso = dateIso;
- App.ui.renderCalendar();
- const fresh = Array.from(document.querySelectorAll('.sy-day[data-add-date]')).find((node) => node.dataset.addDate === dateIso) || btn;
- App.ui.showServiceYearDayPopover(fresh, dateIso, true);
- });
- btn.addEventListener('mouseenter', () => {
- if (!window.matchMedia('(hover:hover)').matches || !btn.classList.contains('has-events')) return;
- App.ui.showServiceYearDayPopover(btn, btn.dataset.addDate, false);
- });
- btn.addEventListener('mouseleave', () => {
- if (!window.matchMedia('(hover:hover)').matches) return;
- window.setTimeout(() => App.ui.hideDayPopover(false), 260);
- });
-});
-        document.querySelectorAll('[data-detail-calendar-item]').forEach((btn) => btn.addEventListener('click', () => { const item = quickItems.find((entry) => entry.id === btn.dataset.detailCalendarItem); App.state.calendarDetailId = item?.id || null; App.ui.renderCalendarDetails(item || null); }));
+        document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
+          btn.addEventListener('click', (e) => { e.stopPropagation(); const dateIso = btn.dataset.addDate; App.state.calendarSelectedDateIso = dateIso; App.ui.renderCalendar(); const fresh = Array.from(document.querySelectorAll('.sy-day[data-add-date]')).find((node) => node.dataset.addDate === dateIso) || btn; App.ui.showServiceYearDayPopover(fresh, dateIso, true); });
+          btn.addEventListener('mouseenter', () => { if (!window.matchMedia('(hover:hover)').matches || !btn.classList.contains('has-events')) return; App.ui.showServiceYearDayPopover(btn, btn.dataset.addDate, false); });
+          btn.addEventListener('mouseleave', () => { if (!window.matchMedia('(hover:hover)').matches) return; window.setTimeout(() => App.ui.hideDayPopover(false), 260); });
+        });
+        document.querySelectorAll('[data-detail-calendar-item]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); const item = quickItems.find((entry) => entry.id === btn.dataset.detailCalendarItem) || App.data.getCalendarItemById(btn.dataset.detailCalendarItem); App.state.calendarDetailId = item?.id || null; App.ui.renderCalendarDetails(item || null); }));
       },
       renderCalendar() {
         const viewMonthStart = new Date(App.state.calendarYear, App.state.calendarMonth, 1);
@@ -1652,7 +1651,6 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       const currentSY = this.utils.getServiceYearForDate(new Date());
       this.data.ensureServiceYear(currentSY);
       this.data.getWeeksForYear(currentSY);
-      this.actions.runSendChecklistAudit(true);
       this.state.selectedYear = currentSY;
       this.state.teamPanelHidden = false;
       this.state.calendarView = this.state.app.settings.calendarView || 'month';
@@ -1662,6 +1660,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       this.ui.closeMobileMenu();
       this.ui.renderAll();
       this.bind();
+      this.actions.runSendChecklistAudit(true);
       this.ui.closeMobileMenu();
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', async () => {

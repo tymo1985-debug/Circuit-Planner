@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.5.5-year-labels-send-audit</title>
+  <title>Service Year Planner v9.5.6-year-bars-send-alert</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
   <style>
@@ -147,7 +147,7 @@ body::before{display:none !important}
 /* Fix: hide service-year month summary dots at the bottom of each month card */
 .sy-month-summary{display:none !important}
  
-/* v9.5.5-year-labels-send-audit: day popover for service-year mini calendar */
+/* v9.5.6-year-bars-send-alert: day popover for service-year mini calendar */
 .day-popover{position:fixed;z-index:3200;min-width:260px;max-width:min(340px,calc(100vw - 24px));background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:18px;box-shadow:0 22px 55px rgba(0,0,0,.22);padding:14px;font-size:13px;line-height:1.35}
 .day-popover[hidden]{display:none !important}
 .day-popover-title{font-weight:800;font-size:14px;margin-bottom:3px}
@@ -163,7 +163,7 @@ body::before{display:none !important}
 @media (max-width:680px){.day-popover{left:12px !important;right:12px !important;top:auto !important;bottom:86px !important;max-width:none;width:auto}.day-popover-actions .btn{flex:1 1 auto}}
 
 
-/* v9.5.5-year-labels-send-audit: stable popover + sending workflow */
+/* v9.5.6-year-bars-send-alert: stable popover + sending workflow */
 .day-popover{pointer-events:auto !important}
 .day-popover.is-hovered{box-shadow:0 24px 60px rgba(0,0,0,.26) !important}
 .send-control{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface2)}
@@ -182,21 +182,15 @@ body::before{display:none !important}
 
 .calendar-details-card #calendarSideDetails .side-item-card:has(.entry-actions){display:none !important}
 
-/* v9.5.5: visible event names in service-year calendar */
-.sy-day.has-events{min-height:54px !important;align-content:start !important;place-items:stretch !important;padding:3px !important;overflow:hidden !important}
-.sy-day-number{display:block;text-align:center;line-height:1.05}
-.sy-event-labels{display:grid;gap:2px;width:100%;margin-top:2px;pointer-events:none}
-.sy-event-label{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;border-left:3px solid var(--accent);background:rgba(var(--accent-rgb),.08);border-radius:5px;padding:1px 3px;font-size:9px;line-height:1.15;color:var(--text)}
-.sy-day.today .sy-event-label{background:rgba(255,255,255,.22);color:#fff;border-left-color:#fff !important}
-#deleteAllNotesBtn{white-space:nowrap}
-@media (max-width:680px){.sy-day.has-events{min-height:48px !important}.sy-event-label{font-size:8px}.sy-event-labels{gap:1px}#notes .toolbar{display:grid;grid-template-columns:1fr}}
+/* v9.5.6: service-year bars instead of dots */
+.sy-days,.sy-event-dots,.sy-event-dot,.sy-event-labels,.sy-event-label{display:none !important}.sy-weeks{display:grid;gap:4px}.sy-week-row{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;min-height:52px;align-items:start}.sy-week-row .sy-day,.sy-week-row .sy-empty{min-height:34px}.sy-period-bar{position:absolute;z-index:3;left:calc((100% / 7) * var(--bar-left) + 2px);width:calc((100% / 7) * var(--bar-span) - 4px);top:calc(21px + (var(--bar-lane) * 15px));height:14px;border:0;border-radius:999px;background:color-mix(in srgb, var(--bar-color) 28%, white);color:#163024;padding:0 7px;font-size:9px;line-height:14px;box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--bar-color) 50%, transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;cursor:pointer}.sy-period-bar span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sy-period-bar:hover{filter:brightness(.98);box-shadow:0 2px 8px rgba(0,0,0,.14), inset 0 0 0 1px var(--bar-color)}.sy-bar-more{position:absolute;right:4px;bottom:0;font-size:9px;color:var(--muted)}#deleteAllNotesBtn{white-space:nowrap}@supports not (background: color-mix(in srgb, red 20%, white)){.sy-period-bar{background:#dff1d7}}@media (max-width:680px){.sy-week-row{min-height:48px}.sy-period-bar{font-size:8px;height:13px;line-height:13px;padding:0 5px;top:calc(20px + (var(--bar-lane) * 14px))}#notes .toolbar{display:grid;grid-template-columns:1fr}}
 </style>
 </head>
 <body>
   <div class="mobile-overlay" id="mobileOverlay" hidden></div>
   <div class="app" id="appRoot">
     <aside class="sidebar">
-      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.5.5-year-labels-send-audit • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.5.6-year-bars-send-alert • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
@@ -204,7 +198,7 @@ body::before{display:none !important}
       <div class="offline-banner" id="offlineBanner">Вы офлайн. Изменения сохраняются локально.</div>
       <header class="topbar">
         <div>
-          <div class="version-badge">Версия: v9.5.5-year-labels-send-audit</div>
+          <div class="version-badge">Версия: v9.5.6-year-bars-send-alert</div>
           <h2 id="screenTitle">Календарь</h2>
           <p id="screenSubtitle"></p>
         </div>
