@@ -197,8 +197,8 @@ body::before{display:none !important}
 </style>
 </head>
 <body>
-  <div class="mobile-overlay" id="mobileOverlay" hidden></div>
   <div class="app" id="appRoot">
+    <div class="mobile-overlay" id="mobileOverlay" hidden></div>
     <aside class="sidebar">
       <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.5.9-year-week-bars • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
@@ -335,9 +335,9 @@ body::before{display:none !important}
 </div>
 </div><p class="small" style="margin-top:12px">PDF использует системную печать браузера.</p></div></div></section>
     </main>
+    <nav class="bottom-nav" id="bottomNav"><div class="bottom-nav-row" id="bottomNavRow"></div></nav>
   </div>
   <div class="modal" id="pdfModal" hidden><div class="modal-card"><div class="modal-head"><div><h3>Экспорт в PDF</h3><div class="modal-sub">Выберите формат и используйте печать браузера.</div></div><button class="icon-btn" id="pdfModalCloseBtn" type="button" aria-label="Закрыть">✕</button></div><div class="pdf-section"><h4>Календарная сетка</h4><div class="pdf-grid"><button class="pdf-option active" data-pdf-type="month-grid" type="button"><strong>Календарь месяца</strong><span>Сетка текущего месяца для печати.</span></button><button class="pdf-option" data-pdf-type="custom-range-calendar" type="button"><strong>Календарь периода</strong><span>Печать для выбранного диапазона дат.</span></button></div></div><div class="pdf-section"><h4>Список собраний и отчёты</h4><div class="pdf-grid"><button class="pdf-option" data-pdf-type="month-agenda" type="button"><strong>Список собраний месяца</strong><span>Список собраний за текущий месяц.</span></button><button class="pdf-option" data-pdf-type="half-year-agenda" type="button"><strong>Собрания за полгода</strong><span>Список собраний за 6 месяцев.</span></button><button class="pdf-option" data-pdf-type="year-agenda" type="button"><strong>Собрания за год</strong><span>Список собраний за 12 месяцев.</span></button><button class="pdf-option" data-pdf-type="custom-range" type="button"><strong>Список за период</strong><span>Список событий за любой диапазон дат.</span></button><button class="pdf-option" data-pdf-type="year-overview" type="button"><strong>Годовой обзор</strong><span>Табличная сводка по служебному году.</span></button><button class="pdf-option" data-pdf-type="notes-report" type="button"><strong>Отчёт по заметкам</strong><span>Недельные заметки по выбранному году.</span></button></div></div><div class="card" id="pdfRangeCard" style="margin-top:14px;padding:14px;border-radius:18px;display:none;box-shadow:none;"><div class="form-grid"><label><span class="small">Начало периода</span><input id="pdfRangeStartInput" type="date" /></label><label><span class="small">Конец периода</span><input id="pdfRangeEndInput" type="date" /></label></div><p class="small" id="pdfRangeHelp" style="margin:10px 0 0;">Выбери даты начала и конца периода.</p></div><div class="pdf-hint" id="pdfHint">Если окно печати не появилось, разрешите всплывающее окно/печать в браузере.</div><div class="editor-actions"><button class="btn" id="pdfCancelBtn" type="button">Закрыть</button><button class="btn primary" id="pdfExportConfirmBtn" type="button">Печать</button></div></div></div>
-  <nav class="bottom-nav" id="bottomNav"><div class="bottom-nav-row" id="bottomNavRow"></div></nav>
   <div class="modal" id="exportModal" hidden>
     <div class="modal-card">
       <div class="modal-head">
