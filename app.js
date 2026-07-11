@@ -3,40 +3,6 @@
 (function () {
   'use strict';
 
-  // TEMPORARY debug helper: shows any JS error directly on screen as a red banner,
-  // so problems can be diagnosed on a phone without a USB/DevTools connection.
-  // Safe to remove once debugging is done — it only ever appears if something throws.
-  (function setupOnScreenErrorCatcher() {
-    const showError = (message) => {
-      try {
-        let box = document.getElementById('debugErrorBox');
-        if (!box) {
-          box = document.createElement('div');
-          box.id = 'debugErrorBox';
-          box.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:999999;background:#b91c1c;color:#fff;padding:12px 14px;border-radius:12px;font:12px/1.4 monospace;max-height:40vh;overflow:auto;white-space:pre-wrap;box-shadow:0 10px 30px rgba(0,0,0,.4)';
-          document.body.appendChild(box);
-        }
-        const line = document.createElement('div');
-        line.style.cssText = 'border-top:1px solid rgba(255,255,255,.3);padding-top:6px;margin-top:6px';
-        line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-        box.appendChild(line);
-      } catch (_) {}
-    };
-    window.addEventListener('error', (e) => {
-      showError(`Ошибка: ${e.message} (${e.filename || ''}:${e.lineno || ''}:${e.colno || ''})`);
-    });
-    window.addEventListener('unhandledrejection', (e) => {
-      showError(`Необработанный промис: ${e.reason?.message || e.reason}`);
-    });
-    // TEMPORARY: show exactly which element receives each tap, to catch invisible
-    // overlays/elements silently swallowing clicks (no JS error would fire for that).
-    document.addEventListener('click', (e) => {
-      const el = e.target;
-      const desc = `${el.tagName.toLowerCase()}${el.id ? '#' + el.id : ''}${el.className ? '.' + String(el.className).replace(/\s+/g, '.') : ''}`;
-      showError(`Тап попал на: ${desc}`);
-    }, true);
-  })();
-
   // Inline favicon fallback: prevents /favicon.ico 404 when index.html has no icon.
   if (!document.querySelector('link[rel~="icon"]')) {
     const favicon = document.createElement('link');
