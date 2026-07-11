@@ -911,6 +911,13 @@
         if (App.els.bottomNavRow) App.els.bottomNavRow.innerHTML = App.config.navItems.map((item) => buildButton(item, true)).join('');
         document.querySelectorAll('[data-screen]').forEach((btn) => btn.addEventListener('click', (event) => { event.preventDefault(); event.stopPropagation(); App.state.selectedScreen = btn.dataset.screen; App.ui.closeMobileMenu(); App.ui.renderAll(); }));
         document.querySelectorAll('.screen').forEach((screen) => screen.classList.toggle('active', screen.id === App.state.selectedScreen));
+        // Nudge Android Chrome to repaint the fixed bottom nav immediately after a
+        // screen switch — without this it can stay invisible/stale until the next scroll.
+        if (App.els.bottomNav) {
+          void App.els.bottomNav.offsetHeight;
+          App.els.bottomNav.style.transform = 'translateZ(0.01px)';
+          requestAnimationFrame(() => { if (App.els.bottomNav) App.els.bottomNav.style.transform = 'translateZ(0)'; });
+        }
       },
       renderScreenHeader() {
         const map = { calendar:['screen_calendar','subtitle_calendar'], weeks:['screen_weeks','subtitle_weeks'], events:['screen_events','subtitle_events'], notes:['screen_notes','subtitle_notes'], settings:['screen_settings','subtitle_settings'] };
