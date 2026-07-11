@@ -88,16 +88,28 @@ function isAppShellRequest(request) {
 
 async function cacheFirst(request) {
   const cached = await caches.match(request);
-  if (cached) return cached;
 
-  const res = await fetch(request);
-  if (res && res.ok) {
-    const cache = await caches.open(CACHE_RUNTIME);
-    try {
-      await cache.put(request, res.clone());
-    } catch (_) {}
+  // Revalidate in the background even on a cache hit, so replacing an icon/font
+  // file (without also touching sw.js) eventually reaches returning users
+  // instead of being served from cache forever.
+  const revalidate = fetch(request)
+    .then(async (res) => {
+      if (res && res.ok) {
+        const cache = await caches.open(CACHE_RUNTIME);
+        try {
+          await cache.put(request, res.clone());
+        } catch (_) {}
+      }
+      return res;
+    })
+    .catch(() => null);
+
+  if (cached) {
+    revalidate.catch(() => {});
+    return cached;
   }
-  return res;
+
+  return (await revalidate) || Response.error();
 }
 
 async function networkFirst(request, fallbackUrl = './index.html') {

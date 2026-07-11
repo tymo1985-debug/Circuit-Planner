@@ -57,7 +57,7 @@
       new_event: 'Новое собрание', edit_event: 'Редактирование собрания', choose_template: 'Выберите собрание', start: 'Начало', end: 'Конец', delete_event: 'Удалить собрание',
       create_entry_help: 'Будет создана отдельная запись собрания.', edit_entry_help: 'Вы можете изменить шаблон, даты, заметку или удалить событие.',
       note: 'Заметка', google_maps: 'Google Maps', google_calendar: 'Google Calendar', apple_calendar: 'Apple / .ics', edit: 'Редактировать', type: 'Тип',
-      type_week: 'Неделя', type_entry: 'Запись', template: 'Зібрання',
+      type_week: 'Неделя', type_entry: 'Запись', template: 'Собрание',
       imported_backup: 'Старый backup импортирован и очищен от дублей.', imported_json: 'JSON успешно импортирован.', import_failed: 'Не удалось импортировать JSON.',
       week_saved: 'Неделя сохранена.', event_template_saved: 'Собрание сохранено.', calendar_event_saved: 'Собрание в календаре сохранено.', calendar_event_deleted: 'Собрание удалено.', week_deleted: 'Данные недели очищены.',
       reset_confirm: 'Сбросить данные приложения?', app_reset: 'Приложение сброшено.',
@@ -156,6 +156,8 @@
 
   const App = {
     config: {
+      // NOTE: do NOT change this to match the app version — it is the localStorage key.
+      // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
       serviceYearStartMonth: 8,
       navItems: [
@@ -995,7 +997,6 @@
           .modal-card{max-height:calc(100dvh - 36px);overflow:auto}
           /* Mobile menu click-through reliability */
           .app.menu-open .sidebar{z-index:2000 !important}
-          .mobile-overlay{display:none !important;pointer-events:none !important;z-index:0 !important}
           .app.menu-open .sidebar{left:0 !important;z-index:2500 !important;pointer-events:auto !important}
           .calendar-layout{grid-template-columns:minmax(0,1fr) minmax(320px,380px) !important;align-items:start}
           .calendar-side{display:block !important;position:sticky;top:86px;align-self:start;max-height:calc(100dvh - 110px);overflow:auto;-webkit-overflow-scrolling:touch}
@@ -1017,7 +1018,6 @@
           .app.menu-open .sidebar{left:0 !important}
           .calendar-layout{grid-template-columns:minmax(0,1fr) minmax(320px,360px) !important;gap:22px !important}
           .service-year-grid{grid-template-columns:repeat(3,minmax(190px,1fr)) !important;gap:18px !important}
-          [data-font-size="small"]{--ui-font-scale:.92}[data-font-size="normal"]{--ui-font-scale:1}[data-font-size="large"]{--ui-font-scale:1.08}[data-font-size="xlarge"]{--ui-font-scale:1.20}
  [data-font-size="80"]{--ui-font-scale:.80}
  [data-font-size="85"]{--ui-font-scale:.85}
  [data-font-size="90"]{--ui-font-scale:.90}
@@ -1044,7 +1044,6 @@
           .mobile-menu-btn{display:inline-flex !important;padding:10px 14px !important;border-radius:18px !important;white-space:nowrap !important}
           .sidebar{position:fixed !important;left:calc(-1 * var(--sidebar-width) - 20px) !important;top:0 !important;bottom:0 !important;width:var(--sidebar-width) !important;z-index:2500 !important;transition:left .22s ease !important;box-shadow:0 20px 60px rgba(0,0,0,.24);display:flex !important;pointer-events:auto !important}
           .app.menu-open .sidebar{left:0 !important}
-          .mobile-overlay,.mobile-overlay.show{display:none !important;pointer-events:none !important}
           .calendar-toolbar{display:grid !important;grid-template-columns:minmax(0,1fr) auto !important;align-items:center !important;gap:12px !important;padding:16px 18px 12px !important}
           .calendar-controls{justify-content:flex-end !important;gap:8px !important}
           .calendar-controls .chip,.calendar-controls select{min-height:42px}
@@ -1065,10 +1064,6 @@
           @media (max-width:1180px){.calendar-layout{grid-template-columns:1fr !important;gap:14px !important}.calendar-side{position:static !important;top:auto !important;max-height:none !important;overflow:visible !important;width:100% !important;display:block !important}.calendar-details-card{width:100% !important;max-width:none !important;margin-top:0 !important}.calendar-toolbar{grid-template-columns:1fr !important;align-items:start !important}.calendar-controls{justify-content:flex-start !important}}
           @media (max-width:900px){.main{padding:14px 12px 86px !important}.calendar-shell{border-radius:22px !important}.calendar-toolbar{padding:14px !important}.calendar-controls{display:grid !important;grid-template-columns:1fr !important;width:100% !important}.calendar-nav{width:100%;justify-content:space-between}.calendar-controls select,.calendar-controls .chip{width:100% !important}#calendarServiceYearLabel{display:none !important}.calendar-sub{font-size:.8rem !important}.service-year-grid{grid-template-columns:repeat(2,minmax(150px,1fr)) !important;padding:12px !important;gap:12px !important}.sy-month-card{padding:10px !important}.sy-day{min-height:30px !important}.calendar-side{margin-top:12px !important}}
           @media (max-width:560px){.service-year-grid{grid-template-columns:1fr !important}.topbar{grid-template-columns:1fr !important}.actions{justify-content:flex-start}.bottom-nav-btn .label{font-size:.68rem}}
-          [data-font-size="small"]{--ui-font-scale:.92}
-          [data-font-size="normal"]{--ui-font-scale:1}
-          [data-font-size="large"]{--ui-font-scale:1.08}
-          [data-font-size="xlarge"]{--ui-font-scale:1.20}
  [data-font-size="80"]{--ui-font-scale:.80}
  [data-font-size="85"]{--ui-font-scale:.85}
  [data-font-size="90"]{--ui-font-scale:.90}
@@ -1304,7 +1299,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         this.renderYearOptions(); this.renderLayoutOptions(); const year = App.state.calendarYear; const month = App.state.calendarMonth; if (App.els.monthLabel) App.els.monthLabel.textContent = `${App.utils.monthName(month)} ${year}`; const monthStart = new Date(year, month, 1); const monthEnd = new Date(year, month + 1, 0); const serviceYear = App.utils.getServiceYearForDate(monthStart); if (App.els.calendarServiceYearLabel) App.els.calendarServiceYearLabel.textContent = `${App.utils.t('service_year')}: ${App.utils.serviceYearLabel(serviceYear)}`; if (App.els.calendarRangeLabel) App.els.calendarRangeLabel.textContent = `${App.utils.prettyDateLong(monthStart)} — ${App.utils.prettyDateLong(monthEnd)}`; if (App.els.calendarPanelYearLabel) App.els.calendarPanelYearLabel.textContent = `${App.utils.t('context')}: ${App.utils.serviceYearLabel(serviceYear)}`; if (App.els.toggleTeamPanelBtn) App.els.toggleTeamPanelBtn.textContent = App.utils.t('calendar_view_year');
         const filterOptions = ['<option value="all">' + App.utils.t('all_events') + '</option>'].concat(App.state.app.events.map((event) => `<option value="${App.utils.escapeAttr(event.id)}">${App.utils.escapeHtml(event.name)}</option>`)); if (App.els.calendarEventQuickFilter) { App.els.calendarEventQuickFilter.innerHTML = filterOptions.join(''); App.els.calendarEventQuickFilter.value = App.state.calendarEventFilter; } if (App.els.eventFilter) { App.els.eventFilter.innerHTML = filterOptions.join(''); App.els.eventFilter.value = App.state.calendarEventFilter; }
         const weeks = this.buildMonthGrid(month, year); const items = App.data.buildCalendarItemsForMonth(month, year); const itemsByWeek = new Map(); weeks.forEach((week) => itemsByWeek.set(week.id, [])); items.forEach((item) => { weeks.forEach((week) => { const weekStart = week.days[0].date; const weekEnd = week.days[6].date; if (App.utils.overlaps(item.start, item.end, weekStart, weekEnd)) { const leftIndex = Math.max(0, App.utils.daysDiff(item.start, weekStart)); const rightIndex = Math.min(6, App.utils.daysDiff(item.end, weekStart)); itemsByWeek.get(week.id).push({ ...item, leftIndex, rightIndex, span: rightIndex - leftIndex + 1 }); } }); });
-        if (App.els.calendarGrid) App.els.calendarGrid.innerHTML = `<div class="grid-cal"><div class="dow-row"><div class="dow-corner"></div><div class="dow-days">${App.utils.dayNames().map((name) => `<div class="dow">${name}</div>`).join('')}</div></div>${weeks.map((week) => { const bars = (itemsByWeek.get(week.id) || []).slice(0, 4); const extraCount = Math.max(0, (itemsByWeek.get(week.id) || []).length - 4); return `<div class="week-row"><button class="week-num" data-open-week="${App.utils.escapeAttr(week.id)}" type="button">W${week.number}</button><div class="week-days">${week.days.map((day) => `<div class="day-cell ${day.inMonth ? '' : 'inactive'} ${day.isWeekend ? 'weekend' : ''} ${day.isToday ? 'today today-col' : ''} ${App.state.calendarSelectedDateIso === day.iso ? 'selected-day' : ''}" data-day="${App.utils.escapeAttr(day.iso)}" role="button" tabindex="0"><div><span class="day-num">${day.day}</span>${day.day === 1 ? `<span class="day-month">${App.utils.monthName(day.month).slice(0, 3)}</span>` : ''}</div><button class="day-add-btn" data-add-date="${App.utils.escapeAttr(day.iso)}" type="button" title="${App.utils.t('add_on_date')}">+</button></div>`).join('')}${bars.map((bar, rowIndex) => `<button class="event-bar" data-edit-calendar-item="${App.utils.escapeAttr(bar.id)}" type="button" style="left:calc(${(bar.leftIndex / 7) * 100}% + 6px);width:calc(${(bar.span / 7) * 100}% - 12px);top:${28 + rowIndex * 20}px;background:${App.utils.clampColor(bar.color)};">${App.utils.escapeHtml(bar.title)}</button>`).join('')}${extraCount ? `<div class="small" style="position:absolute;left:12px;bottom:6px">+ ${extraCount}</div>` : ''}</div></div>`; }).join('')}</div>`;
+        if (App.els.calendarGrid) App.els.calendarGrid.innerHTML = `<div class="grid-cal"><div class="dow-row"><div class="dow-corner"></div><div class="dow-days">${App.utils.dayNames().map((name) => `<div class="dow">${name}</div>`).join('')}</div></div>${weeks.map((week) => { const bars = (itemsByWeek.get(week.id) || []).slice(0, 4); const extraCount = Math.max(0, (itemsByWeek.get(week.id) || []).length - 4); return `<div class="week-row"><button class="week-num" data-open-week="${App.utils.escapeAttr(week.id)}" type="button">W${week.number}</button><div class="week-days">${week.days.map((day) => `<div class="day-cell ${day.inMonth ? '' : 'inactive'} ${day.isWeekend ? 'weekend' : ''} ${day.isToday ? 'today today-col' : ''} ${App.state.calendarSelectedDateIso === day.iso ? 'selected-day' : ''}" data-day="${App.utils.escapeAttr(day.iso)}" role="button" tabindex="0"><div><span class="day-num">${day.day}</span>${day.day === 1 ? `<span class="day-month">${App.utils.monthName(day.month).slice(0, 3)}</span>` : ''}</div><button class="day-add-btn" data-add-date="${App.utils.escapeAttr(day.iso)}" type="button" title="${App.utils.t('add_on_date')}" aria-label="${App.utils.escapeAttr(App.utils.t('add_on_date'))}">+</button></div>`).join('')}${bars.map((bar, rowIndex) => `<button class="event-bar" data-edit-calendar-item="${App.utils.escapeAttr(bar.id)}" type="button" style="left:calc(${(bar.leftIndex / 7) * 100}% + 6px);width:calc(${(bar.span / 7) * 100}% - 12px);top:${28 + rowIndex * 20}px;background:${App.utils.clampColor(bar.color)};">${App.utils.escapeHtml(bar.title)}</button>`).join('')}${extraCount ? `<div class="small" style="position:absolute;left:12px;bottom:6px">+ ${extraCount}</div>` : ''}</div></div>`; }).join('')}</div>`;
         if (App.els.calendarYearSelect) { App.els.calendarYearSelect.innerHTML = Array.from({ length: 9 }, (_, i) => year - 4 + i).map((y) => `<option value="${y}">${y}</option>`).join(''); App.els.calendarYearSelect.value = String(year); }
         if (App.els.calendarQuickList) App.els.calendarQuickList.innerHTML = items.slice(0, 12).map((item) => `<button class="side-item" type="button" data-detail-calendar-item="${App.utils.escapeAttr(item.id)}"><strong>${App.utils.escapeHtml(item.title)}</strong><div class="small">${App.utils.prettyDate(item.start)} — ${App.utils.prettyDate(item.end)}</div><div class="small">${App.utils.escapeHtml(item.note || App.utils.t('no_note'))}</div></button>`).join('') || `<div class="empty">${App.utils.t('no_events_month')}</div>`;
         const detail = items.find((item) => item.id === App.state.calendarDetailId) || items[0] || null; this.renderCalendarDetails(detail); if (App.state.calendarSelectedDateIso) this.renderServiceYearDayDetails(App.state.calendarSelectedDateIso);
@@ -1603,8 +1598,24 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         document.querySelectorAll('[data-delete-note]').forEach((btn) => btn.addEventListener('click', () => App.actions.deleteNote(btn.dataset.deleteNoteYear, btn.dataset.deleteNote)));
       },
       renderSettings() { if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
-      closeMobileMenu() { if (App.els.appRoot) App.els.appRoot.classList.remove('menu-open'); if (App.els.mobileOverlay) { App.els.mobileOverlay.hidden = true; App.els.mobileOverlay.classList.remove('show'); App.els.mobileOverlay.style.display = 'none'; App.els.mobileOverlay.style.pointerEvents = 'none'; } },
-      toggleMobileMenu() { if (!App.els.appRoot) return; const open = !App.els.appRoot.classList.contains('menu-open'); App.els.appRoot.classList.toggle('menu-open', open); if (App.els.mobileOverlay) { App.els.mobileOverlay.hidden = true; App.els.mobileOverlay.classList.remove('show'); App.els.mobileOverlay.style.display = 'none'; App.els.mobileOverlay.style.pointerEvents = 'none'; } }
+      closeMobileMenu() {
+        if (App.els.appRoot) App.els.appRoot.classList.remove('menu-open');
+        if (App.els.mobileOverlay) {
+          App.els.mobileOverlay.hidden = true;
+          App.els.mobileOverlay.classList.remove('show');
+        }
+        App.els.mobileMenuToggleBtn?.setAttribute('aria-expanded', 'false');
+      },
+      toggleMobileMenu() {
+        if (!App.els.appRoot) return;
+        const open = !App.els.appRoot.classList.contains('menu-open');
+        App.els.appRoot.classList.toggle('menu-open', open);
+        if (App.els.mobileOverlay) {
+          App.els.mobileOverlay.hidden = !open;
+          App.els.mobileOverlay.classList.toggle('show', open);
+        }
+        App.els.mobileMenuToggleBtn?.setAttribute('aria-expanded', String(open));
+      }
     },
 
     bind() {
@@ -1654,6 +1665,13 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.mobileOverlay?.addEventListener('click', () => App.ui.closeMobileMenu());
       // sidebarClickStopper: prevent overlay/pointer issues on small screens
       document.querySelector('.sidebar')?.addEventListener('click', (e) => { e.stopPropagation(); });
+      // Tap-outside-to-close for the mobile drawer menu (the dimmed backdrop element
+      // is intentionally kept disabled elsewhere, so this is the actual dismiss mechanism).
+      document.addEventListener('click', (e) => {
+        if (!App.els.appRoot?.classList.contains('menu-open')) return;
+        if (e.target.closest('.sidebar') || e.target.closest('#mobileMenuToggleBtn')) return;
+        App.ui.closeMobileMenu();
+      });
  document.addEventListener('click', (e) => { const popover = document.getElementById('dayPopover'); if (!popover || popover.hidden) return; if (popover.contains(e.target) || e.target.closest('.sy-day')) return; App.ui.hideDayPopover(true); });
       App.els.addYearBtn?.addEventListener('click', () => { if (App.data.addServiceYear(Number(App.els.addYearInput?.value))) App.ui.renderAll(); });
       App.els.addNextYearBtn?.addEventListener('click', () => { const years = Object.keys(App.state.app.serviceYears).map(Number); const nextYear = (years.length ? Math.max(...years) : App.utils.getServiceYearForDate(new Date())) + 1; if (App.data.addServiceYear(nextYear)) { if (App.els.addYearInput) App.els.addYearInput.value = String(nextYear + 1); App.ui.renderAll(); } });
