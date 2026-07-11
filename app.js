@@ -1,5 +1,5 @@
 
-// Service Year Planner v9.5.9-year-week-bars color names for meetings
+// Service Year Planner v9.6.0 color names for meetings
 (function () {
   'use strict';
 
@@ -156,6 +156,9 @@
 
   const App = {
     config: {
+      // Single source of truth for the displayed/stored app version — bump this on
+      // every meaningful update so the version badge always reflects what's actually live.
+      version: '9.6.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -321,10 +324,10 @@
         const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; return out;
       },
       createDefaultData() {
-        return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version:'9.5.9-year-week-bars' } };
+        return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version: App.config.version } };
       },
       convertLegacyBackup(legacy) {
-        const app = this.createDefaultData(); app.events = []; app.meta = { version:'9.5.9-year-week-bars', importedFrom: legacy.schema || 'legacy' }; app.settings = this.ensureSettingsDefaults({});
+        const app = this.createDefaultData(); app.events = []; app.meta = { version: App.config.version, importedFrom: legacy.schema || 'legacy' }; app.settings = this.ensureSettingsDefaults({});
         const eventMap = new Map(); const legacyMeetings = Array.isArray(legacy.meetings) ? legacy.meetings : [];
         const ensureEvent = (name, source = {}) => { const cleanName = String(name || '').trim(); if (!cleanName) return ''; if (eventMap.has(cleanName)) return eventMap.get(cleanName); const id = `evt_${App.utils.slug(cleanName) || App.utils.uid('evt')}`; const scheduleParts = []; if (source.wd && source.tWD) scheduleParts.push(`${source.wd} ${source.tWD}`); if (source.we && source.tWE) scheduleParts.push(`${source.we} ${source.tWE}`); app.events.push({ id, name: cleanName, color: App.utils.clampColor(source.color, '#1f7a45'), address: source.addr || source.address || '', schedule: scheduleParts.join(', ') }); eventMap.set(cleanName, id); return id; };
         legacyMeetings.forEach((meeting) => ensureEvent(meeting?.name, meeting || {}));
@@ -349,7 +352,7 @@
       },
       normalizeApp(appData) {
         const app = appData && typeof appData === 'object' ? appData : this.createDefaultData();
-        app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version:'9.5.9-year-week-bars' };
+        app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version: App.config.version };
         app.events = App.utils.uniqueBy(app.events.map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '' })), (item) => [item.name,item.color,item.address,item.schedule].join('|'));
         app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: item.title || '', note: item.note || '', flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => [item.eventId,item.title,item.note,item.start,item.end].join('|'));
         Object.keys(app.serviceYears).forEach((year) => {
@@ -357,7 +360,7 @@
           Object.keys(sy.weeks).forEach((weekId) => { const w = sy.weeks[weekId]; if (!w) return; const start = App.utils.iso(w.start || weekId); const end = App.utils.iso(w.end || App.utils.addDays(App.utils.parseLocalDate(start), 6)); sy.weeks[weekId] = { id: w.id || weekId, weekId, start, end, eventId: w.eventId || '', priority: w.priority || 'normal', flagLetter: !!w.flagLetter, flagS302: !!w.flagS302, note: w.note || '' }; });
           app.serviceYears[year] = sy;
         });
-        app.meta.version = '9.5.9-year-week-bars';
+        app.meta.version = App.config.version;
         return app;
       },
       migrate(appData) { return this.normalizeApp(appData && appData.schema === 'sp-backup-v2' ? this.convertLegacyBackup(appData) : appData); },
@@ -566,12 +569,12 @@
         const now = new Date().toISOString();
         App.state.app.meta = App.state.app.meta || {};
         App.state.app.meta.lastSyncExportAt = now;
-        App.state.app.meta.version = '9.5.9-year-week-bars';
+        App.state.app.meta.version = App.config.version;
         App.store.save();
         const payload = {
           schema: 'service-year-planner-sync-v1',
           exportedAt: now,
-          appVersion: 'v9.5.9-year-week-bars',
+          appVersion: `v${App.config.version}`,
           source: 'manual-file-sync',
           payload: App.state.app
         };
@@ -591,7 +594,7 @@
             App.state.app.meta = App.state.app.meta || {};
             App.state.app.meta.lastSyncImportAt = new Date().toISOString();
             App.state.app.meta.lastSyncSourceExportedAt = parsed?.exportedAt || '';
-            App.state.app.meta.version = '9.5.9-year-week-bars';
+            App.state.app.meta.version = App.config.version;
             App.store.save();
             const years = Object.keys(App.state.app.serviceYears || {}).map(Number).sort((a,b) => a - b);
             const currentSY = App.utils.getServiceYearForDate(new Date());
@@ -793,8 +796,8 @@
         const qa = (sel) => Array.from(document.querySelectorAll(sel));
         this.localizeColorOptions();
         const brandH1 = q('.brand h1'); if (brandH1) brandH1.textContent = App.utils.t('appTitle');
-        const brandP = q('.brand p'); if (brandP) brandP.textContent = `v9.5.9-year-week-bars • index.html + app.js`;
-        const versionBadge = q('.version-badge'); if (versionBadge) versionBadge.textContent = `${App.utils.t('version')}: v9.5.9-year-week-bars`;
+        const brandP = q('.brand p'); if (brandP) brandP.textContent = `v${App.config.version} • index.html + app.js`;
+        const versionBadge = q('.version-badge'); if (versionBadge) versionBadge.textContent = `${App.utils.t('version')}: v${App.config.version}`;
         if (App.els.themeBtn) App.els.themeBtn.textContent = App.utils.t('theme');
         if (App.els.exportBtn) App.els.exportBtn.textContent = App.utils.t('export');
         if (App.els.syncTitle) App.els.syncTitle.textContent = App.utils.t('sync_title');
@@ -911,13 +914,28 @@
         if (App.els.bottomNavRow) App.els.bottomNavRow.innerHTML = App.config.navItems.map((item) => buildButton(item, true)).join('');
         document.querySelectorAll('[data-screen]').forEach((btn) => btn.addEventListener('click', (event) => { event.preventDefault(); event.stopPropagation(); App.state.selectedScreen = btn.dataset.screen; App.ui.closeMobileMenu(); App.ui.renderAll(); window.scrollTo(0, 0); }));
         document.querySelectorAll('.screen').forEach((screen) => screen.classList.toggle('active', screen.id === App.state.selectedScreen));
-        // Nudge Android Chrome to repaint the fixed bottom nav immediately after a
-        // screen switch — without this it can stay invisible/stale until the next scroll.
-        if (App.els.bottomNav) {
-          void App.els.bottomNav.offsetHeight;
-          App.els.bottomNav.style.transform = 'translateZ(0.01px)';
-          requestAnimationFrame(() => { if (App.els.bottomNav) App.els.bottomNav.style.transform = 'translateZ(0)'; });
-        }
+        this.fixBottomNavViewport();
+      },
+      // Positions the fixed bottom nav using the visualViewport API instead of trusting
+      // plain `position:fixed; bottom:0`. Android Chrome's dynamic address bar can leave
+      // the browser's own idea of "viewport bottom" stale right after a JS-driven screen
+      // switch (especially when the new screen's content height differs a lot from the
+      // previous one) — visualViewport always reports the true, current visible area.
+      fixBottomNavViewport() {
+        const nav = App.els.bottomNav;
+        if (!nav) return;
+        const apply = () => {
+          if (window.visualViewport) {
+            const vv = window.visualViewport;
+            const bottomOffset = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+            nav.style.bottom = `${bottomOffset}px`;
+          } else {
+            nav.style.bottom = '0px';
+          }
+        };
+        apply();
+        requestAnimationFrame(apply);
+        setTimeout(apply, 150);
       },
       renderScreenHeader() {
         const map = { calendar:['screen_calendar','subtitle_calendar'], weeks:['screen_weeks','subtitle_weeks'], events:['screen_events','subtitle_events'], notes:['screen_notes','subtitle_notes'], settings:['screen_settings','subtitle_settings'] };
@@ -1688,6 +1706,11 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       window.addEventListener('pageshow', () => { App.ui.closeMobileMenu(); });
       document.addEventListener('visibilitychange', () => { if (!document.hidden) App.ui.closeMobileMenu(); });
       window.addEventListener('orientationchange', () => { App.ui.closeMobileMenu(); });
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', () => App.ui.fixBottomNavViewport());
+        window.visualViewport.addEventListener('scroll', () => App.ui.fixBottomNavViewport());
+      }
+      window.addEventListener('resize', () => App.ui.fixBottomNavViewport());
       window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { App.ui.hideDayPopover(true); App.ui.closeCalendarEditor(); App.actions.closePdf(); if (App.els.exportModal) App.els.exportModal.hidden = true; App.ui.closeMobileMenu(); } });
     },
 
