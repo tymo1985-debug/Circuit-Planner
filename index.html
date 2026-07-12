@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.6.1</title>
+  <title>Service Year Planner v9.7.0</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
   <style>
@@ -203,7 +203,7 @@ body::before{display:none !important}
   <div class="app" id="appRoot">
     <div class="mobile-overlay" id="mobileOverlay" hidden></div>
     <aside class="sidebar">
-      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.6.1 • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.7.0 • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
@@ -211,7 +211,7 @@ body::before{display:none !important}
       <div class="offline-banner" id="offlineBanner">Вы офлайн. Изменения сохраняются локально.</div>
       <header class="topbar">
         <div>
-          <div class="version-badge">Версия: v9.6.1</div>
+          <div class="version-badge">Версия: v9.7.0</div>
           <h2 id="screenTitle">Календарь</h2>
           <p id="screenSubtitle"></p>
         </div>
@@ -235,6 +235,7 @@ body::before{display:none !important}
             <div class="editor" id="calendarEditor" hidden>
               <div class="editor-head"><div><h4 class="editor-title" id="editorTitle">Событие</h4><div class="editor-sub" id="editorMeta">—</div></div><button class="icon-btn" id="editorCloseBtn" type="button" aria-label="Закрыть">✕</button></div>
               <div class="editor-grid"><label style="grid-column:1 / -1"><span>Собрание</span><select id="editorEventSelect"></select></label><label><span>Начало</span><input id="editorStart" type="date" /></label><label><span>Конец</span><input id="editorEnd" type="date" /></label></div>
+              <div class="editor-grid" id="editorFlagsRow" hidden style="margin-top:4px"><label style="display:flex;align-items:center;gap:8px;flex-direction:row"><input id="editorFlagS302" type="checkbox" style="width:auto" /><span>S302 отправлен</span></label><label style="display:flex;align-items:center;gap:8px;flex-direction:row"><input id="editorFlagLetter" type="checkbox" style="width:auto" /><span>Письмо отправлено</span></label></div>
               <div class="editor-meta" id="editorReadonly">—</div>
               <div class="editor-actions"><button class="btn danger" id="editorDeleteBtn" type="button">Удалить собрание</button><button class="btn" id="editorCancelBtn" type="button">Закрыть</button><button class="btn primary" id="editorSaveBtn" type="button">Сохранить</button></div>
             </div>
@@ -268,7 +269,7 @@ body::before{display:none !important}
   <option value="#f4511e">🟠 Рыжий</option>
   <option value="#43a047">🟢 Светло-зелёный</option>
 </select>
-</div><div><label class="small">Адрес</label><input id="eventAddressInput" type="text" /></div><div><label class="small">Расписание</label><input id="eventScheduleInput" type="text" placeholder="Ср 19:00, Сб 10:00" /></div></div><div class="editor-actions"><button class="btn" id="resetEventBtn" type="button">Очистить</button><button class="btn primary" id="saveEventBtn" type="button">Сохранить собрание</button></div></div></div></section>
+</div><div><label class="small">Адрес</label><input id="eventAddressInput" type="text" /></div><div><label class="small">Расписание</label><input id="eventScheduleInput" type="text" placeholder="Ср 19:00, Сб 10:00" /></div><div><label class="small">Тип визита (для напоминаний S302/письмо)</label><select id="eventVisitTypeInput"><option value="">Не визит (обычная запись)</option><option value="congregation">Собрание</option><option value="group">Группа</option><option value="pregroup">Предгруппа</option></select></div></div><div class="editor-actions"><button class="btn" id="resetEventBtn" type="button">Очистить</button><button class="btn primary" id="saveEventBtn" type="button">Сохранить собрание</button></div></div></div></section>
       <section id="notes" class="screen"><div class="toolbar"><input id="noteSearch" type="text" placeholder="Поиск по заметкам" /></div><div class="card"><div id="notesList" class="grid"></div></div></section>
       <section id="settings" class="screen"><div class="grid" style="grid-template-columns:repeat(2,1fr)"><div class="card"><h3>Внешний вид</h3><div class="form-grid"><div><label class="small">Язык</label><select id="languageSelect"><option value="ru">Русский</option><option value="en">English</option><option value="uk">Українська</option><option value="pl">Polski</option></select></div><div><label class="small">Тема</label><select id="themeSelect"><option value="light">Светлая</option><option value="dark">Тёмная</option></select></div>
 <div>
@@ -330,7 +331,7 @@ body::before{display:none !important}
     </div>
   </div>
 </div>
-<div style="display:flex;justify-content:flex-start;gap:12px;flex-wrap:wrap"><button class="btn primary" id="backupBtn" type="button">Создать backup</button></div>
+<div style="display:flex;justify-content:flex-start;gap:12px;flex-wrap:wrap"><button class="btn primary" id="backupBtn" type="button">Создать backup</button><button class="btn" id="checkRemindersBtn" type="button">Проверить напоминания S302/письма</button></div>
 <div class="card" style="margin-top:14px;box-shadow:none;border:1px dashed var(--danger);border-radius:18px;padding:14px;background:rgba(185,28,28,.06)">
   <div class="small" style="color:var(--danger);font-weight:700;margin-bottom:8px">Опасная зона</div>
   <div class="small" style="margin-bottom:10px">Необратимое действие: все локальные данные приложения будут удалены безвозвратно. Перед этим рекомендуем создать backup.</div>
@@ -341,6 +342,13 @@ body::before{display:none !important}
     <nav class="bottom-nav" id="bottomNav"><div class="bottom-nav-row" id="bottomNavRow"></div></nav>
   </div>
   <div class="modal" id="pdfModal" hidden><div class="modal-card"><div class="modal-head"><div><h3>Экспорт в PDF</h3><div class="modal-sub">Выберите формат и используйте печать браузера.</div></div><button class="icon-btn" id="pdfModalCloseBtn" type="button" aria-label="Закрыть">✕</button></div><div class="pdf-section"><h4>Календарная сетка</h4><div class="pdf-grid"><button class="pdf-option active" data-pdf-type="month-grid" type="button"><strong>Календарь месяца</strong><span>Сетка текущего месяца для печати.</span></button><button class="pdf-option" data-pdf-type="custom-range-calendar" type="button"><strong>Календарь периода</strong><span>Печать для выбранного диапазона дат.</span></button></div></div><div class="pdf-section"><h4>Список собраний и отчёты</h4><div class="pdf-grid"><button class="pdf-option" data-pdf-type="month-agenda" type="button"><strong>Список собраний месяца</strong><span>Список собраний за текущий месяц.</span></button><button class="pdf-option" data-pdf-type="half-year-agenda" type="button"><strong>Собрания за полгода</strong><span>Список собраний за 6 месяцев.</span></button><button class="pdf-option" data-pdf-type="year-agenda" type="button"><strong>Собрания за год</strong><span>Список собраний за 12 месяцев.</span></button><button class="pdf-option" data-pdf-type="custom-range" type="button"><strong>Список за период</strong><span>Список событий за любой диапазон дат.</span></button><button class="pdf-option" data-pdf-type="year-overview" type="button"><strong>Годовой обзор</strong><span>Табличная сводка по служебному году.</span></button><button class="pdf-option" data-pdf-type="notes-report" type="button"><strong>Отчёт по заметкам</strong><span>Недельные заметки по выбранному году.</span></button></div></div><div class="card" id="pdfRangeCard" style="margin-top:14px;padding:14px;border-radius:18px;display:none;box-shadow:none;"><div class="form-grid"><label><span class="small">Начало периода</span><input id="pdfRangeStartInput" type="date" /></label><label><span class="small">Конец периода</span><input id="pdfRangeEndInput" type="date" /></label></div><p class="small" id="pdfRangeHelp" style="margin:10px 0 0;">Выбери даты начала и конца периода.</p></div><div class="pdf-hint" id="pdfHint">Если окно печати не появилось, разрешите всплывающее окно/печать в браузере.</div><div class="editor-actions"><button class="btn" id="pdfCancelBtn" type="button">Закрыть</button><button class="btn primary" id="pdfExportConfirmBtn" type="button">Печать</button></div></div></div>
+  <div class="modal" id="remindersModal" hidden>
+    <div class="modal-card">
+      <div class="modal-head"><div><h3 id="remindersModalTitle">Что нужно отправить</h3><div class="modal-sub" id="remindersModalSub">Ближайшие визиты, которые ждут S302 или письма</div></div><button class="icon-btn" id="remindersModalCloseBtn" type="button" aria-label="Закрыть">✕</button></div>
+      <div id="remindersModalList" class="grid"></div>
+      <div class="editor-actions"><button class="btn primary" id="remindersModalOkBtn" type="button">Закрыть</button></div>
+    </div>
+  </div>
   <div class="modal" id="exportModal" hidden>
     <div class="modal-card">
       <div class="modal-head">

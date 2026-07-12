@@ -81,7 +81,11 @@
       add_entry: 'Добавить собрание',
       edit_week_event: 'Редактировать план недели',
       compact_year_hint: 'На маленьком экране включён компактный вид: нажмите день, чтобы увидеть детали недели и события.',
- sent_status: 'Контроль отправки', letter_short: 'Письмо', s302_short: 'S-302', send_control: 'Контроль отправки', needs_sending: 'Нужно отправить', sent_done: 'Отправлено', deadline: 'Срок', before_visit_hint: 'Рекомендуемый срок: до начала недели посещения.'
+ sent_status: 'Контроль отправки', letter_short: 'Письмо', s302_short: 'S-302', send_control: 'Контроль отправки', needs_sending: 'Нужно отправить', sent_done: 'Отправлено', deadline: 'Срок', before_visit_hint: 'Рекомендуемый срок: до начала недели посещения.',
+      reminders_title: 'Что нужно отправить', reminders_subtitle: 'Ближайшие визиты, которые ждут S302 или письма', reminders_none: 'Все визиты в порядке — ничего срочного нет.',
+      reminders_s302_needed: 'Отправить S302', reminders_letter_needed: 'Отправить письмо', reminders_mark_s302: 'S302 отправлен', reminders_mark_letter: 'Письмо отправлено',
+      reminders_overdue: 'Просрочено', reminders_days_left: 'осталось {days} дн.', reminders_close: 'Закрыть', reminders_open_entry: 'Открыть запись',
+      visit_type: 'Тип визита', visit_type_none: 'Не визит', visit_type_congregation: 'Собрание', visit_type_group: 'Группа', visit_type_pregroup: 'Предгруппа'
     },
     en: {
       appTitle: 'Service Year Planner',
@@ -158,7 +162,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.6.1',
+      version: '9.7.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -371,6 +375,24 @@
     data: {
       ensureServiceYear(year) { if (!App.state.app.serviceYears[year]) App.state.app.serviceYears[year] = { weeks: {} }; return App.state.app.serviceYears[year]; },
       getEventById(id) { return App.state.app.events.find((item) => item.id === id) || null; },
+      getUpcomingReminders() {
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const items = [];
+        (App.state.app.entries || []).forEach((entry) => {
+          const event = this.getEventById(entry.eventId);
+          const visitType = event?.visitType || '';
+          if (!visitType) return; // reminders only apply to congregation/group/pregroup visits
+          const start = App.utils.parseLocalDate(entry.start);
+          if (!start) return;
+          const daysUntil = Math.round((start - today) / 86400000);
+          if (daysUntil < -3) return; // visit already passed a few days ago — stop nagging
+          const needsS302 = !entry?.flags?.f302;
+          const needsLetter = !entry?.flags?.letter && daysUntil <= 60;
+          if (!needsS302 && !needsLetter) return;
+          items.push({ id: entry.id, title: entry.title || event?.name || App.utils.t('event'), start: entry.start, end: entry.end, daysUntil, needsS302, needsLetter, visitType });
+        });
+        return items.sort((a, b) => a.daysUntil - b.daysUntil);
+      },
       getWeek(year, weekId) {
         const sy = this.ensureServiceYear(year); if (!sy.weeks[weekId]) { const start = App.utils.parseLocalDate(weekId); sy.weeks[weekId] = { id: weekId, weekId, start: App.utils.iso(start), end: App.utils.iso(App.utils.addDays(start, 6)), eventId: '', priority: 'normal', flagLetter: false, flagS302: false, note: '' }; }
         return sy.weeks[weekId];
@@ -461,10 +483,11 @@
         }
         if (App.els.eventAddressInput) App.els.eventAddressInput.value = '';
         if (App.els.eventScheduleInput) App.els.eventScheduleInput.value = '';
+        if (App.els.eventVisitTypeInput) App.els.eventVisitTypeInput.value = '';
       },
       saveEventTemplate() {
         const name = App.els.eventNameInput?.value.trim(); if (!name) return App.utils.toast(App.utils.t('enter_event_name'));
-        const payload = { id: App.state.editingEventId || App.utils.uid('evt'), name, color: App.utils.clampColor(App.els.eventColorInput?.value), address: App.els.eventAddressInput?.value.trim() || '', schedule: App.els.eventScheduleInput?.value.trim() || '' };
+        const payload = { id: App.state.editingEventId || App.utils.uid('evt'), name, color: App.utils.clampColor(App.els.eventColorInput?.value), address: App.els.eventAddressInput?.value.trim() || '', schedule: App.els.eventScheduleInput?.value.trim() || '', visitType: App.els.eventVisitTypeInput?.value || '' };
         const index = App.state.app.events.findIndex((event) => event.id === payload.id); if (index >= 0) App.state.app.events[index] = payload; else App.state.app.events.push(payload);
         App.state.app.events = App.utils.uniqueBy(App.state.app.events, (item) => [item.name,item.color,item.address,item.schedule].join('|')); App.store.save(); this.resetEventForm(); App.ui.renderAll(); App.utils.toast(App.utils.t('event_template_saved'));
       },
@@ -526,15 +549,16 @@
       },
       saveCalendarEditor() {
         const eventId = App.els.editorEventSelect?.value || ''; const start = App.els.editorStart?.value || ''; const end = App.els.editorEnd?.value || ''; const note = App.els.editorNoteInput?.value.trim() || '';
+        const flagsInput = { f302: !!App.els.editorFlagS302?.checked, letter: !!App.els.editorFlagLetter?.checked };
         if (!eventId || !start || !end) return App.utils.toast(App.utils.t('choose_template_dates')); if (start > end) return App.utils.toast(App.utils.t('wrong_end_date'));
         const event = App.data.getEventById(eventId);
         const target = App.state.calendarEditingTarget || { mode: 'create', source: 'entry', refId: null };
         if (target.mode === 'edit' && target.source === 'entry') {
-          const entry = App.state.app.entries.find((item) => item.id === target.refId); if (entry) { entry.eventId = eventId; entry.start = start; entry.end = end; entry.title = event?.name || App.utils.t('event'); entry.note = note; }
+          const entry = App.state.app.entries.find((item) => item.id === target.refId); if (entry) { entry.eventId = eventId; entry.start = start; entry.end = end; entry.title = event?.name || App.utils.t('event'); entry.note = note; entry.flags = flagsInput; }
         } else if (target.mode === 'edit' && target.source === 'week') {
           let week = null; Object.values(App.state.app.serviceYears).forEach((sy) => { if (sy.weeks && sy.weeks[target.refId]) week = sy.weeks[target.refId]; }); if (week) { week.eventId = eventId; week.start = start; week.end = end; week.note = note; }
         } else {
-          App.state.app.entries.push({ id: App.utils.uid('entry'), eventId, start, end, title: event?.name || App.utils.t('event'), note, flags: { f302: false, letter: false }, source: 'entry' });
+          App.state.app.entries.push({ id: App.utils.uid('entry'), eventId, start, end, title: event?.name || App.utils.t('event'), note, flags: flagsInput, source: 'entry' });
         }
         App.state.app.entries = App.utils.uniqueBy(App.state.app.entries, (item) => [item.eventId,item.title,item.note,item.start,item.end].join('|'));
         App.store.save(); App.ui.closeCalendarEditor(); App.ui.renderAll(); App.utils.toast(App.utils.t('calendar_event_saved'));
@@ -730,7 +754,8 @@
           'editorCancelBtn','editorDeleteBtn','editorSaveBtn','calendarServiceYearLabel','calendarPanelYearLabel',
           'calendarQuickList','calendarSideTitle','calendarSideMeta','calendarSideDetails','calendarEventQuickFilter',
           'toggleTeamPanelBtn','calendarLayout','eventsList','eventSearchInput','eventColorFilter','deleteAllEventsBtn','eventsListCount','eventNameInput','eventColorInput','eventAddressInput',
-          'eventScheduleInput','resetEventBtn','saveEventBtn','noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
+          'eventScheduleInput','resetEventBtn','saveEventBtn','eventVisitTypeInput','editorFlagsRow','editorFlagS302','editorFlagLetter',
+          'remindersModal','remindersModalList','remindersModalCloseBtn','remindersModalOkBtn','remindersModalTitle','remindersModalSub','checkRemindersBtn','noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
           'pdfCancelBtn','pdfExportConfirmBtn','pdfRangeCard','pdfRangeStartInput','pdfRangeEndInput','pdfRangeHelp','pdfHint',
           'bottomNav','bottomNavRow','mobileOverlay','mobileMenuToggleBtn','exportModal','exportModalCloseBtn','exportCancelBtn',
@@ -1483,9 +1508,66 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.editorNoteInput) App.els.editorNoteInput.value = data.note || '';
         App.els.editorReadonly.textContent = isEdit ? App.utils.t('edit_entry_help') : App.utils.t('create_entry_help');
         App.els.editorDeleteBtn.style.display = isEdit ? '' : 'none';
+        const isWeekEdit = isEdit && data.source === 'week';
+        if (App.els.editorFlagsRow) App.els.editorFlagsRow.hidden = isWeekEdit;
+        if (App.els.editorFlagS302) App.els.editorFlagS302.checked = !!data.flags?.f302;
+        if (App.els.editorFlagLetter) App.els.editorFlagLetter.checked = !!data.flags?.letter;
       },
       closeCalendarEditor() {
         if (App.els.calendarEditor) App.els.calendarEditor.hidden = true; App.state.calendarEditingTarget = null;
+      },
+      renderRemindersModal() {
+        const items = App.data.getUpcomingReminders();
+        if (App.els.remindersModalTitle) App.els.remindersModalTitle.textContent = App.utils.t('reminders_title');
+        if (App.els.remindersModalSub) App.els.remindersModalSub.textContent = App.utils.t('reminders_subtitle');
+        if (!App.els.remindersModalList) return;
+        if (!items.length) {
+          App.els.remindersModalList.innerHTML = `<div class="empty">${App.utils.t('reminders_none')}</div>`;
+          return;
+        }
+        App.els.remindersModalList.innerHTML = items.map((item) => {
+          const dayLabel = item.daysUntil < 0 ? `<span class="flag-badge" style="background:#b91c1c">${App.utils.t('reminders_overdue')}</span>` : `<span class="small">${App.utils.t('reminders_days_left', { days: item.daysUntil })}</span>`;
+          const s302Btn = item.needsS302 ? `<button class="btn danger" type="button" data-mark-reminder="s302" data-entry-id="${App.utils.escapeAttr(item.id)}">${App.utils.t('reminders_mark_s302')}</button>` : '';
+          const letterBtn = item.needsLetter ? `<button class="btn" type="button" data-mark-reminder="letter" data-entry-id="${App.utils.escapeAttr(item.id)}">${App.utils.t('reminders_mark_letter')}</button>` : '';
+          return `<div class="card" style="padding:14px">
+            <div style="display:flex;justify-content:space-between;align-items:start;gap:10px;flex-wrap:wrap">
+              <div><strong>${App.utils.escapeHtml(item.title)}</strong><div class="small">${App.utils.escapeHtml(App.utils.prettyDate(item.start))} — ${App.utils.escapeHtml(App.utils.prettyDate(item.end))}</div></div>
+              ${dayLabel}
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+              ${item.needsS302 ? `<span class="pill">${App.utils.t('reminders_s302_needed')}</span>` : ''}
+              ${item.needsLetter ? `<span class="pill">${App.utils.t('reminders_letter_needed')}</span>` : ''}
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">${s302Btn}${letterBtn}<button class="btn" type="button" data-open-reminder-entry="${App.utils.escapeAttr(item.id)}">${App.utils.t('reminders_open_entry')}</button></div>
+          </div>`;
+        }).join('');
+        document.querySelectorAll('[data-mark-reminder]').forEach((btn) => btn.addEventListener('click', () => {
+          const entry = App.state.app.entries.find((item) => item.id === btn.dataset.entryId);
+          if (entry) {
+            if (!entry.flags) entry.flags = { f302: false, letter: false };
+            if (btn.dataset.markReminder === 's302') entry.flags.f302 = true;
+            if (btn.dataset.markReminder === 'letter') entry.flags.letter = true;
+            App.store.save();
+          }
+          App.ui.renderRemindersModal();
+          App.ui.renderAll();
+        }));
+        document.querySelectorAll('[data-open-reminder-entry]').forEach((btn) => btn.addEventListener('click', () => {
+          App.ui.closeRemindersModal();
+          App.state.selectedScreen = 'calendar';
+          App.ui.renderAll();
+          App.ui.openCalendarEditorForItem(`entry:${btn.dataset.openReminderEntry}`);
+        }));
+      },
+      openRemindersModal() {
+        this.renderRemindersModal();
+        if (App.els.remindersModal) App.els.remindersModal.hidden = false;
+      },
+      closeRemindersModal() {
+        if (App.els.remindersModal) App.els.remindersModal.hidden = true;
+      },
+      showRemindersModalIfNeeded() {
+        if (App.data.getUpcomingReminders().length) this.openRemindersModal();
       },
       renderWeeks() {
         this.renderYearOptions();
@@ -1587,6 +1669,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           if (App.els.eventColorInput) { App.els.eventColorInput.innerHTML = App.utils.colorOptionsHtml(event?.color || '#1f7a45'); App.els.eventColorInput.value = event?.color || '#1f7a45'; if (!App.els.eventColorInput.value) App.els.eventColorInput.selectedIndex = 0; }
           if (App.els.eventAddressInput) App.els.eventAddressInput.value = event?.address || '';
           if (App.els.eventScheduleInput) App.els.eventScheduleInput.value = event?.schedule || '';
+          if (App.els.eventVisitTypeInput) App.els.eventVisitTypeInput.value = event?.visitType || '';
         }));
         document.querySelectorAll('[data-delete-event]').forEach((btn) => btn.addEventListener('click', () => App.actions.deleteEventTemplate(btn.dataset.deleteEvent)));
       },
@@ -1677,6 +1760,9 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.pdfExportConfirmBtn?.addEventListener('click', () => App.actions.doPrint());
       App.els.exportBtn?.addEventListener('click', () => { if (App.els.exportModal) App.els.exportModal.hidden = false; });
       App.els.exportModalCloseBtn?.addEventListener('click', () => { if (App.els.exportModal) App.els.exportModal.hidden = true; });
+      App.els.remindersModalCloseBtn?.addEventListener('click', () => App.ui.closeRemindersModal());
+      App.els.remindersModalOkBtn?.addEventListener('click', () => App.ui.closeRemindersModal());
+      App.els.checkRemindersBtn?.addEventListener('click', () => App.ui.openRemindersModal());
       App.els.exportCancelBtn?.addEventListener('click', () => { if (App.els.exportModal) App.els.exportModal.hidden = true; });
       App.els.exportConfirmBtn?.addEventListener('click', () => { if (App.state.exportType === 'ics') App.actions.exportIcs(); else App.actions.exportJson(); if (App.els.exportModal) App.els.exportModal.hidden = true; });
       App.els.syncExportBtn?.addEventListener('click', () => App.actions.exportSyncFile());
@@ -1730,6 +1816,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       this.ui.renderAll();
       this.bind();
       this.ui.closeMobileMenu();
+      this.ui.showRemindersModalIfNeeded();
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', async () => {
           try {
