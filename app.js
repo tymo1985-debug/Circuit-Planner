@@ -162,7 +162,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.7.2',
+      version: '9.8.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -763,7 +763,7 @@
           'calendarQuickList','calendarSideTitle','calendarSideMeta','calendarSideDetails','calendarEventQuickFilter',
           'toggleTeamPanelBtn','calendarLayout','eventsList','eventSearchInput','eventColorFilter','eventVisitFilter','deleteAllEventsBtn','eventsListCount','eventNameInput','eventColorInput','eventAddressInput',
           'eventScheduleInput','resetEventBtn','saveEventBtn','eventVisitTypeInput','editorFlagsRow','editorFlagS302','editorFlagLetter',
-          'remindersModal','remindersModalList','remindersModalCloseBtn','remindersModalOkBtn','remindersModalTitle','remindersModalSub','checkRemindersBtn','noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
+          'remindersModal','remindersModalList','remindersModalCloseBtn','remindersModalOkBtn','remindersModalTitle','remindersModalSub','checkRemindersBtn','checkRemindersBtnMain','noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
           'pdfCancelBtn','pdfExportConfirmBtn','pdfRangeCard','pdfRangeStartInput','pdfRangeEndInput','pdfRangeHelp','pdfHint',
           'bottomNav','bottomNavRow','mobileOverlay','mobileMenuToggleBtn','exportModal','exportModalCloseBtn','exportCancelBtn',
@@ -940,6 +940,11 @@
         this.renderNotes();
         this.renderSettings();
         this.renderStatus();
+        this.updateReminderButtonBadge();
+      },
+      updateReminderButtonBadge() {
+        const count = App.data.getUpcomingReminders().length;
+        if (App.els.checkRemindersBtnMain) App.els.checkRemindersBtnMain.textContent = count ? `🔔 S302/письма (${count})` : '🔔 S302/письма';
       },
       renderNav() {
         const buildButton = (item, mobile = false) => `<button class="${mobile ? 'bottom-nav-btn' : 'nav-btn'} ${App.state.selectedScreen === item.id ? 'active' : ''}" data-screen="${item.id}" type="button"><span class="icon">${item.icon}</span><span class="label">${App.utils.t(item.tKey)}</span></button>`;
@@ -1368,13 +1373,47 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         document.querySelectorAll('[data-edit-calendar-item]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.actions.openCalendarEditorForItem(btn.dataset.editCalendarItem); }));
         document.querySelectorAll('[data-open-week]').forEach((btn) => btn.addEventListener('click', () => { App.state.selectedScreen = 'weeks'; App.state.selectedYear = App.utils.getServiceYearForDate(btn.dataset.openWeek); App.state.selectedWeekId = btn.dataset.openWeek; App.ui.renderAll(); }));
       },
+      flagBadgesHtml(flags = {}) {
+        const out = [];
+        if (flags.f302) out.push(`<span class="flag-badge">S302</span>`);
+        if (flags.letter) out.push(`<span class="flag-badge">✉</span>`);
+        return out.length ? `<span class="flag-badges">${out.join('')}</span>` : '';
+      },
+      flagTogglesHtml(scope, id, flags = {}) {
+        const s302Done = !!flags.f302;
+        const letterDone = !!flags.letter;
+        const status = (done) => done ? App.utils.t('sent_done') : App.utils.t('needs_sending');
+        const card = (flag, label, done) => `
+          <div class="send-card ${done ? 'is-done' : 'is-pending'}">
+            <div class="send-card-top"><span>${label}</span><span class="send-status">${status(done)}</span></div>
+            <label class="send-toggle"><input type="checkbox" data-${scope}-flag="${flag}" data-${scope}-id="${App.utils.escapeAttr(id)}" ${done ? 'checked' : ''}> ${App.utils.t('sent_done')}</label>
+          </div>`;
+        return `
+          <div class="send-control" aria-label="${App.utils.escapeAttr(App.utils.t('sent_status'))}">
+            <div class="send-control-head"><div><div class="send-control-title">${App.utils.t('send_control')}</div><div class="send-control-hint">${App.utils.t('before_visit_hint')}</div></div></div>
+            <div class="send-control-grid">${card('letter', App.utils.t('letter_short'), letterDone)}${card('s302', App.utils.t('s302_short'), s302Done)}</div>
+          </div>`;
+      },
       renderCalendarDetails(item) {
         if (!App.els.calendarSideTitle || !App.els.calendarSideMeta || !App.els.calendarSideDetails) return; if (!item) { App.els.calendarSideTitle.textContent = App.utils.t('event_details'); App.els.calendarSideMeta.textContent = '—'; App.els.calendarSideDetails.innerHTML = `<div class="empty">${App.utils.t('no_events_month')}</div>`; return; }
         const itemData = App.data.getCalendarItemById(item.id) || item; const event = App.data.getEventById(itemData.eventId); App.els.calendarSideTitle.textContent = itemData.title; App.els.calendarSideMeta.textContent = `${App.utils.prettyDateLong(itemData.start)} — ${App.utils.prettyDateLong(itemData.end)}`;
         const addressHtml = event?.address ? `<a href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.escapeHtml(event.address)}</a>` : App.utils.escapeHtml(App.utils.t('no_address'));
-        App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div><div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
+        const visitLabel = (visitType) => visitType === 'congregation' ? App.utils.t('visit_type_congregation') : visitType === 'group' ? App.utils.t('visit_type_group') : visitType === 'pregroup' ? App.utils.t('visit_type_pregroup') : '';
+        const visitTypeRow = event?.visitType ? `<div class="side-row"><div class="side-label">${App.utils.t('visit_type')}</div><div class="side-value">${App.utils.escapeHtml(visitLabel(event.visitType))} ${this.flagBadgesHtml(itemData.flags)}</div></div>` : '';
+        const sendControls = event?.visitType ? this.flagTogglesHtml(itemData.source, itemData.refId, itemData.flags) : '';
+        App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div>${visitTypeRow}<div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div>${sendControls}<div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
         const editBtn = document.getElementById('detailEditBtn'); if (editBtn) editBtn.addEventListener('click', () => App.actions.openCalendarEditorForItem(itemData.id));
         const icsBtn = document.getElementById('detailIcsBtn'); if (icsBtn) icsBtn.addEventListener('click', () => App.actions.exportSingleEventIcs(itemData.id));
+        document.querySelectorAll('[data-entry-flag]').forEach((input) => input.addEventListener('change', (e) => {
+          const entry = App.state.app.entries.find((it) => it.id === e.target.dataset.entryId);
+          if (entry) { if (!entry.flags) entry.flags = { f302: false, letter: false }; if (e.target.dataset.entryFlag === 's302') entry.flags.f302 = e.target.checked; if (e.target.dataset.entryFlag === 'letter') entry.flags.letter = e.target.checked; App.store.save(); }
+          App.ui.renderCalendarDetails(item);
+        }));
+        document.querySelectorAll('[data-week-flag]').forEach((input) => input.addEventListener('change', (e) => {
+          let week = null; Object.values(App.state.app.serviceYears).forEach((sy) => { if (sy.weeks && sy.weeks[e.target.dataset.weekId]) week = sy.weeks[e.target.dataset.weekId]; });
+          if (week) { if (e.target.dataset.weekFlag === 's302') week.flagS302 = e.target.checked; if (e.target.dataset.weekFlag === 'letter') week.flagLetter = e.target.checked; App.store.save(); }
+          App.ui.renderCalendarDetails(item);
+        }));
       },
       renderServiceYearDayDetails(dateIso) {
         if (!App.els.calendarSideTitle || !App.els.calendarSideMeta || !App.els.calendarSideDetails) return;
@@ -1397,27 +1436,8 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           end: week.end,
           flags: { f302: !!week.flagS302, letter: !!week.flagLetter }
         } : null;
-        const flagBadges = (flags = {}) => {
-          const out = [];
-          if (flags.f302) out.push(`<span class="flag-badge">S302</span>`);
-          if (flags.letter) out.push(`<span class="flag-badge">✉</span>`);
-          return out.length ? `<span class="flag-badges">${out.join('')}</span>` : '';
-        };
-        const flagToggles = (scope, id, flags = {}) => { 
- const s302Done = !!flags.f302; 
- const letterDone = !!flags.letter; 
- const status = (done) => done ? App.utils.t('sent_done') : App.utils.t('needs_sending'); 
- const card = (flag, label, done) => ` 
- <div class="send-card ${done ? 'is-done' : 'is-pending'}"> 
- <div class="send-card-top"><span>${label}</span><span class="send-status">${status(done)}</span></div> 
- <label class="send-toggle"><input type="checkbox" data-${scope}-flag="${flag}" data-${scope}-id="${App.utils.escapeAttr(id)}" ${done ? 'checked' : ''}> ${App.utils.t('sent_done')}</label> 
- </div>`; 
- return ` 
- <div class="send-control" aria-label="${App.utils.escapeAttr(App.utils.t('sent_status'))}"> 
- <div class="send-control-head"><div><div class="send-control-title">${App.utils.t('send_control')}</div><div class="send-control-hint">${App.utils.t('before_visit_hint')}</div></div></div> 
- <div class="send-control-grid">${card('letter', App.utils.t('letter_short'), letterDone)}${card('s302', App.utils.t('s302_short'), s302Done)}</div> 
- </div>`; 
-};
+        const flagBadges = (flags = {}) => this.flagBadgesHtml(flags);
+        const flagToggles = (scope, id, flags = {}) => this.flagTogglesHtml(scope, id, flags);
         const dayEntries = App.state.app.entries
           .filter((entry) => {
             const es = App.utils.parseLocalDate(entry.start);
@@ -1778,6 +1798,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.remindersModalCloseBtn?.addEventListener('click', () => App.ui.closeRemindersModal());
       App.els.remindersModalOkBtn?.addEventListener('click', () => App.ui.closeRemindersModal());
       App.els.checkRemindersBtn?.addEventListener('click', () => App.ui.openRemindersModal());
+      App.els.checkRemindersBtnMain?.addEventListener('click', () => App.ui.openRemindersModal());
       App.els.exportCancelBtn?.addEventListener('click', () => { if (App.els.exportModal) App.els.exportModal.hidden = true; });
       App.els.exportConfirmBtn?.addEventListener('click', () => { if (App.state.exportType === 'ics') App.actions.exportIcs(); else App.actions.exportJson(); if (App.els.exportModal) App.els.exportModal.hidden = true; });
       App.els.syncExportBtn?.addEventListener('click', () => App.actions.exportSyncFile());

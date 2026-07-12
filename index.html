@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.7.2</title>
+  <title>Service Year Planner v9.8.0</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
   <style>
@@ -205,7 +205,7 @@ body::before{display:none !important}
   <div class="app" id="appRoot">
     <div class="mobile-overlay" id="mobileOverlay" hidden></div>
     <aside class="sidebar">
-      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.7.2 • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.8.0 • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
@@ -213,7 +213,7 @@ body::before{display:none !important}
       <div class="offline-banner" id="offlineBanner">Вы офлайн. Изменения сохраняются локально.</div>
       <header class="topbar">
         <div>
-          <div class="version-badge">Версия: v9.7.2</div>
+          <div class="version-badge">Версия: v9.8.0</div>
           <h2 id="screenTitle">Календарь</h2>
           <p id="screenSubtitle"></p>
         </div>
@@ -227,6 +227,7 @@ body::before{display:none !important}
             <div class="calendar-toolbar">
               <div><div class="small" id="calendarServiceYearLabel"></div><h3 class="calendar-title" id="monthLabel"></h3><div class="calendar-sub" id="calendarRangeLabel"></div></div>
               <div class="calendar-controls">
+                <button class="chip" id="checkRemindersBtnMain" type="button">🔔 S302/письма</button>
                 <button class="chip" id="toggleTeamPanelBtn" type="button">Вид: служебный год</button>
                 <div class="calendar-nav"><button class="icon-btn" id="prevMonthBtn" type="button" aria-label="Предыдущий месяц">‹</button><button class="chip" id="todayMonthBtn" type="button">Сегодня</button><button class="icon-btn" id="nextMonthBtn" type="button" aria-label="Следующий месяц">›</button></div>
                 <select id="calendarLayoutPresetSelect" class="calendar-layout-select"></select>
@@ -333,7 +334,7 @@ body::before{display:none !important}
     </div>
   </div>
 </div>
-<div style="display:flex;justify-content:flex-start;gap:12px;flex-wrap:wrap"><button class="btn primary" id="backupBtn" type="button">Создать backup</button><button class="btn" id="checkRemindersBtn" type="button">Проверить напоминания S302/письма</button></div>
+<div style="display:flex;justify-content:flex-start;gap:12px;flex-wrap:wrap"><button class="btn primary" id="backupBtn" type="button">Создать backup</button></div>
 <div class="card" style="margin-top:14px;box-shadow:none;border:1px dashed var(--danger);border-radius:18px;padding:14px;background:rgba(185,28,28,.06)">
   <div class="small" style="color:var(--danger);font-weight:700;margin-bottom:8px">Опасная зона</div>
   <div class="small" style="margin-bottom:10px">Необратимое действие: все локальные данные приложения будут удалены безвозвратно. Перед этим рекомендуем создать backup.</div>
