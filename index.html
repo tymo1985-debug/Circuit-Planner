@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.8.0</title>
+  <title>Service Year Planner v9.9.0</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
   <style>
   :root{--bg:#f4f7f5;--surface:#fff;--surface2:#f0f5f2;--text:#163024;--muted:#5f776a;--line:#d8e2db;--accent:#14532d;--accent2:#0d3d22;--accent-rgb:20,83,45;--danger:#b91c1c;--shadow:0 10px 28px rgba(22,48,36,.08);--cal-header-bg:rgba(20,83,45,.05);--cal-weeknum-bg:rgba(20,83,45,.04);--cal-weekend-bg:rgba(20,83,45,.06);--cal-inactive-bg:transparent;--cal-grid-line:rgba(216,226,219,.85)}
   [data-theme="dark"]{--bg:#0f1712;--surface:#152019;--surface2:#1b2a21;--text:#e8f0eb;--muted:#a7baaf;--line:#2b3b31;--accent:#4ade80;--danger:#f87171;--shadow:0 10px 28px rgba(0,0,0,.28);--cal-header-bg:rgba(74,222,128,.10);--cal-weeknum-bg:rgba(74,222,128,.10);--cal-weekend-bg:rgba(74,222,128,.12);--cal-inactive-bg:rgba(27,42,33,.30);--cal-grid-line:rgba(216,226,219,.85)}
@@ -14,7 +16,7 @@
   h1,h2,h3,h4,p{margin:0} .brand h1{font-size:20px;margin-bottom:6px}
   .app{display:grid;grid-template-columns:280px 1fr;width:100%;min-height:100vh;min-height:100dvh;position:relative;z-index:1}
   .sidebar{background:linear-gradient(180deg,var(--accent),var(--accent2));color:#fff;padding:24px 18px;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;gap:18px}
-  .brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.14);font-weight:700}.menu{display:grid;gap:8px}
+  .brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-weight:700;overflow:hidden}.menu{display:grid;gap:8px}
   .nav-btn{appearance:none;border:0;background:transparent;color:#eef7f1;padding:12px 14px;border-radius:14px;text-align:left;font-size:15px;cursor:pointer;display:flex;gap:10px;align-items:center}.nav-btn.active,.nav-btn:hover{background:rgba(255,255,255,.12)}
   .summary{margin-top:auto;padding:14px;border-radius:16px;background:rgba(255,255,255,.1);font-size:14px}.summary strong{display:block;margin-bottom:8px}
   .main{padding:28px;min-width:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.topbar h2{margin:0;font-size:28px}.topbar p{margin:6px 0 0;color:var(--muted)}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -205,7 +207,7 @@ body::before{display:none !important}
   <div class="app" id="appRoot">
     <div class="mobile-overlay" id="mobileOverlay" hidden></div>
     <aside class="sidebar">
-      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.8.0 • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo"><svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="150" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="336" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="120" y="140" width="272" height="256" rx="32" fill="#f4faf6"/><rect x="120" y="140" width="272" height="72" rx="32" fill="#15532d"/><rect x="120" y="180" width="272" height="32" fill="#15532d"/><circle cx="160" cy="252" r="10" fill="#bfe3cd"/><circle cx="200" cy="252" r="10" fill="#bfe3cd"/><circle cx="240" cy="252" r="10" fill="#bfe3cd"/><circle cx="160" cy="292" r="10" fill="#bfe3cd"/><path d="M204 318 L244 358 L316 274" fill="none" stroke="#1f7a45" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>Service Year Planner</h1><p>v9.9.0 • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
@@ -213,7 +215,7 @@ body::before{display:none !important}
       <div class="offline-banner" id="offlineBanner">Вы офлайн. Изменения сохраняются локально.</div>
       <header class="topbar">
         <div>
-          <div class="version-badge">Версия: v9.8.0</div>
+          <div class="version-badge">Версия: v9.9.0</div>
           <h2 id="screenTitle">Календарь</h2>
           <p id="screenSubtitle"></p>
         </div>
