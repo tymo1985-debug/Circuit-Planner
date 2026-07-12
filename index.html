@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.7.0</title>
+  <title>Service Year Planner v9.7.1</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
   <style>
@@ -21,7 +21,9 @@
   .btn,.chip,select,input,textarea{font:inherit}.btn,.chip{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:12px 14px;border-radius:14px;cursor:pointer;box-shadow:var(--shadow)}
   button,.btn,.chip,.icon-btn,.nav-btn,.bottom-nav-btn,.week-item,.side-item,.event-bar,.pdf-option,a.btn,label.btn,input,select,textarea{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .btn.primary{background:var(--accent);color:#fff;border-color:transparent}.btn.danger{background:var(--danger);color:#fff;border-color:transparent}.btn.full{width:100%}
-  .screen{display:none}.screen.active{display:block}.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px}.grid{display:grid;gap:18px}.split{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .screen{display:none}.screen.active{display:block}.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px}.grid{display:grid;gap:18px}.split{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:start}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .event-editor-card{position:sticky;top:20px;max-height:calc(100vh - 40px);overflow:auto}
+  @media (max-width:900px){.split{grid-template-columns:1fr !important}.event-editor-card{position:static;max-height:none}}
   input[type="text"],input[type="date"],input[type="color"],input[type="number"],textarea,select{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:14px;padding:12px 14px}
   textarea{min-height:120px;resize:vertical}
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}.small{font-size:12px;color:var(--muted)}.empty{padding:24px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);text-align:center}
@@ -203,7 +205,7 @@ body::before{display:none !important}
   <div class="app" id="appRoot">
     <div class="mobile-overlay" id="mobileOverlay" hidden></div>
     <aside class="sidebar">
-      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.7.0 • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo">SY</div><div><h1>Service Year Planner</h1><p>v9.7.1 • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
@@ -211,7 +213,7 @@ body::before{display:none !important}
       <div class="offline-banner" id="offlineBanner">Вы офлайн. Изменения сохраняются локально.</div>
       <header class="topbar">
         <div>
-          <div class="version-badge">Версия: v9.7.0</div>
+          <div class="version-badge">Версия: v9.7.1</div>
           <h2 id="screenTitle">Календарь</h2>
           <p id="screenSubtitle"></p>
         </div>
@@ -249,7 +251,7 @@ body::before{display:none !important}
         <div class="toolbar weeks-toolbar"><input id="weekSearch" type="text" placeholder="Поиск по неделе, заметке или собранию" /><select id="yearSelect"></select><select id="eventFilter"></select></div>
         <div class="split"><div class="card"><div id="weekList" class="grid"></div></div><div class="card"><h3 id="weekEditorTitle">Детали недели</h3><div id="weekEditorEmpty" class="empty">Выберите неделю слева, чтобы редактировать её.</div><div id="weekEditor" hidden><div class="form-grid"><div><label class="small">Назначенное собрание</label><select id="weekEventSelect"></select></div><div><label class="small">Приоритет</label><select id="weekPrioritySelect"><option value="normal">Обычный</option><option value="important">Важный</option><option value="critical">Критичный</option></select></div></div><div class="form-grid" style="margin-top:12px"><label><input type="checkbox" id="flagLetter" /> <span>Письмо</span></label><label><input type="checkbox" id="flagS302" /> <span>S302</span></label></div><div style="margin-top:12px"><label class="small">Заметка недели</label><textarea id="weekNoteInput"></textarea></div><div class="editor-actions"><button class="btn primary" id="saveWeekBtn" type="button">Сохранить</button></div></div></div></div>
       </section>
-      <section id="events" class="screen"><div class="split"><div class="card"><div class="event-tools"><input id="eventSearchInput" type="text" placeholder="Поиск по названию, адресу или расписанию" /><select id="eventColorFilter" aria-label="Группа / цвет"><option value="all">Все группы / цвета</option></select><button class="btn danger" id="deleteAllEventsBtn" type="button">Удалить все собрания</button><div class="small" id="eventsListCount">Показано: 0 из 0</div></div><h3 class="event-templates-title" hidden></h3><div id="eventsList" class="grid"></div></div><div class="card"><h3>Редактор собрания</h3><div class="form-grid"><div><label class="small">Название</label><input id="eventNameInput" type="text" /></div><div>
+      <section id="events" class="screen"><div class="split"><div class="card"><div class="event-tools"><input id="eventSearchInput" type="text" placeholder="Поиск по названию, адресу или расписанию" /><select id="eventColorFilter" aria-label="Группа / цвет"><option value="all">Все группы / цвета</option></select><select id="eventVisitFilter" aria-label="Тип визита"><option value="all">Все записи</option><option value="unset">⚠️ Без типа визита</option><option value="congregation">Собрание</option><option value="group">Группа</option><option value="pregroup">Предгруппа</option></select><button class="btn danger" id="deleteAllEventsBtn" type="button">Удалить все собрания</button><div class="small" id="eventsListCount">Показано: 0 из 0</div></div><h3 class="event-templates-title" hidden></h3><div id="eventsList" class="grid"></div></div><div class="card event-editor-card"><h3>Редактор собрания</h3><div class="form-grid"><div><label class="small">Название</label><input id="eventNameInput" type="text" /></div><div>
 <label class="small">Цвет</label>
 <select id="eventColorInput">
   <option value="#1f7a45">🟢 Зелёный</option>

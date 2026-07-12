@@ -162,7 +162,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.7.0',
+      version: '9.7.1',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -753,7 +753,7 @@
           'editorMeta','editorEventSelect','editorStart','editorEnd','editorReadonly','editorCloseBtn',
           'editorCancelBtn','editorDeleteBtn','editorSaveBtn','calendarServiceYearLabel','calendarPanelYearLabel',
           'calendarQuickList','calendarSideTitle','calendarSideMeta','calendarSideDetails','calendarEventQuickFilter',
-          'toggleTeamPanelBtn','calendarLayout','eventsList','eventSearchInput','eventColorFilter','deleteAllEventsBtn','eventsListCount','eventNameInput','eventColorInput','eventAddressInput',
+          'toggleTeamPanelBtn','calendarLayout','eventsList','eventSearchInput','eventColorFilter','eventVisitFilter','deleteAllEventsBtn','eventsListCount','eventNameInput','eventColorInput','eventAddressInput',
           'eventScheduleInput','resetEventBtn','saveEventBtn','eventVisitTypeInput','editorFlagsRow','editorFlagS302','editorFlagLetter',
           'remindersModal','remindersModalList','remindersModalCloseBtn','remindersModalOkBtn','remindersModalTitle','remindersModalSub','checkRemindersBtn','noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
@@ -1622,6 +1622,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       renderEvents() {
         const query = (App.state.eventSearch || '').trim().toLowerCase();
         const colorFilter = App.state.eventColorFilter || 'all';
+        const visitFilter = App.state.eventVisitFilter || 'all';
         const allEvents = App.state.app.events || [];
         const colors = App.utils.uniqueBy(allEvents.map((event) => App.utils.clampColor(event.color)).filter(Boolean), (color) => color.toLowerCase());
         if (App.els.eventSearchInput) {
@@ -1635,11 +1636,14 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           App.els.eventColorFilter.value = App.state.eventColorFilter || 'all';
           App.els.eventColorFilter.setAttribute('aria-label', App.utils.t('event_group_filter'));
         }
+        if (App.els.eventVisitFilter) App.els.eventVisitFilter.value = visitFilter;
+        const visitLabel = (visitType) => visitType === 'congregation' ? App.utils.t('visit_type_congregation') : visitType === 'group' ? App.utils.t('visit_type_group') : visitType === 'pregroup' ? App.utils.t('visit_type_pregroup') : '';
         const visibleEvents = allEvents.filter((event) => {
           const haystack = [event.name, event.address, event.schedule, App.utils.colorName(event.color)].join(' ').toLowerCase();
           const queryMatch = !query || haystack.includes(query);
           const colorMatch = App.state.eventColorFilter === 'all' || String(event.color).toLowerCase() === String(App.state.eventColorFilter).toLowerCase();
-          return queryMatch && colorMatch;
+          const visitMatch = visitFilter === 'all' || (visitFilter === 'unset' ? !event.visitType : event.visitType === visitFilter);
+          return queryMatch && colorMatch && visitMatch;
         }).sort((a,b) => String(a.name || '').localeCompare(String(b.name || ''), App.utils.lang()));
         if (App.els.eventsListCount) App.els.eventsListCount.textContent = App.utils.t('events_shown_count', { shown: visibleEvents.length, total: allEvents.length });
         if (App.els.deleteAllEventsBtn) {
@@ -1656,6 +1660,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
             </div>
             <div style="display:grid;gap:8px;justify-items:end">
               <span class="pill"><span class="dot" style="background:${App.utils.clampColor(event.color)}"></span>${App.utils.escapeHtml(App.utils.colorName(event.color))}</span>
+              ${event.visitType ? `<span class="pill">${App.utils.escapeHtml(visitLabel(event.visitType))}</span>` : `<span class="pill" style="background:#fef3c7;color:#92400e;border-color:#fde68a">⚠️ ${App.utils.escapeHtml(App.utils.t('visit_type_none'))}</span>`}
               <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
                 <button class="btn" type="button" data-edit-event="${App.utils.escapeAttr(event.id)}">${App.utils.t('edit')}</button>
                 <button class="btn danger" type="button" data-delete-event="${App.utils.escapeAttr(event.id)}">${App.utils.t('delete_template')}</button>
@@ -1670,6 +1675,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           if (App.els.eventAddressInput) App.els.eventAddressInput.value = event?.address || '';
           if (App.els.eventScheduleInput) App.els.eventScheduleInput.value = event?.schedule || '';
           if (App.els.eventVisitTypeInput) App.els.eventVisitTypeInput.value = event?.visitType || '';
+          App.els.eventNameInput?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }));
         document.querySelectorAll('[data-delete-event]').forEach((btn) => btn.addEventListener('click', () => App.actions.deleteEventTemplate(btn.dataset.deleteEvent)));
       },
@@ -1737,6 +1743,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.saveEventBtn?.addEventListener('click', () => App.actions.saveEventTemplate());
       App.els.eventSearchInput?.addEventListener('input', (e) => { App.state.eventSearch = e.target.value; App.ui.renderEvents(); });
       App.els.eventColorFilter?.addEventListener('change', (e) => { App.state.eventColorFilter = e.target.value; App.ui.renderEvents(); });
+      App.els.eventVisitFilter?.addEventListener('change', (e) => { App.state.eventVisitFilter = e.target.value; App.ui.renderEvents(); });
       App.els.deleteAllEventsBtn?.addEventListener('click', () => App.actions.deleteAllEventTemplates());
       App.els.themeBtn?.addEventListener('click', () => { App.state.app.settings.theme = App.state.app.settings.theme === 'dark' ? 'light' : 'dark'; App.store.save(); App.ui.renderAll(); });
       App.els.themeSelect?.addEventListener('change', (e) => { App.state.app.settings.theme = e.target.value; App.store.save(); App.ui.renderAll(); });
