@@ -14,8 +14,8 @@
   const I18N = {
     ru: {
       appTitle: 'Service Year Planner',
-      nav_calendar: 'Календарь', nav_weeks: 'Недели', nav_events: 'Собрания', nav_notes: 'Заметки', nav_settings: 'Настройки',
-      screen_calendar: 'Календарь', screen_weeks: 'Недели', screen_events: 'Собрания', screen_notes: 'Заметки', screen_settings: 'Настройки',
+      nav_calendar: 'Календарь', nav_weeks: 'Недели', nav_events: 'Собрания и события', nav_notes: 'Заметки', nav_settings: 'Настройки',
+      screen_calendar: 'Календарь', screen_weeks: 'Недели', screen_events: 'Собрания и события', screen_notes: 'Заметки', screen_settings: 'Настройки',
       subtitle_calendar: 'Обзор месяца и собраний по служебному году.',
       subtitle_weeks: 'Недельное планирование, заметки и приоритеты.',
       subtitle_events: 'Собрания, адреса залов и расписания.',
@@ -85,7 +85,8 @@
       reminders_title: 'Что нужно отправить', reminders_subtitle: 'Ближайшие визиты, которые ждут S302 или письма', reminders_none: 'Все визиты в порядке — ничего срочного нет.',
       reminders_s302_needed: 'Отправить S302', reminders_letter_needed: 'Отправить письмо', reminders_mark_s302: 'S302 отправлен', reminders_mark_letter: 'Письмо отправлено',
       reminders_overdue: 'Просрочено', reminders_days_left: 'осталось {days} дн.', reminders_close: 'Закрыть', reminders_open_entry: 'Открыть запись',
-      visit_type: 'Тип визита', visit_type_none: 'Не визит', visit_type_congregation: 'Собрание', visit_type_group: 'Группа', visit_type_pregroup: 'Предгруппа'
+      visit_type: 'Тип визита', visit_type_none: 'Не визит', visit_type_congregation: 'Собрание', visit_type_group: 'Группа', visit_type_pregroup: 'Предгруппа',
+      contact_info: 'Контакт ответственного', contact_name: 'Имя', contact_phone: 'Телефон', contact_email: 'E-mail', contact_note: 'Заметка'
     },
     en: {
       appTitle: 'Service Year Planner',
@@ -162,7 +163,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.9.2',
+      version: '9.11.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -176,8 +177,7 @@
       ],
       layoutPresets: [
         { value: 'classic', label: '1. Classic' }, { value: 'compact', label: '2. Compact' }, { value: 'spacious', label: '3. Spacious' },
-        { value: 'cards', label: '4. Cards' }, { value: 'minimal', label: '5. Minimal' }, { value: 'dense', label: '6. Dense' },
-        { value: 'pill', label: '7. Pill' }, { value: 'outline', label: '8. Outline' }, { value: 'agenda', label: '9. Agenda' }, { value: 'board', label: '10. Board' }
+        { value: 'cards', label: '4. Cards' }, { value: 'minimal', label: '5. Minimal' }
       ],
       monthNames: {
         ru: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
@@ -325,7 +325,7 @@
 
     store: {
       ensureSettingsDefaults(settings = {}) {
-        const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; return out;
+        const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset || !['classic','compact','spacious','cards','minimal'].includes(out.layoutPreset)) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; return out;
       },
       createDefaultData() {
         return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version: App.config.version } };
@@ -357,7 +357,7 @@
       normalizeApp(appData) {
         const app = appData && typeof appData === 'object' ? appData : this.createDefaultData();
         app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version: App.config.version };
-        app.events = App.utils.uniqueBy(app.events.map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '', visitType: item.visitType || '' })), (item) => item.id);
+        app.events = App.utils.uniqueBy(app.events.map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '', visitType: item.visitType || '', contactName: item.contactName || '', contactPhone: item.contactPhone || '', contactEmail: item.contactEmail || '', contactNote: item.contactNote || '' })), (item) => item.id);
         app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: item.title || '', note: item.note || '', flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => [item.eventId,item.title,item.note,item.start,item.end].join('|'));
         Object.keys(app.serviceYears).forEach((year) => {
           const sy = app.serviceYears[year] || {}; if (!sy.weeks || typeof sy.weeks !== 'object') sy.weeks = {};
@@ -484,16 +484,21 @@
         if (App.els.eventAddressInput) App.els.eventAddressInput.value = '';
         if (App.els.eventScheduleInput) App.els.eventScheduleInput.value = '';
         if (App.els.eventVisitTypeInput) App.els.eventVisitTypeInput.value = '';
+        if (App.els.eventContactNameInput) App.els.eventContactNameInput.value = '';
+        if (App.els.eventContactPhoneInput) App.els.eventContactPhoneInput.value = '';
+        if (App.els.eventContactEmailInput) App.els.eventContactEmailInput.value = '';
+        if (App.els.eventContactNoteInput) App.els.eventContactNoteInput.value = '';
       },
       saveEventTemplate() {
         try {
           const name = App.els.eventNameInput?.value.trim(); if (!name) return App.utils.toast(App.utils.t('enter_event_name'));
-          const payload = { id: App.state.editingEventId || App.utils.uid('evt'), name, color: App.utils.clampColor(App.els.eventColorInput?.value), address: App.els.eventAddressInput?.value.trim() || '', schedule: App.els.eventScheduleInput?.value.trim() || '', visitType: App.els.eventVisitTypeInput?.value || '' };
+          const payload = { id: App.state.editingEventId || App.utils.uid('evt'), name, color: App.utils.clampColor(App.els.eventColorInput?.value), address: App.els.eventAddressInput?.value.trim() || '', schedule: App.els.eventScheduleInput?.value.trim() || '', visitType: App.els.eventVisitTypeInput?.value || '', contactName: App.els.eventContactNameInput?.value.trim() || '', contactPhone: App.els.eventContactPhoneInput?.value.trim() || '', contactEmail: App.els.eventContactEmailInput?.value.trim() || '', contactNote: App.els.eventContactNoteInput?.value.trim() || '' };
           const index = App.state.app.events.findIndex((event) => event.id === payload.id); if (index >= 0) App.state.app.events[index] = payload; else App.state.app.events.push(payload);
           // Dedup by id only — a content-based key here previously risked collapsing two
           // distinct events that happened to share name/color/address/schedule.
           App.state.app.events = App.utils.uniqueBy(App.state.app.events, (item) => item.id);
           App.store.save(); this.resetEventForm(); App.ui.renderAll(); App.utils.toast(App.utils.t('event_template_saved'));
+          App.ui.closeMobileFloatingPanel();
         } catch (err) {
           console.error('saveEventTemplate failed:', err);
           App.utils.toast(`Ошибка сохранения: ${err?.message || err}`);
@@ -754,15 +759,15 @@
       cacheElements() {
         [
           'appRoot','desktopNav','toastWrap','offlineBanner','sideStatus','screenTitle','screenSubtitle',
-          'weekSearch','yearSelect','eventFilter','weekList','weekEditorTitle','weekEditorEmpty','weekEditor',
-          'weekEventSelect','weekPrioritySelect','flagLetter','flagS302','weekNoteInput','saveWeekBtn',
+          'weekSearch','yearSelect','eventFilter','weekList','weekEditorTitle','weekEditorEmpty','weekEditor','weekEditorCard','weekEditorCloseBtn',
+          'eventEditorCard','eventEditorCloseBtn','mobileFloatingBackdrop','weekEventSelect','weekPrioritySelect','flagLetter','flagS302','weekNoteInput','saveWeekBtn',
           'monthLabel','calendarRangeLabel','calendarGrid','prevMonthBtn','todayMonthBtn','nextMonthBtn',
           'calendarYearSelect','calendarLayoutPresetSelect','layoutPresetSelect','calendarEditor','editorTitle',
           'editorMeta','editorEventSelect','editorStart','editorEnd','editorReadonly','editorCloseBtn',
           'editorCancelBtn','editorDeleteBtn','editorSaveBtn','calendarServiceYearLabel','calendarPanelYearLabel',
           'calendarQuickList','calendarSideTitle','calendarSideMeta','calendarSideDetails','calendarEventQuickFilter',
           'toggleTeamPanelBtn','calendarLayout','eventsList','eventSearchInput','eventColorFilter','eventVisitFilter','deleteAllEventsBtn','eventsListCount','eventNameInput','eventColorInput','eventAddressInput',
-          'eventScheduleInput','resetEventBtn','saveEventBtn','eventVisitTypeInput','editorFlagsRow','editorFlagS302','editorFlagLetter',
+          'eventScheduleInput','resetEventBtn','saveEventBtn','newEventBtn','eventVisitTypeInput','eventContactNameInput','eventContactPhoneInput','eventContactEmailInput','eventContactNoteInput','editorFlagsRow','editorFlagS302','editorFlagLetter',
           'remindersModal','remindersModalList','remindersModalCloseBtn','remindersModalOkBtn','remindersModalTitle','remindersModalSub','checkRemindersBtn','checkRemindersBtnMain','noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
           'pdfCancelBtn','pdfExportConfirmBtn','pdfRangeCard','pdfRangeStartInput','pdfRangeEndInput','pdfRangeHelp','pdfHint',
@@ -1416,7 +1421,9 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const visitLabel = (visitType) => visitType === 'congregation' ? App.utils.t('visit_type_congregation') : visitType === 'group' ? App.utils.t('visit_type_group') : visitType === 'pregroup' ? App.utils.t('visit_type_pregroup') : '';
         const visitTypeRow = event?.visitType ? `<div class="side-row"><div class="side-label">${App.utils.t('visit_type')}</div><div class="side-value">${App.utils.escapeHtml(visitLabel(event.visitType))} ${this.flagBadgesHtml(itemData.flags)}</div></div>` : '';
         const sendControls = event?.visitType ? this.flagTogglesHtml(itemData.source, itemData.refId, itemData.flags) : '';
-        App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div>${visitTypeRow}<div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div>${sendControls}<div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
+        const hasContact = event && (event.contactName || event.contactPhone || event.contactEmail || event.contactNote);
+        const contactBlock = hasContact ? `<div class="send-control" style="margin-top:10px"><div class="send-control-title" style="margin-bottom:8px">${App.utils.t('contact_info')}</div>${event.contactName ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_name')}</div><div class="side-value">${App.utils.escapeHtml(event.contactName)}</div></div>` : ''}${event.contactPhone ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_phone')}</div><div class="side-value"><a href="tel:${App.utils.escapeAttr(event.contactPhone.replace(/[^+\d]/g, ''))}">${App.utils.escapeHtml(event.contactPhone)}</a></div></div>` : ''}${event.contactEmail ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_email')}</div><div class="side-value"><a href="mailto:${App.utils.escapeAttr(event.contactEmail)}">${App.utils.escapeHtml(event.contactEmail)}</a></div></div>` : ''}${event.contactNote ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_note')}</div><div class="side-value">${App.utils.escapeHtml(event.contactNote)}</div></div>` : ''}</div>` : '';
+        App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div>${visitTypeRow}<div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div>${sendControls}${contactBlock}<div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
         const editBtn = document.getElementById('detailEditBtn'); if (editBtn) editBtn.addEventListener('click', () => App.actions.openCalendarEditorForItem(itemData.id));
         const icsBtn = document.getElementById('detailIcsBtn'); if (icsBtn) icsBtn.addEventListener('click', () => App.actions.exportSingleEventIcs(itemData.id));
         document.querySelectorAll('[data-entry-flag]').forEach((input) => input.addEventListener('change', (e) => {
@@ -1556,6 +1563,17 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.editorFlagS302) App.els.editorFlagS302.checked = !!data.flags?.f302;
         if (App.els.editorFlagLetter) App.els.editorFlagLetter.checked = !!data.flags?.letter;
       },
+      openMobileFloatingPanel(panelEl) {
+        if (!panelEl || window.innerWidth > 900) return;
+        panelEl.classList.add('open');
+        if (App.els.mobileFloatingBackdrop) { App.els.mobileFloatingBackdrop.hidden = false; App.els.mobileFloatingBackdrop.classList.add('show'); }
+        App.state.mobileFloatingPanelEl = panelEl;
+      },
+      closeMobileFloatingPanel() {
+        document.querySelectorAll('.mobile-floating-panel.open').forEach((el) => el.classList.remove('open'));
+        if (App.els.mobileFloatingBackdrop) { App.els.mobileFloatingBackdrop.hidden = true; App.els.mobileFloatingBackdrop.classList.remove('show'); }
+        App.state.mobileFloatingPanelEl = null;
+      },
       closeCalendarEditor() {
         if (App.els.calendarEditor) App.els.calendarEditor.hidden = true; App.state.calendarEditingTarget = null;
       },
@@ -1641,7 +1659,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           const notePreview = week.note || entries.map(({ entry }) => entry.note).filter(Boolean).join(' · ') || App.utils.t('no_note');
           return `<button class="week-item ${App.state.selectedWeekId === week.weekId ? 'active' : ''}" data-week-select="${App.utils.escapeAttr(week.weekId)}" type="button"><div class="week-item-top"><strong>${App.utils.prettyDate(week.start)} — ${App.utils.prettyDate(week.end)}</strong><span class="badge">W${App.utils.weekNumber(week.start)}</span></div><div class="pill-row" style="margin-top:8px"><span class="pill"><span class="dot" style="background:${event?.color || '#cbd5e1'}"></span>${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</span>${entryPills}${more}<span class="pill">${App.utils.t(App.config.priorities[week.priority] || 'priority_normal')}</span>${week.flagLetter ? `<span class="pill">${App.utils.t('letter')}</span>` : ''}${week.flagS302 ? `<span class="pill">${App.utils.t('s302')}</span>` : ''}</div><div class="small" style="margin-top:8px">${App.utils.escapeHtml(notePreview)}</div></button>`;
         }).join('') || `<div class="empty">${App.utils.t('no_events_found')}</div>`;
-        document.querySelectorAll('[data-week-select]').forEach((btn) => btn.addEventListener('click', () => { App.state.selectedWeekId = btn.dataset.weekSelect; App.ui.renderWeeks(); }));
+        document.querySelectorAll('[data-week-select]').forEach((btn) => btn.addEventListener('click', () => { App.state.selectedWeekId = btn.dataset.weekSelect; App.ui.renderWeeks(); App.ui.openMobileFloatingPanel(App.els.weekEditorCard); }));
         const selected = filtered.find((week) => week.weekId === App.state.selectedWeekId) || filtered[0] || weeks[0] || null;
         App.state.selectedWeekId = selected?.weekId || null;
         if (!selected) { if (App.els.weekEditorEmpty) App.els.weekEditorEmpty.hidden = false; if (App.els.weekEditor) App.els.weekEditor.hidden = true; return; }
@@ -1700,6 +1718,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
               <strong>${App.utils.escapeHtml(event.name)}</strong>
               <div class="small">${App.utils.escapeHtml(event.schedule || App.utils.t('no_schedule'))}</div>
               <div class="small">${event.address ? `<a href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.escapeHtml(event.address)}</a>` : App.utils.escapeHtml(App.utils.t('no_address'))}</div>
+              ${(event.contactName || event.contactPhone) ? `<div class="small">👤 ${App.utils.escapeHtml([event.contactName, event.contactPhone].filter(Boolean).join(' · '))}</div>` : ''}
             </div>
             <div style="display:grid;gap:8px;justify-items:end">
               <span class="pill"><span class="dot" style="background:${App.utils.clampColor(event.color)}"></span>${App.utils.escapeHtml(App.utils.colorName(event.color))}</span>
@@ -1718,6 +1737,11 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           if (App.els.eventAddressInput) App.els.eventAddressInput.value = event?.address || '';
           if (App.els.eventScheduleInput) App.els.eventScheduleInput.value = event?.schedule || '';
           if (App.els.eventVisitTypeInput) App.els.eventVisitTypeInput.value = event?.visitType || '';
+          if (App.els.eventContactNameInput) App.els.eventContactNameInput.value = event?.contactName || '';
+          if (App.els.eventContactPhoneInput) App.els.eventContactPhoneInput.value = event?.contactPhone || '';
+          if (App.els.eventContactEmailInput) App.els.eventContactEmailInput.value = event?.contactEmail || '';
+          if (App.els.eventContactNoteInput) App.els.eventContactNoteInput.value = event?.contactNote || '';
+          App.ui.openMobileFloatingPanel(App.els.eventEditorCard);
           App.els.eventNameInput?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }));
         document.querySelectorAll('[data-delete-event]').forEach((btn) => btn.addEventListener('click', () => App.actions.deleteEventTemplate(btn.dataset.deleteEvent)));
@@ -1783,6 +1807,10 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.calendarEventQuickFilter?.addEventListener('change', (e) => { App.state.calendarEventFilter = e.target.value; App.ui.renderAll(); });
       App.els.saveWeekBtn?.addEventListener('click', () => App.actions.saveWeek());
       App.els.resetEventBtn?.addEventListener('click', () => App.actions.resetEventForm());
+      App.els.newEventBtn?.addEventListener('click', () => { App.actions.resetEventForm(); App.ui.openMobileFloatingPanel(App.els.eventEditorCard); App.els.eventNameInput?.focus(); });
+      App.els.weekEditorCloseBtn?.addEventListener('click', () => App.ui.closeMobileFloatingPanel());
+      App.els.eventEditorCloseBtn?.addEventListener('click', () => App.ui.closeMobileFloatingPanel());
+      App.els.mobileFloatingBackdrop?.addEventListener('click', () => App.ui.closeMobileFloatingPanel());
       App.els.saveEventBtn?.addEventListener('click', () => App.actions.saveEventTemplate());
       App.els.eventSearchInput?.addEventListener('input', (e) => { App.state.eventSearch = e.target.value; App.ui.renderEvents(); });
       App.els.eventColorFilter?.addEventListener('change', (e) => { App.state.eventColorFilter = e.target.value; App.ui.renderEvents(); });
