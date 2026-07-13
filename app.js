@@ -164,7 +164,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.12.0',
+      version: '9.12.1',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -1608,10 +1608,11 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.editorFlagLetter) App.els.editorFlagLetter.checked = !!data.flags?.letter;
       },
       openMobileFloatingPanel(panelEl) {
-        if (!panelEl || window.innerWidth > 900) return;
-        panelEl.classList.add('open');
+        if (!panelEl) return;
         panelEl.scrollTop = 0;
         requestAnimationFrame(() => { panelEl.scrollTop = 0; });
+        if (window.innerWidth > 900) return;
+        panelEl.classList.add('open');
         if (App.els.mobileFloatingBackdrop) { App.els.mobileFloatingBackdrop.hidden = false; App.els.mobileFloatingBackdrop.classList.add('show'); }
         App.state.mobileFloatingPanelEl = panelEl;
       },
