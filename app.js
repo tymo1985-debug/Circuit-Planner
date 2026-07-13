@@ -164,7 +164,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.12.1',
+      version: '9.13.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -519,6 +519,7 @@
         if (App.els.eventContactPhoneInput) App.els.eventContactPhoneInput.value = '';
         if (App.els.eventContactEmailInput) App.els.eventContactEmailInput.value = '';
         if (App.els.eventContactNoteInput) App.els.eventContactNoteInput.value = '';
+        if (App.els.deleteEventBtn) App.els.deleteEventBtn.hidden = true;
       },
       saveEventTemplate() {
         try {
@@ -565,6 +566,7 @@
         if (App.state.editingEventId === eventId) App.actions.resetEventForm();
         App.store.save();
         App.ui.renderAll();
+        App.ui.closeMobileFloatingPanel();
         App.utils.toast(App.utils.t('delete_template'));
       },
       deleteNote(year, weekId) {
@@ -577,7 +579,7 @@
         App.utils.toast(App.utils.t('delete_note'));
       },
       saveWeek() {
-        if (!App.state.selectedWeekId) return; const week = App.data.getWeek(App.state.selectedYear, App.state.selectedWeekId); week.eventId = App.els.weekEventSelect?.value || ''; week.priority = App.els.weekPrioritySelect?.value || 'normal'; week.flagLetter = !!App.els.flagLetter?.checked; week.flagS302 = !!App.els.flagS302?.checked; week.note = App.els.weekNoteInput?.value.trim() || ''; App.store.save(); App.ui.renderAll(); App.utils.toast(App.utils.t('week_saved'));
+        if (!App.state.selectedWeekId) return; const week = App.data.getWeek(App.state.selectedYear, App.state.selectedWeekId); week.flagLetter = !!App.els.flagLetter?.checked; week.flagS302 = !!App.els.flagS302?.checked; week.note = App.els.weekNoteInput?.value.trim() || ''; App.store.save(); App.ui.renderAll(); App.utils.toast(App.utils.t('week_saved'));
       },
       deleteWeek() {
         if (!App.state.selectedWeekId) return; if (!window.confirm(App.utils.t('clear_week_confirm'))) return; const week = App.data.getWeek(App.state.selectedYear, App.state.selectedWeekId); week.eventId = ''; week.priority = 'normal'; week.flagLetter = false; week.flagS302 = false; week.note = ''; App.store.save(); App.ui.renderAll(); App.utils.toast(App.utils.t('week_deleted'));
@@ -589,6 +591,7 @@
       openCalendarEditorForItem(itemId) {
         const item = App.data.getCalendarItemById(itemId); if (!item) return;
         App.state.calendarEditingTarget = { mode: 'edit', source: item.source, refId: item.refId };
+        if (App.state.selectedScreen !== 'calendar') { App.state.selectedScreen = 'calendar'; App.ui.renderAll(); }
         App.ui.openCalendarEditor(item, true);
       },
       saveCalendarEditor() {
@@ -791,14 +794,14 @@
         [
           'appRoot','desktopNav','toastWrap','offlineBanner','sideStatus','screenTitle','screenSubtitle',
           'weekSearch','yearSelect','eventFilter','weekList','weekEditorTitle','weekEditorEmpty','weekEditor','weekEditorCard','weekEditorCloseBtn',
-          'eventEditorCard','eventEditorCloseBtn','mobileFloatingBackdrop','weekEventSelect','weekPrioritySelect','flagLetter','flagS302','weekNoteInput','saveWeekBtn',
+          'eventEditorCard','eventEditorCloseBtn','mobileFloatingBackdrop','flagLetter','flagS302','weekNoteInput','saveWeekBtn',
           'monthLabel','calendarRangeLabel','calendarGrid','prevMonthBtn','todayMonthBtn','nextMonthBtn',
           'calendarYearSelect','calendarLayoutPresetSelect','layoutPresetSelect','calendarEditor','editorTitle',
           'editorMeta','editorEventSelect','editorStart','editorEnd','editorReadonly','editorCloseBtn',
           'editorCancelBtn','editorDeleteBtn','editorSaveBtn','calendarServiceYearLabel','calendarPanelYearLabel',
           'calendarQuickList','calendarSideTitle','calendarSideMeta','calendarSideDetails','calendarSideCountdownRow','calendarSideCountdown','countdownUnitSelect','calendarEventQuickFilter',
           'toggleTeamPanelBtn','calendarLayout','eventsList','eventSearchInput','eventColorFilter','eventVisitFilter','deleteAllEventsBtn','eventsListCount','eventNameInput','eventColorInput','eventAddressInput',
-          'eventScheduleInput','resetEventBtn','saveEventBtn','newEventBtn','eventVisitTypeInput','eventContactNameInput','eventContactPhoneInput','eventContactEmailInput','eventContactNoteInput','editorFlagsRow','editorFlagS302','editorFlagLetter',
+          'eventScheduleInput','resetEventBtn','saveEventBtn','deleteEventBtn','newEventBtn','eventVisitTypeInput','eventContactNameInput','eventContactPhoneInput','eventContactEmailInput','eventContactNoteInput','editorFlagsRow','editorFlagS302','editorFlagLetter',
           'remindersModal','remindersModalList','remindersModalCloseBtn','remindersModalOkBtn','remindersModalTitle','remindersModalSub','checkRemindersBtn','checkRemindersBtnMain','noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
           'pdfCancelBtn','pdfExportConfirmBtn','pdfRangeCard','pdfRangeStartInput','pdfRangeEndInput','pdfRangeHelp','pdfHint',
@@ -952,9 +955,6 @@
         }
         if (App.els.themeSelect) {
           const opts = App.els.themeSelect.options; if (opts[0]) opts[0].textContent = App.utils.t('theme_light'); if (opts[1]) opts[1].textContent = App.utils.t('theme_dark');
-        }
-        if (App.els.weekPrioritySelect) {
-          const opts = App.els.weekPrioritySelect.options; if (opts[0]) opts[0].textContent = App.utils.t('priority_normal'); if (opts[1]) opts[1].textContent = App.utils.t('priority_important'); if (opts[2]) opts[2].textContent = App.utils.t('priority_critical');
         }
       },
       renderAll() {
@@ -1346,18 +1346,29 @@ showServiceYearDayPopover(anchor, dateIso, pinned = false) {
               const segmentStart = new Date(Math.max(item.start.getTime(), monthStart.getTime(), weekStart.getTime()));
               const segmentEnd = new Date(Math.min(item.end.getTime(), monthEnd.getTime(), weekEnd.getTime()));
               return segmentStart <= segmentEnd;
-            }).sort((a, b) => a.start - b.start || b.end - a.end || String(a.title).localeCompare(String(b.title)));
-            const bars = overlapping.slice(0, 3).map((item, lane) => {
+            }).map((item) => {
               const segmentStart = new Date(Math.max(item.start.getTime(), monthStart.getTime(), weekStart.getTime()));
               const segmentEnd = new Date(Math.min(item.end.getTime(), monthEnd.getTime(), weekEnd.getTime()));
               const left = Math.max(0, App.utils.daysDiff(segmentStart, weekStart));
               const right = Math.min(6, App.utils.daysDiff(segmentEnd, weekStart));
+              return { item, segmentStart, left, right };
+            }).sort((a, b) => a.left - b.left || b.right - a.right || String(a.item.title).localeCompare(String(b.item.title)));
+            // Assign lanes by day-overlap so same-week, non-overlapping-day items (e.g. Sat + Sun) share a row.
+            const lanesInUse = [];
+            overlapping.forEach((bar) => {
+              let lane = 0;
+              while ((lanesInUse[lane] || []).some((other) => bar.left <= other.right && other.left <= bar.right)) lane += 1;
+              bar.lane = lane;
+              (lanesInUse[lane] = lanesInUse[lane] || []).push(bar);
+            });
+            const visibleBars = overlapping.filter((bar) => bar.lane < 3);
+            const bars = visibleBars.map(({ item, left, right, lane }) => {
               const span = Math.max(1, right - left + 1);
               const color = App.utils.clampColor(item.color);
               const label = App.utils.escapeHtml(item.title || App.utils.t('event'));
-              return `<button class="sy-period-bar" type="button" data-detail-calendar-item="${App.utils.escapeAttr(item.id)}" data-add-date="${App.utils.escapeAttr(App.utils.iso(segmentStart))}" style="--bar-left:${left};--bar-span:${span};--bar-lane:${lane};--bar-color:${color};" title="${App.utils.escapeAttr(item.title)}"><span>${label}</span></button>`;
+              return `<button class="sy-period-bar" type="button" data-detail-calendar-item="${App.utils.escapeAttr(item.id)}" data-add-date="${App.utils.escapeAttr(App.utils.iso(App.utils.addDays(weekStart, left)))}" style="--bar-left:${left};--bar-span:${span};--bar-lane:${lane};--bar-color:${color};" title="${App.utils.escapeAttr(item.title)}"><span>${label}</span></button>`;
             }).join('');
-            const more = overlapping.length > 3 ? `<button class="sy-bar-more" type="button" data-add-date="${App.utils.escapeAttr(App.utils.iso(weekStart))}">+${overlapping.length - 3}</button>` : '';
+            const more = overlapping.length > visibleBars.length ? `<button class="sy-bar-more" type="button" data-add-date="${App.utils.escapeAttr(App.utils.iso(weekStart))}">+${overlapping.length - visibleBars.length}</button>` : '';
             rows.push(`<div class="sy-week-row">${dayCells.join('')}${bars}${more}</div>`);
             weekStart = App.utils.addDays(weekStart, 7);
           }
@@ -1704,7 +1715,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           const entryPills = visible.map(({ event, title }) => `<span class="pill"><span class="dot" style="background:${App.utils.clampColor(event?.color || '#1f7a45')}"></span>${App.utils.escapeHtml(title)}</span>`).join('');
           const more = entries.length > visible.length ? `<span class="pill">+${entries.length - visible.length}</span>` : '';
           const notePreview = week.note || entries.map(({ entry }) => entry.note).filter(Boolean).join(' · ') || App.utils.t('no_note');
-          return `<button class="week-item ${App.state.selectedWeekId === week.weekId ? 'active' : ''}" data-week-select="${App.utils.escapeAttr(week.weekId)}" type="button"><div class="week-item-top"><strong>${App.utils.prettyDate(week.start)} — ${App.utils.prettyDate(week.end)}</strong><span class="badge">W${App.utils.weekNumber(week.start)}</span></div><div class="pill-row" style="margin-top:8px"><span class="pill"><span class="dot" style="background:${event?.color || '#cbd5e1'}"></span>${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</span>${entryPills}${more}<span class="pill">${App.utils.t(App.config.priorities[week.priority] || 'priority_normal')}</span>${week.flagLetter ? `<span class="pill">${App.utils.t('letter')}</span>` : ''}${week.flagS302 ? `<span class="pill">${App.utils.t('s302')}</span>` : ''}</div><div class="small" style="margin-top:8px">${App.utils.escapeHtml(notePreview)}</div></button>`;
+          return `<button class="week-item ${App.state.selectedWeekId === week.weekId ? 'active' : ''}" data-week-select="${App.utils.escapeAttr(week.weekId)}" type="button"><div class="week-item-top"><strong>${App.utils.prettyDate(week.start)} — ${App.utils.prettyDate(week.end)}</strong><span class="badge">W${App.utils.weekNumber(week.start)}</span></div><div class="pill-row" style="margin-top:8px">${entryPills || `<span class="pill" style="opacity:.6">${App.utils.t('no_events_found')}</span>`}${more}${week.flagLetter ? `<span class="pill">${App.utils.t('letter')}</span>` : ''}${week.flagS302 ? `<span class="pill">${App.utils.t('s302')}</span>` : ''}</div><div class="small" style="margin-top:8px">${App.utils.escapeHtml(notePreview)}</div></button>`;
         }).join('') || `<div class="empty">${App.utils.t('no_events_found')}</div>`;
         document.querySelectorAll('[data-week-select]').forEach((btn) => btn.addEventListener('click', () => { App.state.selectedWeekId = btn.dataset.weekSelect; App.ui.renderWeeks(); App.ui.openMobileFloatingPanel(App.els.weekEditorCard); }));
         const selected = filtered.find((week) => week.weekId === App.state.selectedWeekId) || filtered[0] || weeks[0] || null;
@@ -1713,9 +1724,6 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.weekEditorTitle) App.els.weekEditorTitle.textContent = `${App.utils.t('week_details')}: ${App.utils.prettyDateLong(selected.start)} — ${App.utils.prettyDateLong(selected.end)}`;
         if (App.els.weekEditorEmpty) App.els.weekEditorEmpty.hidden = true;
         if (App.els.weekEditor) App.els.weekEditor.hidden = false;
-        const eventOptions = ['<option value="">' + App.utils.t('no_template') + '</option>'].concat(App.state.app.events.map((event) => `<option value="${App.utils.escapeAttr(event.id)}">${App.utils.escapeHtml(event.name)}</option>`));
-        if (App.els.weekEventSelect) { App.els.weekEventSelect.innerHTML = eventOptions.join(''); App.els.weekEventSelect.value = selected.eventId || ''; }
-        if (App.els.weekPrioritySelect) App.els.weekPrioritySelect.value = selected.priority || 'normal';
         if (App.els.flagLetter) App.els.flagLetter.checked = !!selected.flagLetter;
         if (App.els.flagS302) App.els.flagS302.checked = !!selected.flagS302;
         if (App.els.weekNoteInput) App.els.weekNoteInput.value = selected.note || '';
@@ -1723,7 +1731,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.weekEditor) {
           let block = document.getElementById('weekCalendarEntriesBlock');
           if (!block) { block = document.createElement('div'); block.id = 'weekCalendarEntriesBlock'; block.style.marginTop = '14px'; const actions = App.els.weekEditor.querySelector('.editor-actions'); App.els.weekEditor.insertBefore(block, actions || null); }
-          block.innerHTML = `<div class="small" style="margin-bottom:8px">${App.utils.t('entries_on_day')}</div>${selectedEntries.length ? selectedEntries.map(({ entry, event, title }) => `<div class="side-item-card" style="margin-bottom:8px"><strong><span class="dot" style="background:${App.utils.clampColor(event?.color || '#1f7a45')}"></span>${App.utils.escapeHtml(title)}</strong><div class="small">${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}</div><div class="small">${App.utils.escapeHtml(entry.note || App.utils.t('no_note'))}</div><div class="entry-actions"><button class="btn" type="button" data-edit-calendar-item="entry:${App.utils.escapeAttr(entry.id)}">${App.utils.t('edit')}</button></div></div>`).join('') : `<div class="empty" style="padding:14px">${App.utils.t('no_entries_day')}</div>`}`;
+          block.innerHTML = `<div class="small" style="margin-bottom:8px">${App.utils.t('entries_on_day')}</div>${selectedEntries.length ? selectedEntries.map(({ entry, event, title }) => `<div class="side-item-card" style="margin-bottom:8px"><strong><span class="dot" style="background:${App.utils.clampColor(event?.color || '#1f7a45')}"></span>${App.utils.escapeHtml(title)}</strong><div class="small">${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}</div><div class="small">${App.utils.escapeHtml(entry.note || App.utils.t('no_note'))}</div><div class="entry-actions"><button class="btn primary" type="button" data-edit-calendar-item="entry:${App.utils.escapeAttr(entry.id)}">✎ ${App.utils.t('edit')}</button></div></div>`).join('') : `<div class="empty" style="padding:14px">${App.utils.t('no_entries_day')}</div>`}`;
           block.querySelectorAll('[data-edit-calendar-item]').forEach((btn) => btn.addEventListener('click', () => App.actions.openCalendarEditorForItem(btn.dataset.editCalendarItem)));
         }
       },
@@ -1760,20 +1768,16 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           App.els.deleteAllEventsBtn.style.opacity = allEvents.length ? '' : '.55';
         }
         if (App.els.eventsList) App.els.eventsList.innerHTML = visibleEvents.map((event) => `
-          <div class="event-row">
+          <div class="event-row" data-edit-event="${App.utils.escapeAttr(event.id)}" style="cursor:pointer">
             <div>
               <strong>${App.utils.escapeHtml(event.name)}</strong>
               <div class="small">${App.utils.escapeHtml(event.schedule || App.utils.t('no_schedule'))}</div>
-              <div class="small">${event.address ? `<a href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.escapeHtml(event.address)}</a>` : App.utils.escapeHtml(App.utils.t('no_address'))}</div>
+              <div class="small">${event.address ? `<a href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${App.utils.escapeHtml(event.address)}</a>` : App.utils.escapeHtml(App.utils.t('no_address'))}</div>
               ${(event.contactName || event.contactPhone) ? `<div class="small">👤 ${App.utils.escapeHtml([event.contactName, event.contactPhone].filter(Boolean).join(' · '))}</div>` : ''}
             </div>
             <div style="display:grid;gap:8px;justify-items:end">
               <span class="pill"><span class="dot" style="background:${App.utils.clampColor(event.color)}"></span>${App.utils.escapeHtml(App.utils.colorName(event.color))}</span>
               ${event.visitType ? `<span class="pill">${App.utils.escapeHtml(visitLabel(event.visitType))}</span>` : `<span class="pill" style="background:#fef3c7;color:#92400e;border-color:#fde68a">⚠️ ${App.utils.escapeHtml(App.utils.t('visit_type_none'))}</span>`}
-              <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-                <button class="btn" type="button" data-edit-event="${App.utils.escapeAttr(event.id)}">${App.utils.t('edit')}</button>
-                <button class="btn danger" type="button" data-delete-event="${App.utils.escapeAttr(event.id)}">${App.utils.t('delete_template')}</button>
-              </div>
             </div>
           </div>`).join('') || `<div class="empty">${query || App.state.eventColorFilter !== 'all' ? App.utils.t('no_events_found') : App.utils.t('no_events_month')}</div>`;
         document.querySelectorAll('[data-edit-event]').forEach((btn) => btn.addEventListener('click', () => {
@@ -1789,9 +1793,9 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           if (App.els.eventContactEmailInput) App.els.eventContactEmailInput.value = event?.contactEmail || '';
           if (App.els.eventContactNoteInput) App.els.eventContactNoteInput.value = event?.contactNote || '';
           App.ui.openMobileFloatingPanel(App.els.eventEditorCard);
+          if (App.els.deleteEventBtn) App.els.deleteEventBtn.hidden = false;
           App.els.eventNameInput?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }));
-        document.querySelectorAll('[data-delete-event]').forEach((btn) => btn.addEventListener('click', () => App.actions.deleteEventTemplate(btn.dataset.deleteEvent)));
       },
       renderNotes() {
         const query = (App.state.noteSearch || '').trim().toLowerCase();
@@ -1855,6 +1859,16 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.saveWeekBtn?.addEventListener('click', () => App.actions.saveWeek());
       App.els.resetEventBtn?.addEventListener('click', () => App.actions.resetEventForm());
       App.els.newEventBtn?.addEventListener('click', () => { App.actions.resetEventForm(); App.ui.openMobileFloatingPanel(App.els.eventEditorCard); App.els.eventNameInput?.focus(); });
+      App.els.deleteEventBtn?.addEventListener('click', () => { if (App.state.editingEventId) App.actions.deleteEventTemplate(App.state.editingEventId); });
+      document.querySelectorAll('.copy-btn[data-copy-input]').forEach((btn) => btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const input = document.getElementById(btn.dataset.copyInput);
+        const text = input?.value || '';
+        if (!text) return;
+        const done = () => App.utils.toast(App.utils.t('copied'));
+        if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(done).catch(() => done());
+        else done();
+      }));
       App.els.weekEditorCloseBtn?.addEventListener('click', () => App.ui.closeMobileFloatingPanel());
       App.els.eventEditorCloseBtn?.addEventListener('click', () => App.ui.closeMobileFloatingPanel());
       App.els.mobileFloatingBackdrop?.addEventListener('click', () => App.ui.closeMobileFloatingPanel());
