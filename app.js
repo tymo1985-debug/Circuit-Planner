@@ -164,7 +164,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.13.0',
+      version: '9.14.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -530,7 +530,7 @@
           // distinct events that happened to share name/color/address/schedule.
           App.state.app.events = App.utils.uniqueBy(App.state.app.events, (item) => item.id);
           App.store.save(); this.resetEventForm(); App.ui.renderAll(); App.utils.toast(App.utils.t('event_template_saved'));
-          App.ui.closeMobileFloatingPanel();
+          App.ui.closeModal(App.els.eventEditorModal);
         } catch (err) {
           console.error('saveEventTemplate failed:', err);
           App.utils.toast(`Ошибка сохранения: ${err?.message || err}`);
@@ -566,7 +566,7 @@
         if (App.state.editingEventId === eventId) App.actions.resetEventForm();
         App.store.save();
         App.ui.renderAll();
-        App.ui.closeMobileFloatingPanel();
+        App.ui.closeModal(App.els.eventEditorModal);
         App.utils.toast(App.utils.t('delete_template'));
       },
       deleteNote(year, weekId) {
@@ -591,7 +591,6 @@
       openCalendarEditorForItem(itemId) {
         const item = App.data.getCalendarItemById(itemId); if (!item) return;
         App.state.calendarEditingTarget = { mode: 'edit', source: item.source, refId: item.refId };
-        if (App.state.selectedScreen !== 'calendar') { App.state.selectedScreen = 'calendar'; App.ui.renderAll(); }
         App.ui.openCalendarEditor(item, true);
       },
       saveCalendarEditor() {
@@ -793,8 +792,8 @@
       cacheElements() {
         [
           'appRoot','desktopNav','toastWrap','offlineBanner','sideStatus','screenTitle','screenSubtitle',
-          'weekSearch','yearSelect','eventFilter','weekList','weekEditorTitle','weekEditorEmpty','weekEditor','weekEditorCard','weekEditorCloseBtn',
-          'eventEditorCard','eventEditorCloseBtn','mobileFloatingBackdrop','flagLetter','flagS302','weekNoteInput','saveWeekBtn',
+          'weekSearch','yearSelect','eventFilter','weekList','weekEditorTitle','weekEditor','weekEditorModal','weekEditorCloseBtn',
+          'eventEditorModal','eventEditorCloseBtn','flagLetter','flagS302','weekNoteInput','saveWeekBtn',
           'monthLabel','calendarRangeLabel','calendarGrid','prevMonthBtn','todayMonthBtn','nextMonthBtn',
           'calendarYearSelect','calendarLayoutPresetSelect','layoutPresetSelect','calendarEditor','editorTitle',
           'editorMeta','editorEventSelect','editorStart','editorEnd','editorReadonly','editorCloseBtn',
@@ -889,7 +888,6 @@
         if (headings[2]) headings[2].textContent = App.utils.t('look_and_feel');
         if (headings[3]) headings[3].textContent = App.utils.t('data_management');
         if (App.els.weekEditorTitle && !App.state.selectedWeekId) App.els.weekEditorTitle.textContent = App.utils.t('week_details');
-        if (App.els.weekEditorEmpty) App.els.weekEditorEmpty.textContent = App.utils.t('choose_week');
         if (App.els.saveWeekBtn) App.els.saveWeekBtn.textContent = App.utils.t('save');
         if (App.els.resetEventBtn) App.els.resetEventBtn.textContent = App.utils.t('clear');
         if (App.els.saveEventBtn) App.els.saveEventBtn.textContent = App.utils.t('save_event');
@@ -1290,7 +1288,7 @@ showServiceYearDayPopover(anchor, dateIso, pinned = false) {
  popover.querySelector('[data-popover-details]')?.addEventListener('click', (e) => { e.stopPropagation(); App.state.calendarSelectedDateIso = dateIso; App.ui.renderServiceYearDayDetails(dateIso); App.ui.hideDayPopover(true); App.els.calendarSideTitle?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
  popover.querySelector('[data-popover-add]')?.addEventListener('click', (e) => { e.stopPropagation(); App.ui.hideDayPopover(true); App.actions.openCalendarEditorForCreate(dateIso); });
  popover.querySelector('[data-popover-edit-week]')?.addEventListener('click', (e) => { e.stopPropagation(); App.ui.hideDayPopover(true); App.actions.openCalendarEditorForItem(e.currentTarget.dataset.popoverEditWeek); });
- popover.querySelector('[data-popover-open-week]')?.addEventListener('click', (e) => { e.stopPropagation(); App.ui.hideDayPopover(true); App.state.selectedScreen = 'weeks'; App.state.selectedYear = Number(e.currentTarget.dataset.popoverYear || info.sy); App.state.selectedWeekId = e.currentTarget.dataset.popoverOpenWeek; App.ui.renderAll(); });
+ popover.querySelector('[data-popover-open-week]')?.addEventListener('click', (e) => { e.stopPropagation(); App.ui.hideDayPopover(true); App.state.selectedScreen = 'weeks'; App.state.selectedYear = Number(e.currentTarget.dataset.popoverYear || info.sy); App.state.selectedWeekId = e.currentTarget.dataset.popoverOpenWeek; App.ui.renderAll(); App.ui.openModal(App.els.weekEditorModal); });
 },
   renderCalendarYear(serviceYear) {
         this.ensureCalendarViewStyles();
@@ -1433,7 +1431,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         document.querySelectorAll('.day-cell[data-day]').forEach((cell) => cell.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); App.state.calendarSelectedDateIso = cell.dataset.day; App.ui.renderCalendar(); App.ui.renderServiceYearDayDetails(cell.dataset.day); } }));
         document.querySelectorAll('[data-add-date]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.actions.openCalendarEditorForCreate(btn.dataset.addDate); }));
         document.querySelectorAll('[data-edit-calendar-item]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.actions.openCalendarEditorForItem(btn.dataset.editCalendarItem); }));
-        document.querySelectorAll('[data-open-week]').forEach((btn) => btn.addEventListener('click', () => { App.state.selectedScreen = 'weeks'; App.state.selectedYear = App.utils.getServiceYearForDate(btn.dataset.openWeek); App.state.selectedWeekId = btn.dataset.openWeek; App.ui.renderAll(); }));
+        document.querySelectorAll('[data-open-week]').forEach((btn) => btn.addEventListener('click', () => { App.state.selectedScreen = 'weeks'; App.state.selectedYear = App.utils.getServiceYearForDate(btn.dataset.openWeek); App.state.selectedWeekId = btn.dataset.openWeek; App.ui.renderAll(); App.ui.openModal(App.els.weekEditorModal); }));
       },
       flagBadgesHtml(flags = {}) {
         const out = [];
@@ -1591,6 +1589,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           App.state.selectedYear = sy;
           App.state.selectedWeekId = weekId;
           App.ui.renderAll();
+          App.ui.openModal(App.els.weekEditorModal);
         });
         document.querySelectorAll('[data-edit-calendar-item]').forEach((btn) => btn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -1618,19 +1617,14 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.editorFlagS302) App.els.editorFlagS302.checked = !!data.flags?.f302;
         if (App.els.editorFlagLetter) App.els.editorFlagLetter.checked = !!data.flags?.letter;
       },
-      openMobileFloatingPanel(panelEl) {
-        if (!panelEl) return;
-        panelEl.scrollTop = 0;
-        requestAnimationFrame(() => { panelEl.scrollTop = 0; });
-        if (window.innerWidth > 900) return;
-        panelEl.classList.add('open');
-        if (App.els.mobileFloatingBackdrop) { App.els.mobileFloatingBackdrop.hidden = false; App.els.mobileFloatingBackdrop.classList.add('show'); }
-        App.state.mobileFloatingPanelEl = panelEl;
+      openModal(modalEl) {
+        if (!modalEl) return;
+        modalEl.hidden = false;
+        const card = modalEl.querySelector('.modal-card');
+        if (card) card.scrollTop = 0;
       },
-      closeMobileFloatingPanel() {
-        document.querySelectorAll('.mobile-floating-panel.open').forEach((el) => el.classList.remove('open'));
-        if (App.els.mobileFloatingBackdrop) { App.els.mobileFloatingBackdrop.hidden = true; App.els.mobileFloatingBackdrop.classList.remove('show'); }
-        App.state.mobileFloatingPanelEl = null;
+      closeModal(modalEl) {
+        if (modalEl) modalEl.hidden = true;
       },
       closeCalendarEditor() {
         if (App.els.calendarEditor) App.els.calendarEditor.hidden = true; App.state.calendarEditingTarget = null;
@@ -1717,13 +1711,10 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           const notePreview = week.note || entries.map(({ entry }) => entry.note).filter(Boolean).join(' · ') || App.utils.t('no_note');
           return `<button class="week-item ${App.state.selectedWeekId === week.weekId ? 'active' : ''}" data-week-select="${App.utils.escapeAttr(week.weekId)}" type="button"><div class="week-item-top"><strong>${App.utils.prettyDate(week.start)} — ${App.utils.prettyDate(week.end)}</strong><span class="badge">W${App.utils.weekNumber(week.start)}</span></div><div class="pill-row" style="margin-top:8px">${entryPills || `<span class="pill" style="opacity:.6">${App.utils.t('no_events_found')}</span>`}${more}${week.flagLetter ? `<span class="pill">${App.utils.t('letter')}</span>` : ''}${week.flagS302 ? `<span class="pill">${App.utils.t('s302')}</span>` : ''}</div><div class="small" style="margin-top:8px">${App.utils.escapeHtml(notePreview)}</div></button>`;
         }).join('') || `<div class="empty">${App.utils.t('no_events_found')}</div>`;
-        document.querySelectorAll('[data-week-select]').forEach((btn) => btn.addEventListener('click', () => { App.state.selectedWeekId = btn.dataset.weekSelect; App.ui.renderWeeks(); App.ui.openMobileFloatingPanel(App.els.weekEditorCard); }));
-        const selected = filtered.find((week) => week.weekId === App.state.selectedWeekId) || filtered[0] || weeks[0] || null;
-        App.state.selectedWeekId = selected?.weekId || null;
-        if (!selected) { if (App.els.weekEditorEmpty) App.els.weekEditorEmpty.hidden = false; if (App.els.weekEditor) App.els.weekEditor.hidden = true; return; }
+        document.querySelectorAll('[data-week-select]').forEach((btn) => btn.addEventListener('click', () => { App.state.selectedWeekId = btn.dataset.weekSelect; App.ui.renderWeeks(); App.ui.openModal(App.els.weekEditorModal); }));
+        const selected = App.state.selectedWeekId ? filtered.find((week) => week.weekId === App.state.selectedWeekId) : null;
+        if (!selected) { App.state.selectedWeekId = null; return; }
         if (App.els.weekEditorTitle) App.els.weekEditorTitle.textContent = `${App.utils.t('week_details')}: ${App.utils.prettyDateLong(selected.start)} — ${App.utils.prettyDateLong(selected.end)}`;
-        if (App.els.weekEditorEmpty) App.els.weekEditorEmpty.hidden = true;
-        if (App.els.weekEditor) App.els.weekEditor.hidden = false;
         if (App.els.flagLetter) App.els.flagLetter.checked = !!selected.flagLetter;
         if (App.els.flagS302) App.els.flagS302.checked = !!selected.flagS302;
         if (App.els.weekNoteInput) App.els.weekNoteInput.value = selected.note || '';
@@ -1792,7 +1783,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           if (App.els.eventContactPhoneInput) App.els.eventContactPhoneInput.value = event?.contactPhone || '';
           if (App.els.eventContactEmailInput) App.els.eventContactEmailInput.value = event?.contactEmail || '';
           if (App.els.eventContactNoteInput) App.els.eventContactNoteInput.value = event?.contactNote || '';
-          App.ui.openMobileFloatingPanel(App.els.eventEditorCard);
+          App.ui.openModal(App.els.eventEditorModal);
           if (App.els.deleteEventBtn) App.els.deleteEventBtn.hidden = false;
           App.els.eventNameInput?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }));
@@ -1826,6 +1817,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           App.state.selectedYear = Number(btn.dataset.jumpYear);
           App.state.selectedWeekId = btn.dataset.jumpWeek;
           App.ui.renderAll();
+          App.ui.openModal(App.els.weekEditorModal);
         }));
         document.querySelectorAll('[data-delete-note]').forEach((btn) => btn.addEventListener('click', () => App.actions.deleteNote(btn.dataset.deleteNoteYear, btn.dataset.deleteNote)));
       },
@@ -1858,7 +1850,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.calendarEventQuickFilter?.addEventListener('change', (e) => { App.state.calendarEventFilter = e.target.value; App.ui.renderAll(); });
       App.els.saveWeekBtn?.addEventListener('click', () => App.actions.saveWeek());
       App.els.resetEventBtn?.addEventListener('click', () => App.actions.resetEventForm());
-      App.els.newEventBtn?.addEventListener('click', () => { App.actions.resetEventForm(); App.ui.openMobileFloatingPanel(App.els.eventEditorCard); App.els.eventNameInput?.focus(); });
+      App.els.newEventBtn?.addEventListener('click', () => { App.actions.resetEventForm(); App.ui.openModal(App.els.eventEditorModal); App.els.eventNameInput?.focus(); });
       App.els.deleteEventBtn?.addEventListener('click', () => { if (App.state.editingEventId) App.actions.deleteEventTemplate(App.state.editingEventId); });
       document.querySelectorAll('.copy-btn[data-copy-input]').forEach((btn) => btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -1869,9 +1861,8 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(done).catch(() => done());
         else done();
       }));
-      App.els.weekEditorCloseBtn?.addEventListener('click', () => App.ui.closeMobileFloatingPanel());
-      App.els.eventEditorCloseBtn?.addEventListener('click', () => App.ui.closeMobileFloatingPanel());
-      App.els.mobileFloatingBackdrop?.addEventListener('click', () => App.ui.closeMobileFloatingPanel());
+      App.els.weekEditorCloseBtn?.addEventListener('click', () => App.ui.closeModal(App.els.weekEditorModal));
+      App.els.eventEditorCloseBtn?.addEventListener('click', () => App.ui.closeModal(App.els.eventEditorModal));
       App.els.saveEventBtn?.addEventListener('click', () => App.actions.saveEventTemplate());
       App.els.eventSearchInput?.addEventListener('input', (e) => { App.state.eventSearch = e.target.value; App.ui.renderEvents(); });
       App.els.eventColorFilter?.addEventListener('change', (e) => { App.state.eventColorFilter = e.target.value; App.ui.renderEvents(); });
@@ -1938,7 +1929,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         window.visualViewport.addEventListener('scroll', () => App.ui.fixBottomNavViewport());
       }
       window.addEventListener('resize', () => App.ui.fixBottomNavViewport());
-      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { App.ui.hideDayPopover(true); App.ui.closeCalendarEditor(); App.actions.closePdf(); if (App.els.exportModal) App.els.exportModal.hidden = true; App.ui.closeMobileMenu(); } });
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { App.ui.hideDayPopover(true); App.ui.closeCalendarEditor(); App.ui.closeModal(App.els.weekEditorModal); App.ui.closeModal(App.els.eventEditorModal); App.actions.closePdf(); if (App.els.exportModal) App.els.exportModal.hidden = true; App.ui.closeMobileMenu(); } });
     },
 
     init() {
