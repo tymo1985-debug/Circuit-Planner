@@ -87,7 +87,16 @@
       reminders_overdue: 'Просрочено', reminders_days_left: 'осталось {days} дн.', reminders_close: 'Закрыть', reminders_open_entry: 'Открыть запись',
       visit_type: 'Тип визита', visit_type_none: 'Не визит', visit_type_congregation: 'Собрание', visit_type_group: 'Группа', visit_type_pregroup: 'Предгруппа',
       contact_info: 'Контакт ответственного', contact_name: 'Имя', contact_phone: 'Телефон', contact_email: 'E-mail', contact_note: 'Заметка',
-      countdown_today: 'Сегодня', countdown_future: 'Через {value} {label}', countdown_past: '{value} {label} назад', copied: 'Скопировано', copy: 'Копировать'
+      countdown_today: 'Сегодня', countdown_future: 'Через {value} {label}', countdown_past: '{value} {label} назад', copied: 'Скопировано', copy: 'Копировать',
+      stats_title: 'Статистика служебного года', stats_planned: 'Визитов запланировано', stats_done: 'Проведено', unvisited_title: 'Не запланирован визит', unvisited_none: 'Все собрания имеют запланированный визит ✓',
+      planner_nothing: 'Выберите хотя бы одно собрание', planner_no_free_weeks: 'Нет свободных недель в выбранном периоде', planner_confirm: 'Создать визиты по плану', planner_created: 'Создано визитов',
+      conflict_warning: '⚠️ На эти даты уже запланирован другой визит:', conflict_proceed: 'Всё равно сохранить?',
+      next_visit: 'Следующий визит', next_visit_none: 'Нет предстоящих визитов',
+      compose_letter: 'Составить письмо', share: 'Поделиться', letter_subject: 'Посещение районного надзирателя', letter_body_greeting: 'Дорогие братья!', letter_body_visit: 'Планируется посещение', letter_body_closing: 'С братской любовью.',
+      result_note: 'Итоги визита (после посещения)', result_note_short: 'Итоги визита', last_visit_result: 'Прошлый визит',
+      backup_prompt: 'Скачать резервную копию сейчас?', backup_never: 'Резервная копия ещё ни разу не создавалась.', backup_overdue: 'Последний backup был {days} дн. назад.',
+      pin_on: 'PIN-код: вкл', pin_off: 'PIN-код: выкл', pin_set_prompt: 'Задайте PIN (4–8 цифр):', pin_format: 'PIN должен состоять из 4–8 цифр', pin_enabled: 'PIN-код включён', pin_disabled: 'PIN-код отключён', pin_wrong: 'Неверный PIN', pin_enter_current: 'Введите текущий PIN:', pin_disable_confirm: 'Отключить PIN-код?',
+      visits_schedule: 'График посещений (для КС)'
     },
     en: {
       appTitle: 'Service Year Planner',
@@ -116,7 +125,16 @@
       reminders_overdue: 'Overdue', reminders_days_left: '{days} d. left', reminders_close: 'Close', reminders_open_entry: 'Open entry',
       visit_type: 'Visit type', visit_type_none: 'Not a visit', visit_type_congregation: 'Congregation', visit_type_group: 'Group', visit_type_pregroup: 'Pregroup',
       contact_info: 'Responsible contact', contact_name: 'Name', contact_phone: 'Phone', contact_email: 'E-mail', contact_note: 'Note',
-      countdown_today: 'Today', countdown_future: 'In {value} {label}', countdown_past: '{value} {label} ago', copied: 'Copied', copy: 'Copy'
+      countdown_today: 'Today', countdown_future: 'In {value} {label}', countdown_past: '{value} {label} ago', copied: 'Copied', copy: 'Copy',
+      stats_title: 'Service year statistics', stats_planned: 'Visits planned', stats_done: 'Completed', unvisited_title: 'No visit planned', unvisited_none: 'All congregations have a planned visit ✓',
+      planner_nothing: 'Select at least one congregation', planner_no_free_weeks: 'No free weeks in the selected range', planner_confirm: 'Create visits per plan', planner_created: 'Visits created',
+      conflict_warning: '⚠️ Another visit is already planned for these dates:', conflict_proceed: 'Save anyway?',
+      next_visit: 'Next visit', next_visit_none: 'No upcoming visits',
+      compose_letter: 'Compose letter', share: 'Share', letter_subject: 'Circuit overseer visit', letter_body_greeting: 'Dear brothers!', letter_body_visit: 'A visit is planned', letter_body_closing: 'With brotherly love.',
+      result_note: 'Visit results (after the visit)', result_note_short: 'Visit results', last_visit_result: 'Previous visit',
+      backup_prompt: 'Download a backup now?', backup_never: 'A backup has never been created.', backup_overdue: 'Last backup was {days} days ago.',
+      pin_on: 'PIN: on', pin_off: 'PIN: off', pin_set_prompt: 'Set a PIN (4–8 digits):', pin_format: 'PIN must be 4–8 digits', pin_enabled: 'PIN enabled', pin_disabled: 'PIN disabled', pin_wrong: 'Wrong PIN', pin_enter_current: 'Enter current PIN:', pin_disable_confirm: 'Disable PIN?',
+      visits_schedule: 'Visit schedule (for CO)'
     },
     uk: {
       appTitle: 'Service Year Planner',
@@ -145,7 +163,16 @@
       reminders_overdue: 'Прострочено', reminders_days_left: 'залишилося {days} дн.', reminders_close: 'Закрити', reminders_open_entry: 'Відкрити запис',
       visit_type: 'Тип візиту', visit_type_none: 'Не візит', visit_type_congregation: 'Зібрання', visit_type_group: 'Група', visit_type_pregroup: 'Передгрупа',
       contact_info: 'Контакт відповідального', contact_name: 'Ім’я', contact_phone: 'Телефон', contact_email: 'E-mail', contact_note: 'Нотатка',
-      countdown_today: 'Сьогодні', countdown_future: 'Через {value} {label}', countdown_past: '{value} {label} тому', copied: 'Скопійовано', copy: 'Копіювати'
+      countdown_today: 'Сьогодні', countdown_future: 'Через {value} {label}', countdown_past: '{value} {label} тому', copied: 'Скопійовано', copy: 'Копіювати',
+      stats_title: 'Статистика службового року', stats_planned: 'Візитів заплановано', stats_done: 'Проведено', unvisited_title: 'Візит не заплановано', unvisited_none: 'Усі зібрання мають запланований візит ✓',
+      planner_nothing: 'Виберіть хоча б одне зібрання', planner_no_free_weeks: 'Немає вільних тижнів у вибраному періоді', planner_confirm: 'Створити візити за планом', planner_created: 'Створено візитів',
+      conflict_warning: '⚠️ На ці дати вже заплановано інший візит:', conflict_proceed: 'Все одно зберегти?',
+      next_visit: 'Наступний візит', next_visit_none: 'Немає майбутніх візитів',
+      compose_letter: 'Скласти листа', share: 'Поділитися', letter_subject: 'Відвідування районного наглядача', letter_body_greeting: 'Дорогі брати!', letter_body_visit: 'Планується відвідування', letter_body_closing: 'З братньою любов’ю.',
+      result_note: 'Підсумки візиту (після відвідування)', result_note_short: 'Підсумки візиту', last_visit_result: 'Минулий візит',
+      backup_prompt: 'Завантажити резервну копію зараз?', backup_never: 'Резервна копія ще не створювалася.', backup_overdue: 'Останній backup був {days} дн. тому.',
+      pin_on: 'PIN-код: увімк', pin_off: 'PIN-код: вимк', pin_set_prompt: 'Задайте PIN (4–8 цифр):', pin_format: 'PIN має складатися з 4–8 цифр', pin_enabled: 'PIN-код увімкнено', pin_disabled: 'PIN-код вимкнено', pin_wrong: 'Невірний PIN', pin_enter_current: 'Введіть поточний PIN:', pin_disable_confirm: 'Вимкнути PIN-код?',
+      visits_schedule: 'Графік відвідувань (для КН)'
     },
     pl: {
       appTitle: 'Service Year Planner',
@@ -174,7 +201,16 @@
       reminders_overdue: 'Zaległe', reminders_days_left: 'pozostało {days} dni', reminders_close: 'Zamknij', reminders_open_entry: 'Otwórz wpis',
       visit_type: 'Typ wizyty', visit_type_none: 'Nie wizyta', visit_type_congregation: 'Zbór', visit_type_group: 'Grupa', visit_type_pregroup: 'Pregrupa',
       contact_info: 'Kontakt odpowiedzialnego', contact_name: 'Imię', contact_phone: 'Telefon', contact_email: 'E-mail', contact_note: 'Notatka',
-      countdown_today: 'Dzisiaj', countdown_future: 'Za {value} {label}', countdown_past: '{value} {label} temu', copied: 'Skopiowano', copy: 'Kopiuj'
+      countdown_today: 'Dzisiaj', countdown_future: 'Za {value} {label}', countdown_past: '{value} {label} temu', copied: 'Skopiowano', copy: 'Kopiuj',
+      stats_title: 'Statystyka roku służbowego', stats_planned: 'Zaplanowanych wizyt', stats_done: 'Odbytych', unvisited_title: 'Brak zaplanowanej wizyty', unvisited_none: 'Wszystkie zbory mają zaplanowaną wizytę ✓',
+      planner_nothing: 'Wybierz co najmniej jeden zbór', planner_no_free_weeks: 'Brak wolnych tygodni w wybranym okresie', planner_confirm: 'Utworzyć wizyty według planu', planner_created: 'Utworzono wizyt',
+      conflict_warning: '⚠️ Na te daty zaplanowano już inną wizytę:', conflict_proceed: 'Zapisać mimo to?',
+      next_visit: 'Następna wizyta', next_visit_none: 'Brak nadchodzących wizyt',
+      compose_letter: 'Napisz list', share: 'Udostępnij', letter_subject: 'Wizyta nadzorcy obwodu', letter_body_greeting: 'Drodzy bracia!', letter_body_visit: 'Planowana jest wizyta', letter_body_closing: 'Z braterską miłością.',
+      result_note: 'Wyniki wizyty (po odwiedzinach)', result_note_short: 'Wyniki wizyty', last_visit_result: 'Poprzednia wizyta',
+      backup_prompt: 'Pobrać kopię zapasową teraz?', backup_never: 'Kopia zapasowa nie została jeszcze utworzona.', backup_overdue: 'Ostatnia kopia była {days} dni temu.',
+      pin_on: 'PIN: wł', pin_off: 'PIN: wył', pin_set_prompt: 'Ustaw PIN (4–8 cyfr):', pin_format: 'PIN musi mieć 4–8 cyfr', pin_enabled: 'PIN włączony', pin_disabled: 'PIN wyłączony', pin_wrong: 'Błędny PIN', pin_enter_current: 'Podaj obecny PIN:', pin_disable_confirm: 'Wyłączyć PIN?',
+      visits_schedule: 'Harmonogram wizyt (dla NO)'
     }
   };
 
@@ -182,7 +218,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.14.1',
+      version: '9.15.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -268,6 +304,39 @@
       daysDiff(a, b) { const da = this.parseLocalDate(this.iso(a)); const db = this.parseLocalDate(this.iso(b)); if (!da || !db) return 0; return Math.round((da - db) / 86400000); },
       overlaps(startA, endA, startB, endB) { return startA <= endB && endA >= startB; },
       getServiceYearForDate(date) { const d = new Date(date); return d.getMonth() >= App.config.serviceYearStartMonth ? d.getFullYear() : d.getFullYear() - 1; },
+      easterDate(year) {
+        // Anonymous Gregorian computus
+        const a = year % 19, b = Math.floor(year / 100), c = year % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), month = Math.floor((h + l - 7 * m + 114) / 31) - 1, day = ((h + l - 7 * m + 114) % 31) + 1;
+        return new Date(year, month, day);
+      },
+      holidaysForYear(year) {
+        const iso = (d) => this.iso(d);
+        const easter = this.easterDate(year);
+        const off = (days) => { const d = new Date(easter); d.setDate(d.getDate() + days); return d; };
+        const map = {};
+        const add = (dateIso, name) => { (map[dateIso] = map[dateIso] || []).push(name); };
+        add(`${year}-01-01`, 'Новый год (CZ/AT/DE)');
+        add(`${year}-05-01`, 'День труда (CZ/AT/DE)');
+        add(`${year}-12-24`, 'Сочельник (CZ/DE частично)');
+        add(`${year}-12-25`, 'Рождество (CZ/AT/DE)');
+        add(`${year}-12-26`, '2-й день Рождества (CZ/AT/DE)');
+        add(`${year}-05-08`, 'День победы (CZ)'); add(`${year}-07-05`, 'Кирилл и Мефодий (CZ)'); add(`${year}-07-06`, 'Ян Гус (CZ)'); add(`${year}-09-28`, 'День государственности (CZ)'); add(`${year}-10-28`, 'День независимости (CZ)'); add(`${year}-11-17`, 'День свободы (CZ)');
+        add(`${year}-01-06`, 'Богоявление (AT)'); add(`${year}-08-15`, 'Успение (AT)'); add(`${year}-10-26`, 'Нацпраздник (AT)'); add(`${year}-11-01`, 'Все святые (AT)'); add(`${year}-12-08`, 'Непорочное зачатие (AT)');
+        add(`${year}-10-03`, 'День единства (DE)');
+        add(iso(off(-2)), 'Страстная пятница (CZ/DE)');
+        add(iso(off(1)), 'Пасхальный понедельник (CZ/AT/DE)');
+        add(iso(off(39)), 'Вознесение (AT/DE)');
+        add(iso(off(50)), 'Духов понедельник (AT/DE)');
+        add(iso(off(60)), 'Тело Христово (AT/DE частично)');
+        return map;
+      },
+      holidaysCache: {},
+      getHolidayNames(dateIso) {
+        if (!App.state.app?.settings?.showHolidays) return null;
+        const year = Number(String(dateIso).slice(0, 4));
+        if (!this.holidaysCache[year]) this.holidaysCache[year] = this.holidaysForYear(year);
+        return this.holidaysCache[year][dateIso] || null;
+      },
       serviceYearLabel(year) { return `${year}/${year + 1}`; },
       serviceYearBounds(year) { return { start: new Date(year, App.config.serviceYearStartMonth, 1), end: new Date(year + 1, App.config.serviceYearStartMonth, 0) }; },
       clampColor(color, fallback = '#1f7a45') { return /^#[0-9a-f]{6}$/i.test(String(color || '')) ? color : fallback; },
@@ -374,7 +443,7 @@
 
     store: {
       ensureSettingsDefaults(settings = {}) {
-        const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset || !['classic','compact','spacious','cards','minimal'].includes(out.layoutPreset)) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; return out;
+        const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (typeof out.showHolidays !== 'boolean') out.showHolidays = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset || !['classic','compact','spacious','cards','minimal'].includes(out.layoutPreset)) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; return out;
       },
       createDefaultData() {
         return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version: App.config.version } };
@@ -431,6 +500,23 @@
     data: {
       ensureServiceYear(year) { if (!App.state.app.serviceYears[year]) App.state.app.serviceYears[year] = { weeks: {} }; return App.state.app.serviceYears[year]; },
       getEventById(id) { return App.state.app.events.find((item) => item.id === id) || null; },
+      getServiceYearStats(sy) {
+        const syStart = new Date(sy, App.config.serviceYearStartMonth, 1);
+        const syEnd = new Date(sy + 1, App.config.serviceYearStartMonth, 0);
+        const today = new Date(); today.setHours(0,0,0,0);
+        const visitEvents = (App.state.app.events || []).filter((e) => e.visitType);
+        const entriesInYear = (App.state.app.entries || []).filter((entry) => {
+          const es = App.utils.parseLocalDate(entry.start), ee = App.utils.parseLocalDate(entry.end);
+          return es && ee && App.utils.overlaps(es, ee, syStart, syEnd);
+        });
+        const visitEntries = entriesInYear.filter((entry) => { const ev = this.getEventById(entry.eventId); return ev?.visitType; });
+        const done = visitEntries.filter((entry) => App.utils.parseLocalDate(entry.end) < today);
+        const s302Sent = visitEntries.filter((e) => e.flags?.f302).length;
+        const letterSent = visitEntries.filter((e) => e.flags?.letter).length;
+        const visitedEventIds = new Set(visitEntries.map((e) => e.eventId));
+        const unvisited = visitEvents.filter((ev) => !visitedEventIds.has(ev.id));
+        return { syStart, syEnd, visitEvents, visitEntries, planned: visitEntries.length, done: done.length, s302Sent, letterSent, unvisited };
+      },
       getUpcomingReminders() {
         const today = new Date(); today.setHours(0, 0, 0, 0);
         const items = [];
@@ -517,7 +603,7 @@
       getCalendarItemById(itemId) {
         if (!itemId) return null; const [source, refId] = String(itemId).split(':');
         if (source === 'entry') {
-          const entry = App.state.app.entries.find((item) => item.id === refId); if (!entry) return null; const event = this.getEventById(entry.eventId); return { id: itemId, source: 'entry', refId, eventId: entry.eventId, title: entry.title || event?.name || App.utils.t('event'), note: entry.note || '', flags: { f302: !!entry?.flags?.f302, letter: !!entry?.flags?.letter }, start: entry.start, end: entry.end };
+          const entry = App.state.app.entries.find((item) => item.id === refId); if (!entry) return null; const event = this.getEventById(entry.eventId); return { id: itemId, source: 'entry', refId, eventId: entry.eventId, title: entry.title || event?.name || App.utils.t('event'), note: entry.note || '', resultNote: entry.resultNote || '', flags: { f302: !!entry?.flags?.f302, letter: !!entry?.flags?.letter }, start: entry.start, end: entry.end };
         }
         if (source === 'week') {
           let found = null;
@@ -620,16 +706,31 @@
       },
       saveCalendarEditor() {
         const eventId = App.els.editorEventSelect?.value || ''; const start = App.els.editorStart?.value || ''; const end = App.els.editorEnd?.value || ''; const note = App.els.editorNoteInput?.value.trim() || '';
+        const resultNote = App.els.editorResultInput?.value.trim() || '';
         const flagsInput = { f302: !!App.els.editorFlagS302?.checked, letter: !!App.els.editorFlagLetter?.checked };
         if (!eventId || !start || !end) return App.utils.toast(App.utils.t('choose_template_dates')); if (start > end) return App.utils.toast(App.utils.t('wrong_end_date'));
         const event = App.data.getEventById(eventId);
         const target = App.state.calendarEditingTarget || { mode: 'create', source: 'entry', refId: null };
+        // Conflict detector: warn when another visit-type entry overlaps these dates.
+        if (event?.visitType) {
+          const ns = App.utils.parseLocalDate(start), ne = App.utils.parseLocalDate(end);
+          const conflict = (App.state.app.entries || []).find((other) => {
+            if (target.mode === 'edit' && target.source === 'entry' && other.id === target.refId) return false;
+            const oe = App.data.getEventById(other.eventId); if (!oe?.visitType) return false;
+            const os = App.utils.parseLocalDate(other.start), oed = App.utils.parseLocalDate(other.end);
+            return os && oed && App.utils.overlaps(ns, ne, os, oed);
+          });
+          if (conflict) {
+            const cTitle = conflict.title || App.data.getEventById(conflict.eventId)?.name || '';
+            if (!window.confirm(`${App.utils.t('conflict_warning')}\n\n${cTitle}: ${App.utils.prettyDate(conflict.start)} — ${App.utils.prettyDate(conflict.end)}\n\n${App.utils.t('conflict_proceed')}`)) return;
+          }
+        }
         if (target.mode === 'edit' && target.source === 'entry') {
-          const entry = App.state.app.entries.find((item) => item.id === target.refId); if (entry) { entry.eventId = eventId; entry.start = start; entry.end = end; entry.title = event?.name || App.utils.t('event'); entry.note = note; entry.flags = flagsInput; }
+          const entry = App.state.app.entries.find((item) => item.id === target.refId); if (entry) { entry.eventId = eventId; entry.start = start; entry.end = end; entry.title = event?.name || App.utils.t('event'); entry.note = note; entry.flags = flagsInput; entry.resultNote = resultNote; }
         } else if (target.mode === 'edit' && target.source === 'week') {
           let week = null; Object.values(App.state.app.serviceYears).forEach((sy) => { if (sy.weeks && sy.weeks[target.refId]) week = sy.weeks[target.refId]; }); if (week) { week.eventId = eventId; week.start = start; week.end = end; week.note = note; }
         } else {
-          App.state.app.entries.push({ id: App.utils.uid('entry'), eventId, start, end, title: event?.name || App.utils.t('event'), note, flags: flagsInput, source: 'entry' });
+          App.state.app.entries.push({ id: App.utils.uid('entry'), eventId, start, end, title: event?.name || App.utils.t('event'), note, flags: flagsInput, resultNote, source: 'entry' });
         }
         App.state.app.entries = App.utils.uniqueBy(App.state.app.entries, (item) => [item.eventId,item.title,item.note,item.start,item.end].join('|'));
         App.store.save(); App.ui.closeCalendarEditor(); App.ui.renderAll(); App.utils.toast(App.utils.t('calendar_event_saved'));
@@ -713,7 +814,26 @@
         reader.onerror = () => { App.utils.toast(App.utils.t('sync_import_failed')); if (App.els.syncImportInput) App.els.syncImportInput.value = ''; };
         reader.readAsText(file, 'utf-8');
       },
-      exportJson() { App.utils.downloadText(`service-year-planner-${App.utils.iso(new Date())}.json`, JSON.stringify(App.state.app, null, 2), 'application/json;charset=utf-8'); },
+      exportJson() {
+        App.state.app.meta = App.state.app.meta || {};
+        App.state.app.meta.lastBackupAt = new Date().toISOString();
+        App.store.save();
+        App.utils.downloadText(`circuit-planner-backup-${App.utils.iso(new Date())}.json`, JSON.stringify(App.state.app, null, 2), 'application/json;charset=utf-8');
+      },
+      downloadBackup() { this.exportJson(); },
+      moveEntryToDate(entryId, targetIso) {
+        const entry = App.state.app.entries.find((it) => it.id === entryId);
+        const target = App.utils.parseLocalDate(targetIso);
+        if (!entry || !target) return;
+        const oldStart = App.utils.parseLocalDate(entry.start), oldEnd = App.utils.parseLocalDate(entry.end);
+        if (!oldStart || !oldEnd) return;
+        const span = App.utils.daysDiff(oldEnd, oldStart);
+        entry.start = App.utils.iso(target);
+        entry.end = App.utils.iso(App.utils.addDays(target, span));
+        App.store.save();
+        App.ui.renderAll();
+        App.utils.toast(`${entry.title || App.utils.t('event')}: ${App.utils.prettyDate(entry.start)} — ${App.utils.prettyDate(entry.end)}`);
+      },
       exportIcs() {
         let start = App.els.exportRangeStartInput?.value || App.utils.iso(new Date(App.state.calendarYear, App.state.calendarMonth, 1)); let end = App.els.exportRangeEndInput?.value || App.utils.iso(new Date(App.state.calendarYear, App.state.calendarMonth + 1, 0)); if (start > end) return App.utils.toast(App.utils.t('wrong_end_date')); const items = App.data.collectIcsItems(start, end); const escape = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;'); const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Service Year Planner//RU//']; items.forEach((item) => lines.push('BEGIN:VEVENT',`UID:${App.utils.uid('ics')}`,`DTSTAMP:${App.utils.iso(new Date()).replace(/-/g,'')}T000000Z`,`DTSTART;VALUE=DATE:${item.start.replace(/-/g,'')}`,`DTEND;VALUE=DATE:${item.end.replace(/-/g,'')}`,`SUMMARY:${escape(item.title)}`,`DESCRIPTION:${escape(item.description)}`,`LOCATION:${escape(item.location)}`,'END:VEVENT')); lines.push('END:VCALENDAR'); App.utils.downloadText(`service-year-planner-${start}-${end}.ics`, `${lines.join('\r\n')}\r\n`, 'text/calendar;charset=utf-8');
       },
@@ -746,7 +866,7 @@
         let start = App.utils.iso(monthStart), end = App.utils.iso(monthEnd);
         if (['custom-range','custom-range-calendar'].includes(type)) { start = App.els.pdfRangeStartInput?.value || start; end = App.els.pdfRangeEndInput?.value || end; }
         if (type === 'half-year-agenda') end = App.utils.iso(new Date(App.state.calendarYear, App.state.calendarMonth + 6, 0));
-        if (['year-agenda','year-overview','notes-report'].includes(type)) { start = App.utils.iso(bounds.start); end = App.utils.iso(bounds.end); }
+        if (['year-agenda','year-overview','notes-report','visits-schedule'].includes(type)) { start = App.utils.iso(bounds.start); end = App.utils.iso(bounds.end); }
         return { start, end, sy };
       },
       collectPrintItems(startIso, endIso) {
@@ -772,7 +892,7 @@
         if (range.start > range.end) { App.utils.toast(App.utils.t('wrong_end_date')); return ''; }
         const items = this.collectPrintItems(range.start, range.end);
         const esc = (v) => App.utils.escapeHtml(v);
-        const titles = { 'month-grid':App.utils.t('month_grid'), 'custom-range-calendar':App.utils.t('period_calendar'), 'month-agenda':App.utils.t('month_list'), 'half-year-agenda':App.utils.t('half_year'), 'year-agenda':App.utils.t('year_events'), 'custom-range':App.utils.t('list_period'), 'year-overview':App.utils.t('year_overview'), 'notes-report':App.utils.t('notes_report') };
+        const titles = { 'month-grid':App.utils.t('month_grid'), 'custom-range-calendar':App.utils.t('period_calendar'), 'month-agenda':App.utils.t('month_list'), 'half-year-agenda':App.utils.t('half_year'), 'year-agenda':App.utils.t('year_events'), 'custom-range':App.utils.t('list_period'), 'year-overview':App.utils.t('year_overview'), 'notes-report':App.utils.t('notes_report'), 'visits-schedule':App.utils.t('visits_schedule') };
         const title = titles[type] || App.utils.t('pdf_print');
         const flags = (f={}) => [f.letter ? App.utils.t('letter_short') : '', f.f302 ? App.utils.t('s302_short') : ''].filter(Boolean).map((x)=>`<span class="flag">${esc(x)}</span>`).join(' ');
         const agenda = () => items.length ? `<table><thead><tr><th>${esc(App.utils.t('start'))}</th><th>${esc(App.utils.t('end'))}</th><th>${esc(App.utils.t('event'))}</th><th>${esc(App.utils.t('schedule'))}</th><th>${esc(App.utils.t('address'))}</th><th>${esc(App.utils.t('note'))}</th></tr></thead><tbody>${items.map((it)=>`<tr><td>${esc(App.utils.prettyDateLong(it.startDate))}</td><td>${esc(App.utils.prettyDateLong(it.endDate))}</td><td><span class="dot" style="background:${App.utils.clampColor(it.color)}"></span>${esc(it.title)} ${flags(it.flags)}</td><td>${esc(it.schedule || App.utils.t('no_schedule'))}</td><td>${esc(it.address || App.utils.t('no_address'))}</td><td>${esc(it.note || App.utils.t('no_note'))}</td></tr>`).join('')}</tbody></table>` : `<div class="empty">${esc(App.utils.t('no_events_month'))}</div>`;
@@ -798,7 +918,18 @@
           }).join('')}</div>`;
         };
         const overview = () => { const byMonth = new Map(); items.forEach((it)=>{ const k=`${it.startDate.getFullYear()}-${String(it.startDate.getMonth()+1).padStart(2,'0')}`; if(!byMonth.has(k)) byMonth.set(k,[]); byMonth.get(k).push(it); }); return `<table><thead><tr><th>${esc(App.utils.t('service_year'))}</th><th>${esc(App.utils.t('event'))}</th><th>${esc(App.utils.t('notes_count'))}</th></tr></thead><tbody>${Array.from(byMonth.entries()).map(([k,list])=>{ const [y,m]=k.split('-').map(Number); return `<tr><td>${esc(App.utils.monthName(m-1))} ${y}</td><td>${list.length}</td><td>${list.filter((x)=>x.note).length}</td></tr>`; }).join('')}</tbody></table>${agenda()}`; };
-        const body = (type === 'month-grid' || type === 'custom-range-calendar') ? calendar() : type === 'notes-report' ? notes() : type === 'year-overview' ? overview() : agenda();
+        const visitsSchedule = () => {
+          const visitLabel = (vt) => vt === 'congregation' ? App.utils.t('visit_type_congregation') : vt === 'group' ? App.utils.t('visit_type_group') : vt === 'pregroup' ? App.utils.t('visit_type_pregroup') : '';
+          const rows = (App.state.app.entries || []).map((entry) => ({ entry, event: App.data.getEventById(entry.eventId) }))
+            .filter(({ entry, event }) => {
+              if (!event?.visitType) return false;
+              const es = App.utils.parseLocalDate(entry.start), ee = App.utils.parseLocalDate(entry.end);
+              return es && ee && App.utils.overlaps(es, ee, App.utils.parseLocalDate(range.start), App.utils.parseLocalDate(range.end));
+            })
+            .sort((a, b) => String(a.entry.start).localeCompare(String(b.entry.start)));
+          return rows.length ? `<table><thead><tr><th>№</th><th>${esc(App.utils.t('range_start'))}</th><th>${esc(App.utils.t('range_end'))}</th><th>${esc(App.utils.t('event'))}</th><th>${esc(App.utils.t('visit_type'))}</th><th>S-302</th><th>${esc(App.utils.t('letter_short'))}</th><th>${esc(App.utils.t('note'))}</th></tr></thead><tbody>${rows.map(({ entry, event }, i) => `<tr><td>${i + 1}</td><td>${esc(App.utils.prettyDateLong(entry.start))}</td><td>${esc(App.utils.prettyDateLong(entry.end))}</td><td><span class="dot" style="background:${App.utils.clampColor(event.color)}"></span>${esc(entry.title || event.name)}</td><td>${esc(visitLabel(event.visitType))}</td><td>${entry.flags?.f302 ? '✓' : '—'}</td><td>${entry.flags?.letter ? '✓' : '—'}</td><td>${esc(entry.note || '')}</td></tr>`).join('')}</tbody></table>` : `<div class="empty">${esc(App.utils.t('no_events_month'))}</div>`;
+        };
+        const body = (type === 'month-grid' || type === 'custom-range-calendar') ? calendar() : type === 'notes-report' ? notes() : type === 'year-overview' ? overview() : type === 'visits-schedule' ? visitsSchedule() : agenda();
         const label = `${App.utils.prettyDateLong(App.utils.parseLocalDate(range.start))} — ${App.utils.prettyDateLong(App.utils.parseLocalDate(range.end))}`;
         return `<!doctype html><html lang="${App.utils.lang()}"><head><meta charset="utf-8"><title>${esc(title)}</title><style>*{box-sizing:border-box}body{font-family:Segoe UI,Arial,sans-serif;color:#16251d;margin:0;padding:22px;background:#fff;font-size:12px}h1{font-size:22px;margin:0 0 6px}h2{font-size:16px;margin:0 0 10px}.meta{color:#566;margin-bottom:18px}.print-months{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.print-month{break-inside:avoid;border:1px solid #ccd8d0;border-radius:12px;padding:12px}.cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-dow span{text-align:center;color:#667;font-weight:600}.cal-day,.cal-empty{min-height:78px;border:1px solid #dde6e0;border-radius:8px;padding:5px}.cal-day strong{display:block;margin-bottom:3px}.cal-event{font-size:10px;margin:2px 0;padding:2px 4px;border-radius:6px;background:#f1f5f2;overflow:hidden;text-overflow:ellipsis}.dot{display:inline-block;width:8px;height:8px;border-radius:999px;margin-right:5px}.flag{display:inline-block;border:1px solid #ccd8d0;border-radius:999px;padding:1px 5px;margin-left:3px;font-size:10px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccd8d0;padding:7px;text-align:left;vertical-align:top}th{background:#eef5f0}.empty{border:1px dashed #ccd8d0;border-radius:10px;padding:20px;text-align:center;color:#667}@media print{body{padding:0}.print-month{page-break-inside:avoid}@page{size:A4 landscape;margin:10mm}}</style></head><body><h1>${esc(title)}</h1><div class="meta">${esc(label)} · Service Year Planner</div>${body}</body></html>`;
       },
@@ -826,7 +957,10 @@
           'calendarQuickList','calendarSideTitle','calendarSideMeta','calendarSideDetails','calendarSideCountdownRow','calendarSideCountdown','countdownUnitSelect','calendarEventQuickFilter',
           'toggleTeamPanelBtn','calendarLayout','eventsList','eventSearchInput','eventColorFilter','eventVisitFilter','deleteAllEventsBtn','eventsListCount','eventNameInput','eventColorInput','eventAddressInput',
           'eventScheduleInput','resetEventBtn','saveEventBtn','deleteEventBtn','newEventBtn','eventVisitTypeInput','eventContactNameInput','eventContactPhoneInput','eventContactEmailInput','eventContactNoteInput','editorFlagsRow','editorFlagS302','editorFlagLetter',
-          'remindersModal','remindersModalList','remindersModalCloseBtn','remindersModalOkBtn','remindersModalTitle','remindersModalSub','checkRemindersBtn','checkRemindersBtnMain','noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
+          'remindersModal','remindersModalList','remindersModalCloseBtn','remindersModalOkBtn','remindersModalTitle','remindersModalSub','checkRemindersBtn','checkRemindersBtnMain',
+          'statsModal','statsModalTitle','statsModalSub','statsModalBody','statsModalCloseBtn','statsModalOkBtn','statsBtn','plannerBtn',
+          'plannerModal','plannerModalCloseBtn','plannerStartInput','plannerEndInput','plannerEventsList','plannerPreview','plannerCancelBtn','plannerApplyBtn',
+          'pinOverlay','pinInput','pinError','pinSubmitBtn','pinSetupBtn','holidaysToggle','editorResultInput','editorResultLabel','noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
           'pdfCancelBtn','pdfExportConfirmBtn','pdfRangeCard','pdfRangeStartInput','pdfRangeEndInput','pdfRangeHelp','pdfHint',
           'bottomNav','bottomNavRow','mobileOverlay','mobileMenuToggleBtn','exportModal','exportModalCloseBtn','exportCancelBtn',
@@ -1000,6 +1134,9 @@
         this.renderSettings();
         this.renderStatus();
         this.updateReminderButtonBadge();
+        this.renderNextVisitCard();
+        if (App.els.holidaysToggle) App.els.holidaysToggle.checked = !!App.state.app.settings.showHolidays;
+        this.updatePinButton();
       },
       updateReminderButtonBadge() {
         const count = App.data.getUpcomingReminders().length;
@@ -1361,8 +1498,9 @@ showServiceYearDayPopover(anchor, dateIso, pinned = false) {
                 dayCells.push('<div class="sy-empty"></div>');
               } else {
                 const dayItems = items.filter((item) => App.utils.overlaps(item.start, item.end, date, date));
-                const title = dayItems.length ? dayItems.map((item) => item.title).join(' · ') : App.utils.t('add_on_date');
-                dayCells.push(`<button class="sy-day ${iso === todayIso ? 'today' : ''} ${(date.getDay() === 0 || date.getDay() === 6) ? 'weekend' : ''} ${dayItems.length ? 'has-events' : ''} ${App.state.calendarSelectedDateIso === iso ? 'selected' : ''}" type="button" data-add-date="${App.utils.escapeAttr(iso)}" title="${App.utils.escapeAttr(title)}"><span>${date.getDate()}</span></button>`);
+                const hol = App.utils.getHolidayNames(iso);
+                const title = [dayItems.length ? dayItems.map((item) => item.title).join(' · ') : '', hol ? hol.join(', ') : ''].filter(Boolean).join(' · ') || App.utils.t('add_on_date');
+                dayCells.push(`<button class="sy-day ${iso === todayIso ? 'today' : ''} ${(date.getDay() === 0 || date.getDay() === 6) ? 'weekend' : ''} ${dayItems.length ? 'has-events' : ''} ${hol ? 'holiday' : ''} ${App.state.calendarSelectedDateIso === iso ? 'selected' : ''}" type="button" data-add-date="${App.utils.escapeAttr(iso)}" title="${App.utils.escapeAttr(title)}"><span>${date.getDate()}</span></button>`);
               }
             }
             const overlapping = items.filter((item) => {
@@ -1447,7 +1585,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
             (lanes[lane] = lanes[lane] || []).push(bar);
           });
         });
-        if (App.els.calendarGrid) App.els.calendarGrid.innerHTML = `<div class="grid-cal"><div class="dow-row"><div class="dow-corner"></div><div class="dow-days">${App.utils.dayNames().map((name) => `<div class="dow">${name}</div>`).join('')}</div></div>${weeks.map((week) => { const bars = (itemsByWeek.get(week.id) || []).slice(0, 4); const extraCount = Math.max(0, (itemsByWeek.get(week.id) || []).length - 4); return `<div class="week-row"><button class="week-num" data-open-week="${App.utils.escapeAttr(week.id)}" type="button">W${week.number}</button><div class="week-days">${week.days.map((day) => `<div class="day-cell ${day.inMonth ? '' : 'inactive'} ${day.isWeekend ? 'weekend' : ''} ${day.isToday ? 'today today-col' : ''} ${App.state.calendarSelectedDateIso === day.iso ? 'selected-day' : ''}" data-day="${App.utils.escapeAttr(day.iso)}" role="button" tabindex="0"><div><span class="day-num">${day.day}</span>${day.day === 1 ? `<span class="day-month">${App.utils.monthName(day.month).slice(0, 3)}</span>` : ''}</div><button class="day-add-btn" data-add-date="${App.utils.escapeAttr(day.iso)}" type="button" title="${App.utils.t('add_on_date')}" aria-label="${App.utils.escapeAttr(App.utils.t('add_on_date'))}">+</button></div>`).join('')}${bars.map((bar) => `<button class="event-bar" data-detail-calendar-item="${App.utils.escapeAttr(bar.id)}" type="button" style="left:calc(${(bar.leftIndex / 7) * 100}% + 6px);width:calc(${(bar.span / 7) * 100}% - 12px);top:${34 + (bar.lane || 0) * 20}px;background:${App.utils.clampColor(bar.color)};">${App.utils.escapeHtml(bar.title)}</button>`).join('')}${extraCount ? `<div class="small" style="position:absolute;left:12px;bottom:6px">+ ${extraCount}</div>` : ''}</div></div>`; }).join('')}</div>`;
+        if (App.els.calendarGrid) App.els.calendarGrid.innerHTML = `<div class="grid-cal"><div class="dow-row"><div class="dow-corner"></div><div class="dow-days">${App.utils.dayNames().map((name) => `<div class="dow">${name}</div>`).join('')}</div></div>${weeks.map((week) => { const bars = (itemsByWeek.get(week.id) || []).slice(0, 4); const extraCount = Math.max(0, (itemsByWeek.get(week.id) || []).length - 4); return `<div class="week-row"><button class="week-num" data-open-week="${App.utils.escapeAttr(week.id)}" type="button">W${week.number}</button><div class="week-days">${week.days.map((day) => { const hol = App.utils.getHolidayNames(day.iso); return `<div class="day-cell ${day.inMonth ? '' : 'inactive'} ${day.isWeekend ? 'weekend' : ''} ${day.isToday ? 'today today-col' : ''} ${App.state.calendarSelectedDateIso === day.iso ? 'selected-day' : ''} ${hol ? 'holiday' : ''}" data-day="${App.utils.escapeAttr(day.iso)}" role="button" tabindex="0" ${hol ? `title="${App.utils.escapeAttr(hol.join(', '))}"` : ''}><div><span class="day-num">${day.day}</span>${day.day === 1 ? `<span class="day-month">${App.utils.monthName(day.month).slice(0, 3)}</span>` : ''}${hol ? '<span class="holiday-mark" aria-hidden="true">🎌</span>' : ''}</div><button class="day-add-btn" data-add-date="${App.utils.escapeAttr(day.iso)}" type="button" title="${App.utils.t('add_on_date')}" aria-label="${App.utils.escapeAttr(App.utils.t('add_on_date'))}">+</button></div>`; }).join('')}${bars.map((bar) => `<button class="event-bar" draggable="${bar.id.startsWith('entry:') ? 'true' : 'false'}" data-drag-entry="${bar.id.startsWith('entry:') ? App.utils.escapeAttr(bar.id) : ''}" data-detail-calendar-item="${App.utils.escapeAttr(bar.id)}" type="button" style="left:calc(${(bar.leftIndex / 7) * 100}% + 6px);width:calc(${(bar.span / 7) * 100}% - 12px);top:${34 + (bar.lane || 0) * 20}px;background:${App.utils.clampColor(bar.color)};">${App.utils.escapeHtml(bar.title)}</button>`).join('')}${extraCount ? `<div class="small" style="position:absolute;left:12px;bottom:6px">+ ${extraCount}</div>` : ''}</div></div>`; }).join('')}</div>`;
         if (App.els.calendarYearSelect) { App.els.calendarYearSelect.innerHTML = Array.from({ length: 9 }, (_, i) => year - 4 + i).map((y) => `<option value="${y}">${y}</option>`).join(''); App.els.calendarYearSelect.value = String(year); }
         if (App.els.calendarQuickList) App.els.calendarQuickList.innerHTML = items.slice(0, 12).map((item) => `<button class="side-item" type="button" data-detail-calendar-item="${App.utils.escapeAttr(item.id)}"><strong>${App.utils.escapeHtml(item.title)}</strong><div class="small">${App.utils.prettyDate(item.start)} — ${App.utils.prettyDate(item.end)}</div><div class="small">${App.utils.escapeHtml(item.note || App.utils.t('no_note'))}</div></button>`).join('') || `<div class="empty">${App.utils.t('no_events_month')}</div>`;
         const detail = items.find((item) => item.id === App.state.calendarDetailId) || items[0] || null; this.renderCalendarDetails(detail); if (App.state.calendarSelectedDateIso) this.renderServiceYearDayDetails(App.state.calendarSelectedDateIso);
@@ -1457,6 +1595,21 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         document.querySelectorAll('[data-add-date]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.actions.openCalendarEditorForCreate(btn.dataset.addDate); }));
         document.querySelectorAll('[data-edit-calendar-item]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.actions.openCalendarEditorForItem(btn.dataset.editCalendarItem); }));
         document.querySelectorAll('[data-open-week]').forEach((btn) => btn.addEventListener('click', () => { App.state.selectedScreen = 'weeks'; App.state.selectedYear = App.utils.getServiceYearForDate(btn.dataset.openWeek); App.state.selectedWeekId = btn.dataset.openWeek; App.ui.renderAll(); App.ui.openModal(App.els.weekEditorModal); }));
+        // Drag-and-drop: move a visit entry to another day (shifts start+end by the same offset).
+        document.querySelectorAll('[data-drag-entry]').forEach((bar) => {
+          if (!bar.dataset.dragEntry) return;
+          bar.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', bar.dataset.dragEntry); e.dataTransfer.effectAllowed = 'move'; });
+        });
+        document.querySelectorAll('.day-cell[data-day]').forEach((cell) => {
+          cell.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; cell.classList.add('drag-over'); });
+          cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+          cell.addEventListener('drop', (e) => {
+            e.preventDefault(); cell.classList.remove('drag-over');
+            const itemId = e.dataTransfer.getData('text/plain');
+            if (!itemId || !itemId.startsWith('entry:')) return;
+            App.actions.moveEntryToDate(itemId.slice(6), cell.dataset.day);
+          });
+        });
       },
       flagBadgesHtml(flags = {}) {
         const out = [];
@@ -1489,11 +1642,19 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const visitLabel = (visitType) => visitType === 'congregation' ? App.utils.t('visit_type_congregation') : visitType === 'group' ? App.utils.t('visit_type_group') : visitType === 'pregroup' ? App.utils.t('visit_type_pregroup') : '';
         const visitTypeRow = event?.visitType ? `<div class="side-row"><div class="side-label">${App.utils.t('visit_type')}</div><div class="side-value">${App.utils.escapeHtml(visitLabel(event.visitType))} ${this.flagBadgesHtml(itemData.flags)}</div></div>` : '';
         const sendControls = event?.visitType ? this.flagTogglesHtml(itemData.source, itemData.refId, itemData.flags) : '';
+        // Last visit's results for this event (from past entries), shown for context.
+        const today0 = new Date(); today0.setHours(0,0,0,0);
+        const pastResult = event ? (App.state.app.entries || [])
+          .filter((en) => en.eventId === event.id && en.resultNote && App.utils.parseLocalDate(en.end) < today0 && `entry:${en.id}` !== itemData.id)
+          .sort((a, b) => String(b.end).localeCompare(String(a.end)))[0] : null;
+        const resultRow = itemData.resultNote ? `<div class="side-row"><div class="side-label">${App.utils.t('result_note_short')}</div><div class="side-value">${App.utils.escapeHtml(itemData.resultNote)}</div></div>` : '';
+        const pastResultRow = pastResult ? `<div class="side-row"><div class="side-label">${App.utils.t('last_visit_result')} (${App.utils.prettyDate(pastResult.end)})</div><div class="side-value">${App.utils.escapeHtml(pastResult.resultNote)}</div></div>` : '';
         const hasContact = event && (event.contactName || event.contactPhone || event.contactEmail || event.contactNote);
         const contactBlock = hasContact ? `<div class="send-control" style="margin-top:10px"><div class="send-control-title" style="margin-bottom:8px">${App.utils.t('contact_info')}</div>${event.contactName ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_name')}</div><div class="side-value">${App.utils.escapeHtml(event.contactName)}</div></div>` : ''}${event.contactPhone ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_phone')}</div><div class="side-value" style="display:flex;align-items:center;gap:6px"><a href="tel:${App.utils.escapeAttr(event.contactPhone.replace(/[^+\d]/g, ''))}">${App.utils.escapeHtml(event.contactPhone)}</a><button class="icon-btn copy-btn" type="button" data-copy-text="${App.utils.escapeAttr(event.contactPhone)}" title="${App.utils.escapeAttr(App.utils.t('copy'))}" aria-label="${App.utils.escapeAttr(App.utils.t('copy'))}">📋</button></div></div>` : ''}${event.contactEmail ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_email')}</div><div class="side-value" style="display:flex;align-items:center;gap:6px"><a href="mailto:${App.utils.escapeAttr(event.contactEmail)}">${App.utils.escapeHtml(event.contactEmail)}</a><button class="icon-btn copy-btn" type="button" data-copy-text="${App.utils.escapeAttr(event.contactEmail)}" title="${App.utils.escapeAttr(App.utils.t('copy'))}" aria-label="${App.utils.escapeAttr(App.utils.t('copy'))}">📋</button></div></div>` : ''}${event.contactNote ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_note')}</div><div class="side-value">${App.utils.escapeHtml(event.contactNote)}</div></div>` : ''}</div>` : '';
-        App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div>${visitTypeRow}<div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div>${sendControls}${contactBlock}<div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
+        App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div>${visitTypeRow}<div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div>${resultRow}${pastResultRow}${sendControls}${contactBlock}<div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button>${event?.contactEmail ? `<a class="btn" href="${this.buildLetterMailto(event, itemData)}">✉ ${App.utils.t('compose_letter')}</a>` : ''}<button class="btn" type="button" id="detailShareBtn">📤 ${App.utils.t('share')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
         const editBtn = document.getElementById('detailEditBtn'); if (editBtn) editBtn.addEventListener('click', () => App.actions.openCalendarEditorForItem(itemData.id));
         const icsBtn = document.getElementById('detailIcsBtn'); if (icsBtn) icsBtn.addEventListener('click', () => App.actions.exportSingleEventIcs(itemData.id));
+        document.getElementById('detailShareBtn')?.addEventListener('click', () => App.ui.shareWeekText(itemData, event));
         document.querySelectorAll('.copy-btn[data-copy-text]').forEach((btn) => btn.addEventListener('click', (e) => {
           e.preventDefault(); e.stopPropagation();
           const text = btn.dataset.copyText;
@@ -1635,6 +1796,8 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.els.editorStart.value = data.start || '';
         App.els.editorEnd.value = data.end || data.start || '';
         if (App.els.editorNoteInput) App.els.editorNoteInput.value = data.note || '';
+        if (App.els.editorResultInput) App.els.editorResultInput.value = data.resultNote || '';
+        if (App.els.editorResultLabel) App.els.editorResultLabel.textContent = App.utils.t('result_note');
         App.els.editorReadonly.textContent = isEdit ? App.utils.t('edit_entry_help') : App.utils.t('create_entry_help');
         App.els.editorDeleteBtn.style.display = isEdit ? '' : 'none';
         const isWeekEdit = isEdit && data.source === 'week';
@@ -1650,6 +1813,150 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       },
       closeModal(modalEl) {
         if (modalEl) modalEl.hidden = true;
+      },
+      openStatsModal() {
+        const sy = App.state.calendarYear ? App.utils.getServiceYearForDate(new Date(App.state.calendarYear, App.state.calendarMonth || 0, 1)) : App.utils.getServiceYearForDate(new Date());
+        const stats = App.data.getServiceYearStats(sy);
+        if (App.els.statsModalTitle) App.els.statsModalTitle.textContent = App.utils.t('stats_title');
+        if (App.els.statsModalSub) App.els.statsModalSub.textContent = App.utils.serviceYearLabel(sy);
+        const pct = (a, b) => b ? Math.round((a / b) * 100) : 0;
+        const statCard = (label, value, sub) => `<div class="card" style="padding:14px;box-shadow:none"><div class="small">${label}</div><div style="font-size:26px;font-weight:800">${value}</div>${sub ? `<div class="small">${sub}</div>` : ''}</div>`;
+        const unvisitedHtml = stats.unvisited.length
+          ? `<div class="card" style="padding:14px;box-shadow:none"><div class="small" style="font-weight:700;margin-bottom:8px">⚠️ ${App.utils.t('unvisited_title')} (${stats.unvisited.length})</div>${stats.unvisited.map((ev) => `<div class="side-row"><div class="side-label"><span class="dot" style="background:${App.utils.clampColor(ev.color)}"></span>${App.utils.escapeHtml(ev.name)}</div><div class="side-value small">${App.utils.escapeHtml(ev.contactName || '')}</div></div>`).join('')}</div>`
+          : `<div class="empty">${App.utils.t('unvisited_none')}</div>`;
+        if (App.els.statsModalBody) App.els.statsModalBody.innerHTML = `
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px">
+            ${statCard(App.utils.t('stats_planned'), stats.planned)}
+            ${statCard(App.utils.t('stats_done'), stats.done)}
+            ${statCard('S-302', `${stats.s302Sent}/${stats.planned}`, `${pct(stats.s302Sent, stats.planned)}%`)}
+            ${statCard(App.utils.t('letter'), `${stats.letterSent}/${stats.planned}`, `${pct(stats.letterSent, stats.planned)}%`)}
+          </div>${unvisitedHtml}`;
+        this.openModal(App.els.statsModal);
+      },
+      openPlannerModal() {
+        const sy = App.utils.getServiceYearForDate(new Date());
+        const stats = App.data.getServiceYearStats(sy);
+        if (App.els.plannerStartInput && !App.els.plannerStartInput.value) App.els.plannerStartInput.value = App.utils.iso(new Date());
+        if (App.els.plannerEndInput && !App.els.plannerEndInput.value) App.els.plannerEndInput.value = App.utils.iso(stats.syEnd);
+        if (App.els.plannerEventsList) App.els.plannerEventsList.innerHTML = stats.unvisited.length
+          ? stats.unvisited.map((ev) => `<label style="display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:12px"><input type="checkbox" data-planner-event="${App.utils.escapeAttr(ev.id)}" style="width:auto" checked /><span class="dot" style="background:${App.utils.clampColor(ev.color)}"></span>${App.utils.escapeHtml(ev.name)}</label>`).join('')
+          : `<div class="empty">${App.utils.t('unvisited_none')}</div>`;
+        if (App.els.plannerPreview) App.els.plannerPreview.textContent = '';
+        this.openModal(App.els.plannerModal);
+      },
+      applyAutoPlan() {
+        const startIso = App.els.plannerStartInput?.value, endIso = App.els.plannerEndInput?.value;
+        const rs = App.utils.parseLocalDate(startIso), re = App.utils.parseLocalDate(endIso);
+        if (!rs || !re || rs > re) return App.utils.toast(App.utils.t('wrong_end_date'));
+        const selectedIds = Array.from(document.querySelectorAll('[data-planner-event]:checked')).map((el) => el.dataset.plannerEvent);
+        if (!selectedIds.length) return App.utils.toast(App.utils.t('planner_nothing'));
+        // Collect busy weeks (any entry overlapping that week)
+        const isWeekBusy = (weekStart, weekEnd) => (App.state.app.entries || []).some((entry) => {
+          const es = App.utils.parseLocalDate(entry.start), ee = App.utils.parseLocalDate(entry.end);
+          return es && ee && App.utils.overlaps(es, ee, weekStart, weekEnd);
+        });
+        let cursor = App.utils.startOfWeek(rs);
+        if (cursor < rs) cursor = App.utils.addDays(cursor, 7);
+        const assignments = [];
+        for (const eventId of selectedIds) {
+          while (cursor <= re && isWeekBusy(cursor, App.utils.addDays(cursor, 6))) cursor = App.utils.addDays(cursor, 7);
+          if (cursor > re) break;
+          const event = App.data.getEventById(eventId);
+          // Visit Tue–Sun of that week (typical circuit visit span)
+          const vStart = App.utils.addDays(cursor, 1), vEnd = App.utils.addDays(cursor, 6);
+          assignments.push({ eventId, event, start: App.utils.iso(vStart), end: App.utils.iso(vEnd) });
+          cursor = App.utils.addDays(cursor, 7);
+        }
+        if (!assignments.length) return App.utils.toast(App.utils.t('planner_no_free_weeks'));
+        const summary = assignments.map((a) => `${a.event?.name}: ${App.utils.prettyDate(a.start)} — ${App.utils.prettyDate(a.end)}`).join('\n');
+        if (!window.confirm(`${App.utils.t('planner_confirm')} (${assignments.length}):\n\n${summary}`)) return;
+        assignments.forEach((a) => App.state.app.entries.push({ id: App.utils.uid('entry'), eventId: a.eventId, start: a.start, end: a.end, title: a.event?.name || '', note: '', flags: { f302: false, letter: false }, resultNote: '', source: 'entry' }));
+        App.store.save();
+        this.closeModal(App.els.plannerModal);
+        App.ui.renderAll();
+        App.utils.toast(`${App.utils.t('planner_created')}: ${assignments.length}`);
+      },
+      buildLetterMailto(event, itemData) {
+        const subject = encodeURIComponent(`${App.utils.t('letter_subject')}: ${event?.name || ''}`);
+        const bodyText = `${App.utils.t('letter_body_greeting')}\n\n${App.utils.t('letter_body_visit')}: ${event?.name || ''}\n${App.utils.t('range_start')}: ${App.utils.prettyDateLong(itemData.start)}\n${App.utils.t('range_end')}: ${App.utils.prettyDateLong(itemData.end)}\n${event?.schedule ? `${App.utils.t('schedule')}: ${event.schedule}\n` : ''}${event?.address ? `${App.utils.t('address')}: ${event.address}\n` : ''}\n${App.utils.t('letter_body_closing')}`;
+        return `mailto:${encodeURIComponent(event?.contactEmail || '')}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+      },
+      shareWeekText(itemData, event) {
+        const text = `${itemData.title}\n${App.utils.prettyDateLong(itemData.start)} — ${App.utils.prettyDateLong(itemData.end)}${event?.address ? `\n${App.utils.t('address')}: ${event.address}` : ''}${event?.schedule ? `\n${App.utils.t('schedule')}: ${event.schedule}` : ''}`;
+        if (navigator.share) { navigator.share({ text }).catch(() => {}); }
+        else if (navigator.clipboard?.writeText) { navigator.clipboard.writeText(text).then(() => App.utils.toast(App.utils.t('copied'))).catch(() => {}); }
+      },
+      renderNextVisitCard() {
+        let host = document.getElementById('nextVisitCard');
+        const side = document.querySelector('.calendar-side');
+        if (!side) return;
+        if (!host) { host = document.createElement('div'); host.id = 'nextVisitCard'; host.className = 'side-card'; host.style.marginBottom = '14px'; side.insertBefore(host, side.firstChild); }
+        const today = new Date(); today.setHours(0,0,0,0);
+        const upcoming = (App.state.app.entries || [])
+          .map((entry) => ({ entry, event: App.data.getEventById(entry.eventId), start: App.utils.parseLocalDate(entry.start) }))
+          .filter(({ event, start, entry }) => event?.visitType && start && App.utils.parseLocalDate(entry.end) >= today)
+          .sort((a, b) => a.start - b.start)[0];
+        if (!upcoming) { host.innerHTML = `<h4 style="margin:0 0 6px">🎯 ${App.utils.t('next_visit')}</h4><div class="empty" style="padding:12px">${App.utils.t('next_visit_none')}</div>`; return; }
+        const { entry, event } = upcoming;
+        const flags = entry.flags || {};
+        const pill = (ok, label) => `<span class="pill" style="${ok ? '' : 'background:#fee2e2;border-color:#fecaca;color:#991b1b'}">${ok ? '✓' : '✗'} ${label}</span>`;
+        host.innerHTML = `<h4 style="margin:0 0 6px">🎯 ${App.utils.t('next_visit')}</h4>
+          <strong>${App.utils.escapeHtml(entry.title || event.name)}</strong>
+          <div class="small">${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}</div>
+          <div class="small" style="font-weight:700;margin:4px 0">${App.utils.countdownText(entry.start, App.state.countdownUnit || 'days')}</div>
+          <div class="pill-row" style="margin:6px 0">${pill(flags.f302, 'S-302')}${pill(flags.letter, App.utils.t('letter_short'))}</div>
+          ${event.address ? `<div class="small"><a href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">📍 ${App.utils.escapeHtml(event.address)}</a></div>` : ''}
+          ${event.contactName || event.contactPhone ? `<div class="small">👤 ${App.utils.escapeHtml([event.contactName, event.contactPhone].filter(Boolean).join(' · '))}</div>` : ''}
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+            <button class="btn" type="button" data-detail-calendar-item="entry:${App.utils.escapeAttr(entry.id)}" id="nextVisitOpenBtn">${App.utils.t('open')}</button>
+            ${event.contactEmail ? `<a class="btn" href="${this.buildLetterMailto(event, { title: entry.title, start: entry.start, end: entry.end })}">✉ ${App.utils.t('compose_letter')}</a>` : ''}
+          </div>`;
+        document.getElementById('nextVisitOpenBtn')?.addEventListener('click', () => { App.state.calendarDetailId = `entry:${entry.id}`; App.ui.renderCalendarDetails({ id: `entry:${entry.id}` }); });
+      },
+      checkAutoBackupReminder() {
+        try {
+          const last = App.state.app.meta?.lastBackupAt ? new Date(App.state.app.meta.lastBackupAt) : null;
+          const days = last ? Math.floor((Date.now() - last.getTime()) / 86400000) : Infinity;
+          if (days >= 7) {
+            const label = last ? App.utils.t('backup_overdue', { days }) : App.utils.t('backup_never');
+            if (window.confirm(`💾 ${label}\n\n${App.utils.t('backup_prompt')}`)) App.actions.downloadBackup();
+          }
+        } catch (_) {}
+      },
+      // --- PIN protection (local barrier, not cryptographic security) ---
+      pinHash(pin) { let h = 5381; const s = `syp:${pin}`; for (let i = 0; i < s.length; i += 1) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return String(h); },
+      getStoredPin() { try { return localStorage.getItem('syp-pin-hash') || ''; } catch (_) { return ''; } },
+      setupPin() {
+        const existing = this.getStoredPin();
+        if (existing) {
+          const current = window.prompt(App.utils.t('pin_enter_current'));
+          if (current === null) return;
+          if (this.pinHash(current.trim()) !== existing) return App.utils.toast(App.utils.t('pin_wrong'));
+          if (window.confirm(App.utils.t('pin_disable_confirm'))) { try { localStorage.removeItem('syp-pin-hash'); } catch (_) {} App.utils.toast(App.utils.t('pin_disabled')); this.updatePinButton(); return; }
+        }
+        const pin = window.prompt(App.utils.t('pin_set_prompt'));
+        if (!pin) return;
+        const clean = pin.trim();
+        if (!/^\d{4,8}$/.test(clean)) return App.utils.toast(App.utils.t('pin_format'));
+        try { localStorage.setItem('syp-pin-hash', this.pinHash(clean)); } catch (_) {}
+        App.utils.toast(App.utils.t('pin_enabled'));
+        this.updatePinButton();
+      },
+      updatePinButton() {
+        if (App.els.pinSetupBtn) App.els.pinSetupBtn.textContent = this.getStoredPin() ? `🔒 ${App.utils.t('pin_on')}` : `🔒 ${App.utils.t('pin_off')}`;
+      },
+      showPinGateIfNeeded() {
+        const stored = this.getStoredPin();
+        if (!stored || !App.els.pinOverlay) return;
+        App.els.pinOverlay.hidden = false;
+        const tryUnlock = () => {
+          const value = (App.els.pinInput?.value || '').trim();
+          if (this.pinHash(value) === stored) { App.els.pinOverlay.hidden = true; if (App.els.pinInput) App.els.pinInput.value = ''; if (App.els.pinError) App.els.pinError.textContent = ''; }
+          else { if (App.els.pinError) App.els.pinError.textContent = App.utils.t('pin_wrong'); if (App.els.pinInput) { App.els.pinInput.value = ''; App.els.pinInput.focus(); } }
+        };
+        App.els.pinSubmitBtn?.addEventListener('click', tryUnlock);
+        App.els.pinInput?.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryUnlock(); });
+        setTimeout(() => App.els.pinInput?.focus(), 100);
       },
       closeCalendarEditor() {
         if (App.els.calendarEditor) App.els.calendarEditor.hidden = true; App.state.calendarEditingTarget = null;
@@ -1918,6 +2225,15 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.remindersModalCloseBtn?.addEventListener('click', () => App.ui.closeRemindersModal());
       App.els.remindersModalOkBtn?.addEventListener('click', () => App.ui.closeRemindersModal());
       App.els.checkRemindersBtn?.addEventListener('click', () => App.ui.openRemindersModal());
+      App.els.statsBtn?.addEventListener('click', () => App.ui.openStatsModal());
+      App.els.statsModalCloseBtn?.addEventListener('click', () => App.ui.closeModal(App.els.statsModal));
+      App.els.statsModalOkBtn?.addEventListener('click', () => App.ui.closeModal(App.els.statsModal));
+      App.els.plannerBtn?.addEventListener('click', () => App.ui.openPlannerModal());
+      App.els.plannerModalCloseBtn?.addEventListener('click', () => App.ui.closeModal(App.els.plannerModal));
+      App.els.plannerCancelBtn?.addEventListener('click', () => App.ui.closeModal(App.els.plannerModal));
+      App.els.plannerApplyBtn?.addEventListener('click', () => App.ui.applyAutoPlan());
+      App.els.pinSetupBtn?.addEventListener('click', () => App.ui.setupPin());
+      App.els.holidaysToggle?.addEventListener('change', (e) => { App.state.app.settings.showHolidays = !!e.target.checked; App.store.save(); App.ui.renderAll(); });
       App.els.countdownUnitSelect?.addEventListener('change', (e) => { App.state.countdownUnit = e.target.value; App.ui.renderAll(); });
       App.els.checkRemindersBtnMain?.addEventListener('click', () => App.ui.openRemindersModal());
       App.els.exportCancelBtn?.addEventListener('click', () => { if (App.els.exportModal) App.els.exportModal.hidden = true; });
@@ -1977,7 +2293,9 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       this.ui.renderAll();
       this.bind();
       this.ui.closeMobileMenu();
+      this.ui.showPinGateIfNeeded();
       this.ui.showRemindersModalIfNeeded();
+      this.ui.checkAutoBackupReminder();
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', async () => {
           try {
