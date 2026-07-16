@@ -214,11 +214,52 @@
     }
   };
 
+  // --- Merged from the standalone "Visit Planner / Формуляр посещения" project ---
+  // Minimal i18n shim satisfying visit-pdf.js's contract: t(key), lang, WEEKDAYS, MEETING_TYPES, MEAL_DAY_KEYS.
+  // Strings copied verbatim from that project's own ru dictionary so the generated PDF matches exactly.
+  const VP_I18N = {
+    lang: 'ru',
+    WEEKDAYS: ['weekdayMon','weekdayTue','weekdayWed','weekdayThu','weekdayFri','weekdaySat','weekdaySun'],
+    MEETING_TYPES: ['meetingTypeMidweek','meetingTypeWeekend','meetingTypeElders','meetingTypeWithElders','meetingTypePioneers','meetingTypeOther'],
+    MEAL_DAY_KEYS: ['weekdayWed','weekdayThu','weekdayFri','weekdaySat','weekdaySun'],
+    dict: {
+      visitTypeMeeting: 'Собрание', visitTypeGroup: 'Группа', visitTypePregroup: 'Предгруппа',
+      meetingTypeMidweek: 'Встреча середины недели', meetingTypeWeekend: 'Встреча выходного дня', meetingTypeElders: 'Встреча старейшин', meetingTypeWithElders: 'Встреча со старейшинами', meetingTypePioneers: 'Встреча с пионерами', meetingTypeOther: 'Другое',
+      meetingTypeLabel: 'Тип встречи', dayLabel: 'День недели', timeLabel: 'Время', placeLabel: 'Место проведения',
+      weekdayMon: 'Понедельник', weekdayTue: 'Вторник', weekdayWed: 'Среда', weekdayThu: 'Четверг', weekdayFri: 'Пятница', weekdaySat: 'Суббота', weekdaySun: 'Воскресенье',
+      serviceTableTime: 'Время', serviceTablePlace: 'Место проведения встречи', serviceTablePartner: 'С кем сотрудничаю', serviceTableKind: 'Вид служения',
+      pastoralName: 'Имя', pastoralDay: 'День', pastoralTime: 'Время', pastoralReason: 'Причина пастырского посещения',
+      mealDay: 'День', mealTime: 'Время', mealPlace: 'Место', mealHost: 'Кто принимает', mealPhone: 'Телефон', mealNote: 'Примечание',
+      pdfPageForAlex: 'Формуляр для Алексея', pdfPageForLydia: 'Формуляр для Лидии', pdfVisitTypeLabel: 'Тип посещения:',
+      pdfMeetingsSchedule: 'Расписание встреч', pdfServicePlan: 'План служения', pdfPastoralVisits: 'Пастырские посещения', pdfMeals: 'Обеды', pdfNotes: 'Дополнительные заметки',
+      pdfManualLinesTitle: 'Для заметок вручную', pdfGeneratedOn: 'Документ сформирован',
+    },
+    t(key) { return this.dict[key] || key; },
+  };
+
+  const DEFAULT_LETTER_TEMPLATE = `До старійшин збору {congregation}{cong_number_suffix}
+
+Дорогі брати!
+
+Час летить непомітно! Ми з дружиною дуже раді, що прийшов час відвідати ваш збір. Знову для нас велика радість провести з вами час протягом тижня служіння!
+
+Візит відбудеться з {start_date} до {end_date}
+
+Цей тиждень дасть нам можливість служити один одному, щоб Єгова зміцнив нас (Ісаї 41:10).
+
+Збір, безсумнівно, зрадіє, коли почує про це. Вже одразу ви можете заохочувати братів і сестер якомога активніше підтримувати тиждень служіння. Ви також можете нагадати вісникам про можливість служити в якості допоміжних піонерів з метою 15 або 30 годин в місяці візиту («Пасіть», розділ 15, абзац 1). Усіх, хто виконує будь-яку форму піонерського служіння в цьому місяці, сердечно запрошуємо на піонерську зустріч! Дорогі старійшини, ваші зусилля і підтримка на цьому тижні допоможуть нам усім отримати користь і найбільше заохочення.
+
+Для нас завжди особлива радість, коли ми співпрацюємо з вами у проповідуванні, наприклад, у громадських місцях (служіння зі стендом, служіння водіям-далекобійникам і т.д.). Ми також раді разом з вісниками відвідувати зацікавлених на повторних відвідинах та біблійні вивчення, на які нас вони запрошують. Можливо в зборі є діти чи підлітки, з якими вивчають Біблію — для нас буде велика честь, коли нас на такі вивчення запрошують. Якщо хтось хоче приєднатися до нас у служінні, але не має повторних відвідин або біблійних вивчень, він також може записатися на служіння разом з нами. В такому випадку ми ходимо разом з групою і можемо розділити з ним нашу радість в служінні.
+
+Я вже з нетерпінням чекаю на цю зустріч і надсилаю вам теплі вітання братньої любові,
+
+Ваш {sender}`;
+
   const App = {
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.15.2',
+      version: '9.16.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -372,7 +413,7 @@
       },
       slug(value) { return String(value || '').toLowerCase().trim().replace(/\s+/g,'-').replace(/[^a-z0-9\-а-яёіїєґ]/gi,''); },
       escapeHtml(str) { return String(str ?? '').replace(/[&<>"']/g, (s) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s])); },
-      escapeAttr(str) { return this.escapeHtml(str); },
+      escapeAttr(str) { return App.utils.escapeHtml(str); },
       prettyDate(date) { const d = new Date(date); if (Number.isNaN(d.getTime())) return '—'; return d.toLocaleDateString(this.lang(), { day:'2-digit', month:'short' }); },
       prettyDateLong(date) { const d = new Date(date); if (Number.isNaN(d.getTime())) return '—'; return d.toLocaleDateString(this.lang(), { day:'2-digit', month:'long', year:'numeric' }); },
       countdownText(dateIso, unit = 'days') {
@@ -409,6 +450,9 @@
       downloadText(filename, text, mime = 'text/plain;charset=utf-8') {
         const blob = new Blob([text], { type: mime }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
       },
+      downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+      },
       toast(message) {
         if (!App.els.toastWrap) return; const el = document.createElement('div'); el.className = 'toast'; el.textContent = message; App.els.toastWrap.appendChild(el); setTimeout(() => el.remove(), 3500);
       },
@@ -443,7 +487,7 @@
 
     store: {
       ensureSettingsDefaults(settings = {}) {
-        const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (typeof out.showHolidays !== 'boolean') out.showHolidays = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset || !['classic','compact','spacious','cards','minimal'].includes(out.layoutPreset)) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; return out;
+        const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (typeof out.showHolidays !== 'boolean') out.showHolidays = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset || !['classic','compact','spacious','cards','minimal'].includes(out.layoutPreset)) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; if (typeof out.letterTemplate !== 'string' || !out.letterTemplate) out.letterTemplate = DEFAULT_LETTER_TEMPLATE; if (typeof out.senderName !== 'string') out.senderName = ''; return out;
       },
       createDefaultData() {
         return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version: App.config.version } };
@@ -475,8 +519,8 @@
       normalizeApp(appData) {
         const app = appData && typeof appData === 'object' ? appData : this.createDefaultData();
         app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version: App.config.version };
-        app.events = App.utils.uniqueBy(app.events.map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '', visitType: item.visitType || '', contactName: item.contactName || '', contactPhone: item.contactPhone || '', contactEmail: item.contactEmail || '', contactNote: item.contactNote || '' })), (item) => item.id);
-        app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: item.title || '', note: item.note || '', flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => [item.eventId,item.title,item.note,item.start,item.end].join('|'));
+        app.events = App.utils.uniqueBy(app.events.map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '', visitType: item.visitType || '', contactName: item.contactName || '', contactPhone: item.contactPhone || '', contactEmail: item.contactEmail || '', contactNote: item.contactNote || '', congNumber: item.congNumber || '' })), (item) => item.id);
+        app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: item.title || '', note: item.note || '', resultNote: item.resultNote || '', visitForm: item.visitForm || null, flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => item.id);
         Object.keys(app.serviceYears).forEach((year) => {
           const sy = app.serviceYears[year] || {}; if (!sy.weeks || typeof sy.weeks !== 'object') sy.weeks = {};
           Object.keys(sy.weeks).forEach((weekId) => { const w = sy.weeks[weekId]; if (!w) return; const start = App.utils.iso(w.start || weekId); const end = App.utils.iso(w.end || App.utils.addDays(App.utils.parseLocalDate(start), 6)); sy.weeks[weekId] = { id: w.id || weekId, weekId, start, end, eventId: w.eventId || '', priority: w.priority || 'normal', flagLetter: !!w.flagLetter, flagS302: !!w.flagS302, note: w.note || '' }; });
@@ -630,12 +674,13 @@
         if (App.els.eventContactPhoneInput) App.els.eventContactPhoneInput.value = '';
         if (App.els.eventContactEmailInput) App.els.eventContactEmailInput.value = '';
         if (App.els.eventContactNoteInput) App.els.eventContactNoteInput.value = '';
+        if (App.els.eventCongNumberInput) App.els.eventCongNumberInput.value = '';
         if (App.els.deleteEventBtn) App.els.deleteEventBtn.hidden = true;
       },
       saveEventTemplate() {
         try {
           const name = App.els.eventNameInput?.value.trim(); if (!name) return App.utils.toast(App.utils.t('enter_event_name'));
-          const payload = { id: App.state.editingEventId || App.utils.uid('evt'), name, color: App.utils.clampColor(App.els.eventColorInput?.value), address: App.els.eventAddressInput?.value.trim() || '', schedule: App.els.eventScheduleInput?.value.trim() || '', visitType: App.els.eventVisitTypeInput?.value || '', contactName: App.els.eventContactNameInput?.value.trim() || '', contactPhone: App.els.eventContactPhoneInput?.value.trim() || '', contactEmail: App.els.eventContactEmailInput?.value.trim() || '', contactNote: App.els.eventContactNoteInput?.value.trim() || '' };
+          const payload = { id: App.state.editingEventId || App.utils.uid('evt'), name, color: App.utils.clampColor(App.els.eventColorInput?.value), address: App.els.eventAddressInput?.value.trim() || '', schedule: App.els.eventScheduleInput?.value.trim() || '', visitType: App.els.eventVisitTypeInput?.value || '', contactName: App.els.eventContactNameInput?.value.trim() || '', contactPhone: App.els.eventContactPhoneInput?.value.trim() || '', contactEmail: App.els.eventContactEmailInput?.value.trim() || '', contactNote: App.els.eventContactNoteInput?.value.trim() || '', congNumber: App.els.eventCongNumberInput?.value.trim() || '' };
           const index = App.state.app.events.findIndex((event) => event.id === payload.id); if (index >= 0) App.state.app.events[index] = payload; else App.state.app.events.push(payload);
           // Dedup by id only — a content-based key here previously risked collapsing two
           // distinct events that happened to share name/color/address/schedule.
@@ -732,7 +777,7 @@
         } else {
           App.state.app.entries.push({ id: App.utils.uid('entry'), eventId, start, end, title: event?.name || App.utils.t('event'), note, flags: flagsInput, resultNote, source: 'entry' });
         }
-        App.state.app.entries = App.utils.uniqueBy(App.state.app.entries, (item) => [item.eventId,item.title,item.note,item.start,item.end].join('|'));
+        App.state.app.entries = App.utils.uniqueBy(App.state.app.entries, (item) => item.id);
         App.store.save(); App.ui.closeCalendarEditor(); App.ui.renderAll(); App.utils.toast(App.utils.t('calendar_event_saved'));
       },
       deleteCalendarEditorItem() {
@@ -960,7 +1005,11 @@
           'remindersModal','remindersModalList','remindersModalCloseBtn','remindersModalOkBtn','remindersModalTitle','remindersModalSub','checkRemindersBtn','checkRemindersBtnMain',
           'statsModal','statsModalTitle','statsModalSub','statsModalBody','statsModalCloseBtn','statsModalOkBtn','statsBtn','plannerBtn',
           'plannerModal','plannerModalCloseBtn','plannerStartInput','plannerEndInput','plannerEventsList','plannerPreview','plannerCancelBtn','plannerApplyBtn',
-          'pinOverlay','pinInput','pinError','pinSubmitBtn','pinSetupBtn','holidaysToggle','editorResultInput','editorResultLabel','noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
+          'pinOverlay','pinInput','pinError','pinSubmitBtn','pinSetupBtn','holidaysToggle','editorResultInput','editorResultLabel',
+          'eventCongNumberInput','letterTemplateInput','letterTemplateResetBtn','senderNameInput',
+          'visitFormModal','visitFormSub','visitFormCloseBtn','vfVisitType','vfMeetingsList','vfAddMeetingBtn','vfServiceDaysList','vfAddDayBtn','vfPastoralHeading','vfPastoralList','vfAddPastoralBtn','vfMealsList','vfAddMealBtn','vfNotesInput','vfCloseBtn2','vfGeneratePdfBtn',
+          'letterModal','letterModalSub','letterModalCloseBtn','letterTextInput','letterAttachStatus','letterResetBtn','letterAttachPdfBtn','letterSendBtn',
+          'noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
           'pdfCancelBtn','pdfExportConfirmBtn','pdfRangeCard','pdfRangeStartInput','pdfRangeEndInput','pdfRangeHelp','pdfHint',
           'bottomNav','bottomNavRow','mobileOverlay','mobileMenuToggleBtn','exportModal','exportModalCloseBtn','exportCancelBtn',
@@ -1651,10 +1700,12 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const pastResultRow = pastResult ? `<div class="side-row"><div class="side-label">${App.utils.t('last_visit_result')} (${App.utils.prettyDate(pastResult.end)})</div><div class="side-value">${App.utils.escapeHtml(pastResult.resultNote)}</div></div>` : '';
         const hasContact = event && (event.contactName || event.contactPhone || event.contactEmail || event.contactNote);
         const contactBlock = hasContact ? `<div class="send-control" style="margin-top:10px"><div class="send-control-title" style="margin-bottom:8px">${App.utils.t('contact_info')}</div>${event.contactName ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_name')}</div><div class="side-value">${App.utils.escapeHtml(event.contactName)}</div></div>` : ''}${event.contactPhone ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_phone')}</div><div class="side-value" style="display:flex;align-items:center;gap:6px"><a href="tel:${App.utils.escapeAttr(event.contactPhone.replace(/[^+\d]/g, ''))}">${App.utils.escapeHtml(event.contactPhone)}</a><button class="icon-btn copy-btn" type="button" data-copy-text="${App.utils.escapeAttr(event.contactPhone)}" title="${App.utils.escapeAttr(App.utils.t('copy'))}" aria-label="${App.utils.escapeAttr(App.utils.t('copy'))}">📋</button></div></div>` : ''}${event.contactEmail ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_email')}</div><div class="side-value" style="display:flex;align-items:center;gap:6px"><a href="mailto:${App.utils.escapeAttr(event.contactEmail)}">${App.utils.escapeHtml(event.contactEmail)}</a><button class="icon-btn copy-btn" type="button" data-copy-text="${App.utils.escapeAttr(event.contactEmail)}" title="${App.utils.escapeAttr(App.utils.t('copy'))}" aria-label="${App.utils.escapeAttr(App.utils.t('copy'))}">📋</button></div></div>` : ''}${event.contactNote ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_note')}</div><div class="side-value">${App.utils.escapeHtml(event.contactNote)}</div></div>` : ''}</div>` : '';
-        App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div>${visitTypeRow}<div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div>${resultRow}${pastResultRow}${sendControls}${contactBlock}<div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button>${event?.contactEmail ? `<a class="btn" href="${this.buildLetterMailto(event, itemData)}">✉ ${App.utils.t('compose_letter')}</a>` : ''}<button class="btn" type="button" id="detailShareBtn">📤 ${App.utils.t('share')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
+        App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div>${visitTypeRow}<div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div>${resultRow}${pastResultRow}${sendControls}${contactBlock}<div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button>${itemData.source === 'entry' && event?.visitType ? `<button class="btn" type="button" id="detailVisitFormBtn">📋 Формуляр визита</button><button class="btn" type="button" id="detailLetterBtn">✉ ${App.utils.t('compose_letter')}</button>` : ''}<button class="btn" type="button" id="detailShareBtn">📤 ${App.utils.t('share')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
         const editBtn = document.getElementById('detailEditBtn'); if (editBtn) editBtn.addEventListener('click', () => App.actions.openCalendarEditorForItem(itemData.id));
         const icsBtn = document.getElementById('detailIcsBtn'); if (icsBtn) icsBtn.addEventListener('click', () => App.actions.exportSingleEventIcs(itemData.id));
         document.getElementById('detailShareBtn')?.addEventListener('click', () => App.ui.shareWeekText(itemData, event));
+        document.getElementById('detailVisitFormBtn')?.addEventListener('click', () => App.ui.openVisitForm(itemData.id));
+        document.getElementById('detailLetterBtn')?.addEventListener('click', () => App.ui.openLetterModal(itemData.id));
         document.querySelectorAll('.copy-btn[data-copy-text]').forEach((btn) => btn.addEventListener('click', (e) => {
           e.preventDefault(); e.stopPropagation();
           const text = btn.dataset.copyText;
@@ -1876,11 +1927,6 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.ui.renderAll();
         App.utils.toast(`${App.utils.t('planner_created')}: ${assignments.length}`);
       },
-      buildLetterMailto(event, itemData) {
-        const subject = encodeURIComponent(`${App.utils.t('letter_subject')}: ${event?.name || ''}`);
-        const bodyText = `${App.utils.t('letter_body_greeting')}\n\n${App.utils.t('letter_body_visit')}: ${event?.name || ''}\n${App.utils.t('range_start')}: ${App.utils.prettyDateLong(itemData.start)}\n${App.utils.t('range_end')}: ${App.utils.prettyDateLong(itemData.end)}\n${event?.schedule ? `${App.utils.t('schedule')}: ${event.schedule}\n` : ''}${event?.address ? `${App.utils.t('address')}: ${event.address}\n` : ''}\n${App.utils.t('letter_body_closing')}`;
-        return `mailto:${encodeURIComponent(event?.contactEmail || '')}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
-      },
       shareWeekText(itemData, event) {
         const text = `${itemData.title}\n${App.utils.prettyDateLong(itemData.start)} — ${App.utils.prettyDateLong(itemData.end)}${event?.address ? `\n${App.utils.t('address')}: ${event.address}` : ''}${event?.schedule ? `\n${App.utils.t('schedule')}: ${event.schedule}` : ''}`;
         if (navigator.share) { navigator.share({ text }).catch(() => {}); }
@@ -1909,9 +1955,10 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           ${event.contactName || event.contactPhone ? `<div class="small">👤 ${App.utils.escapeHtml([event.contactName, event.contactPhone].filter(Boolean).join(' · '))}</div>` : ''}
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
             <button class="btn" type="button" data-detail-calendar-item="entry:${App.utils.escapeAttr(entry.id)}" id="nextVisitOpenBtn">${App.utils.t('open')}</button>
-            ${event.contactEmail ? `<a class="btn" href="${this.buildLetterMailto(event, { title: entry.title, start: entry.start, end: entry.end })}">✉ ${App.utils.t('compose_letter')}</a>` : ''}
+            ${event.visitType ? `<button class="btn" type="button" id="nextVisitLetterBtn">✉ ${App.utils.t('compose_letter')}</button>` : ''}
           </div>`;
         document.getElementById('nextVisitOpenBtn')?.addEventListener('click', () => { App.state.calendarDetailId = `entry:${entry.id}`; App.ui.renderCalendarDetails({ id: `entry:${entry.id}` }); });
+        document.getElementById('nextVisitLetterBtn')?.addEventListener('click', () => App.ui.openLetterModal(`entry:${entry.id}`));
       },
       checkAutoBackupReminder() {
         try {
@@ -1957,6 +2004,206 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.els.pinSubmitBtn?.addEventListener('click', tryUnlock);
         App.els.pinInput?.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryUnlock(); });
         setTimeout(() => App.els.pinInput?.focus(), 100);
+      },
+      // ===================== Merged: Visit Form (formerly a separate app) =====================
+      vpDefaultsForType(state, type) {
+        const dayLabels = {
+          pregroup: ['weekdayThu','weekdayFri','weekdaySat','weekdaySun'],
+          group: ['weekdayWed','weekdayThu','weekdayFri','weekdaySat','weekdaySun'],
+          meeting: ['weekdayWed','weekdayThu','weekdayFri','weekdaySat','weekdaySun'],
+        };
+        const pastoralCount = { pregroup: 0, group: 2, meeting: 3 };
+        if (!state.servicePlan.length && dayLabels[type]) {
+          state.servicePlan = dayLabels[type].map((dayKey) => ({ id: App.utils.uid('vd'), label: VP_I18N.t(dayKey), rows: [{ id: App.utils.uid('vr'), time: '', place: '', partner: '', kind: '', session: '' }] }));
+        }
+        if (!state.pastoralVisits.length) {
+          const count = pastoralCount[type] || 0;
+          state.pastoralVisits = Array.from({ length: count }, () => ({ id: App.utils.uid('vp'), name: '', day: '', time: '', partner: '', reason: '' }));
+        }
+        if (!state.meals.length) state.meals = [{ id: App.utils.uid('vm'), day: '', time: '', place: '', host: '', phone: '', note: '' }];
+      },
+      openVisitForm(itemId) {
+        const item = App.data.getCalendarItemById(itemId);
+        if (!item || item.source !== 'entry') return App.utils.toast('Формуляр визита доступен только для записей визитов.');
+        const entry = App.state.app.entries.find((e) => e.id === item.refId);
+        if (!entry) return;
+        const event = App.data.getEventById(entry.eventId);
+        App.state.visitFormEntryId = entry.id;
+        const visitTypeMap = { congregation: 'meeting', group: 'group', pregroup: 'pregroup' };
+        const saved = entry.visitForm;
+        const state = saved ? JSON.parse(JSON.stringify(saved)) : { visitType: visitTypeMap[event?.visitType] || 'meeting', meetings: [], servicePlan: [], pastoralVisits: [], meals: [], notes: '' };
+        this.vpDefaultsForType(state, state.visitType);
+        App.state.visitFormData = state;
+        if (App.els.vfVisitType) App.els.vfVisitType.value = state.visitType;
+        if (App.els.vfNotesInput) App.els.vfNotesInput.value = state.notes || '';
+        if (App.els.visitFormSub) App.els.visitFormSub.textContent = `${entry.title || event?.name || ''} · ${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}`;
+        this.renderVisitFormLists();
+        this.openModal(App.els.visitFormModal);
+      },
+      saveVisitFormState() {
+        const entry = App.state.app.entries.find((e) => e.id === App.state.visitFormEntryId);
+        if (!entry || !App.state.visitFormData) return;
+        App.state.visitFormData.notes = App.els.vfNotesInput?.value || '';
+        entry.visitForm = JSON.parse(JSON.stringify(App.state.visitFormData));
+        App.store.save();
+      },
+      renderVisitFormLists() {
+        const state = App.state.visitFormData; if (!state) return;
+        const esc = App.utils.escapeHtml, escA = App.utils.escapeAttr;
+        // Meetings
+        if (App.els.vfMeetingsList) App.els.vfMeetingsList.innerHTML = state.meetings.length ? state.meetings.map((m) => `
+          <div class="card" style="padding:10px;box-shadow:none" data-row-id="${escA(m.id)}" data-row-kind="meeting">
+            <div class="form-grid">
+              <label><span class="small">Тип</span><select data-field="type">${VP_I18N.MEETING_TYPES.map((mt) => `<option value="${mt}" ${m.type === mt ? 'selected' : ''}>${esc(VP_I18N.t(mt))}</option>`).join('')}</select></label>
+              <label><span class="small">День</span><input data-field="day" type="text" value="${escA(m.day)}" /></label>
+              <label><span class="small">Время</span><input data-field="time" type="text" value="${escA(m.time)}" /></label>
+              <label><span class="small">Место</span><input data-field="place" type="text" value="${escA(m.place)}" /></label>
+            </div>
+            <button class="btn danger" type="button" data-remove-row style="margin-top:8px">Удалить</button>
+          </div>`).join('') : `<div class="empty">Встречи ещё не добавлены</div>`;
+        // Service plan (grouped by day)
+        if (App.els.vfServiceDaysList) App.els.vfServiceDaysList.innerHTML = state.servicePlan.map((day) => `
+          <div class="card" style="padding:10px;box-shadow:none" data-day-id="${escA(day.id)}">
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><input data-day-field="label" type="text" value="${escA(day.label)}" style="font-weight:700" /><button class="btn danger" type="button" data-remove-day style="white-space:nowrap">Удалить день</button></div>
+            ${day.rows.map((r) => `
+              <div class="form-grid" data-row-id="${escA(r.id)}" data-row-kind="service" data-day-id="${escA(day.id)}" style="margin-bottom:8px">
+                <label><span class="small">Время</span><input data-field="time" type="text" value="${escA(r.time)}" /></label>
+                <label><span class="small">Место</span><input data-field="place" type="text" value="${escA(r.place)}" /></label>
+                <label><span class="small">С кем</span><input data-field="partner" type="text" value="${escA(r.partner)}" /></label>
+                <label><span class="small">Вид служения</span><input data-field="kind" type="text" value="${escA(r.kind)}" /></label>
+                <button class="btn danger" type="button" data-remove-row style="grid-column:1 / -1">Удалить строку</button>
+              </div>`).join('')}
+            <button class="btn" type="button" data-add-service-row="${escA(day.id)}">+ Строка</button>
+          </div>`).join('') || '<div class="empty">Дни ещё не добавлены</div>';
+        // Pastoral visits — hidden entirely for pregroup, matching the original app's rule
+        const showPastoral = state.visitType !== 'pregroup';
+        if (App.els.vfPastoralHeading) App.els.vfPastoralHeading.style.display = showPastoral ? '' : 'none';
+        if (App.els.vfAddPastoralBtn) App.els.vfAddPastoralBtn.style.display = showPastoral ? '' : 'none';
+        if (App.els.vfPastoralList) {
+          App.els.vfPastoralList.style.display = showPastoral ? '' : 'none';
+          App.els.vfPastoralList.innerHTML = state.pastoralVisits.length ? state.pastoralVisits.map((p) => `
+            <div class="card" style="padding:10px;box-shadow:none" data-row-id="${escA(p.id)}" data-row-kind="pastoral">
+              <div class="form-grid">
+                <label><span class="small">Имя</span><input data-field="name" type="text" value="${escA(p.name)}" /></label>
+                <label><span class="small">День</span><input data-field="day" type="text" value="${escA(p.day)}" /></label>
+                <label><span class="small">Время</span><input data-field="time" type="text" value="${escA(p.time)}" /></label>
+                <label><span class="small">С кем</span><input data-field="partner" type="text" value="${escA(p.partner)}" /></label>
+                <label style="grid-column:1 / -1"><span class="small">Причина</span><input data-field="reason" type="text" value="${escA(p.reason)}" /></label>
+              </div>
+              <button class="btn danger" type="button" data-remove-row style="margin-top:8px">Удалить</button>
+            </div>`).join('') : `<div class="empty">Посещения ещё не добавлены</div>`;
+        }
+        // Meals
+        if (App.els.vfMealsList) App.els.vfMealsList.innerHTML = state.meals.length ? state.meals.map((m) => `
+          <div class="card" style="padding:10px;box-shadow:none" data-row-id="${escA(m.id)}" data-row-kind="meal">
+            <div class="form-grid">
+              <label><span class="small">День</span><input data-field="day" type="text" value="${escA(m.day)}" /></label>
+              <label><span class="small">Время</span><input data-field="time" type="text" value="${escA(m.time)}" /></label>
+              <label><span class="small">Место</span><input data-field="place" type="text" value="${escA(m.place)}" /></label>
+              <label><span class="small">Кто принимает</span><input data-field="host" type="text" value="${escA(m.host)}" /></label>
+              <label><span class="small">Телефон</span><input data-field="phone" type="text" value="${escA(m.phone)}" /></label>
+              <label><span class="small">Примечание</span><input data-field="note" type="text" value="${escA(m.note)}" /></label>
+            </div>
+            <button class="btn danger" type="button" data-remove-row style="margin-top:8px">Удалить</button>
+          </div>`).join('') : `<div class="empty">Обеды ещё не добавлены</div>`;
+        this.bindVisitFormRowEvents();
+      },
+      bindVisitFormRowEvents() {
+        const state = App.state.visitFormData; if (!state) return;
+        const findArray = (kind) => kind === 'meeting' ? state.meetings : kind === 'pastoral' ? state.pastoralVisits : kind === 'meal' ? state.meals : null;
+        document.querySelectorAll('#vfMeetingsList [data-row-id], #vfPastoralList [data-row-id], #vfMealsList [data-row-id]').forEach((row) => {
+          row.querySelectorAll('[data-field]').forEach((input) => input.addEventListener('input', () => {
+            const arr = findArray(row.dataset.rowKind); const obj = arr && arr.find((o) => o.id === row.dataset.rowId);
+            if (obj) { obj[input.dataset.field] = input.value; App.ui.saveVisitFormState(); }
+          }));
+          row.querySelector('[data-remove-row]')?.addEventListener('click', () => {
+            const arr = findArray(row.dataset.rowKind);
+            if (arr) { const idx = arr.findIndex((o) => o.id === row.dataset.rowId); if (idx >= 0) arr.splice(idx, 1); }
+            App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
+          });
+        });
+        document.querySelectorAll('#vfServiceDaysList [data-day-id]').forEach((dayEl) => {
+          if (dayEl.hasAttribute('data-row-id')) return; // skip nested row grids matched by the day-id attr too
+        });
+        document.querySelectorAll('#vfServiceDaysList > div[data-day-id]').forEach((dayCard) => {
+          const day = state.servicePlan.find((d) => d.id === dayCard.dataset.dayId); if (!day) return;
+          dayCard.querySelector('[data-day-field="label"]')?.addEventListener('input', (e) => { day.label = e.target.value; App.ui.saveVisitFormState(); });
+          dayCard.querySelector('[data-remove-day]')?.addEventListener('click', () => {
+            const idx = state.servicePlan.findIndex((d) => d.id === day.id); if (idx >= 0) state.servicePlan.splice(idx, 1);
+            App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
+          });
+          dayCard.querySelector('[data-add-service-row]')?.addEventListener('click', () => {
+            day.rows.push({ id: App.utils.uid('vr'), time: '', place: '', partner: '', kind: '', session: '' });
+            App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
+          });
+          dayCard.querySelectorAll('[data-row-kind="service"]').forEach((row) => {
+            const r = day.rows.find((rr) => rr.id === row.dataset.rowId); if (!r) return;
+            row.querySelectorAll('[data-field]').forEach((input) => input.addEventListener('input', () => { r[input.dataset.field] = input.value; App.ui.saveVisitFormState(); }));
+            row.querySelector('[data-remove-row]')?.addEventListener('click', () => {
+              const idx = day.rows.findIndex((rr) => rr.id === r.id); if (idx >= 0) day.rows.splice(idx, 1);
+              App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
+            });
+          });
+        });
+      },
+      buildVisitPdfDoc() {
+        const state = App.state.visitFormData;
+        if (!state) return null;
+        if (typeof window.PdfGenerator === 'undefined' || !window.jspdf) { App.utils.toast('Модуль PDF ещё не загрузился, попробуйте ещё раз через секунду.'); return null; }
+        return window.PdfGenerator.generate(state, VP_I18N);
+      },
+      // ===================== Merged: pre-visit letter =====================
+      fillLetterTemplate(entry, event) {
+        const tpl = App.state.app.settings.letterTemplate || DEFAULT_LETTER_TEMPLATE;
+        const congNumberSuffix = event?.congNumber ? ` (${event.congNumber})` : '';
+        const ukDate = (d) => { const dt = new Date(d); return Number.isNaN(dt.getTime()) ? '—' : dt.toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' }); };
+        return tpl
+          .replace(/\{congregation\}/g, entry?.title || event?.name || '')
+          .replace(/\{cong_number_suffix\}/g, congNumberSuffix)
+          .replace(/\{cong_number\}/g, event?.congNumber || '')
+          .replace(/\{start_date\}/g, ukDate(entry?.start))
+          .replace(/\{end_date\}/g, ukDate(entry?.end))
+          .replace(/\{today\}/g, ukDate(new Date()))
+          .replace(/\{sender\}/g, App.state.app.settings.senderName || '');
+      },
+      openLetterModal(itemId) {
+        const item = App.data.getCalendarItemById(itemId);
+        if (!item || item.source !== 'entry') return App.utils.toast('Письмо доступно только для записей визитов.');
+        const entry = App.state.app.entries.find((e) => e.id === item.refId);
+        if (!entry) return;
+        const event = App.data.getEventById(entry.eventId);
+        App.state.letterEntryId = entry.id;
+        if (App.els.letterModalSub) App.els.letterModalSub.textContent = `${entry.title || event?.name || ''} · ${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}`;
+        if (App.els.letterTextInput) App.els.letterTextInput.value = this.fillLetterTemplate(entry, event);
+        if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = entry.visitForm ? '📎 График визита готов и будет прикреплён.' : '⚠️ График визита ещё не заполнен — можно отправить только текст письма, либо сначала открыть «Формуляр визита».';
+        this.openModal(App.els.letterModal);
+      },
+      async sendLetterNow() {
+        const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);
+        const event = entry ? App.data.getEventById(entry.eventId) : null;
+        const text = App.els.letterTextInput?.value || '';
+        const hasForm = !!entry?.visitForm;
+        let pdfBlob = null, pdfName = 'visit-schedule.pdf';
+        if (hasForm) {
+          try {
+            App.state.visitFormData = JSON.parse(JSON.stringify(entry.visitForm));
+            const doc = this.buildVisitPdfDoc();
+            if (doc) { pdfBlob = doc.output('blob'); pdfName = `${App.utils.slug(entry.title || 'visit')}.pdf`; }
+          } catch (err) { console.error('PDF build for sharing failed', err); }
+        }
+        const mailto = () => { window.location.href = `mailto:${encodeURIComponent(event?.contactEmail || '')}?subject=${encodeURIComponent(App.utils.t('letter_subject'))}&body=${encodeURIComponent(text)}`; };
+        if (navigator.share && pdfBlob && navigator.canShare && navigator.canShare({ files: [new File([pdfBlob], pdfName, { type: 'application/pdf' })] })) {
+          try {
+            await navigator.share({ text, files: [new File([pdfBlob], pdfName, { type: 'application/pdf' })] });
+            App.utils.toast('Отправлено');
+            return;
+          } catch (err) { /* user cancelled or unsupported — fall through to fallback below */ }
+        }
+        if (pdfBlob) {
+          App.utils.downloadBlob(pdfBlob, pdfName);
+          App.utils.toast('График скачан — прикрепи его к письму вручную.');
+        }
+        mailto();
       },
       closeCalendarEditor() {
         if (App.els.calendarEditor) App.els.calendarEditor.hidden = true; App.state.calendarEditingTarget = null;
@@ -2115,6 +2362,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           if (App.els.eventContactPhoneInput) App.els.eventContactPhoneInput.value = event?.contactPhone || '';
           if (App.els.eventContactEmailInput) App.els.eventContactEmailInput.value = event?.contactEmail || '';
           if (App.els.eventContactNoteInput) App.els.eventContactNoteInput.value = event?.contactNote || '';
+          if (App.els.eventCongNumberInput) App.els.eventCongNumberInput.value = event?.congNumber || '';
           App.ui.openModal(App.els.eventEditorModal);
           if (App.els.deleteEventBtn) App.els.deleteEventBtn.hidden = false;
           App.els.eventNameInput?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -2153,7 +2401,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         }));
         document.querySelectorAll('[data-delete-note]').forEach((btn) => btn.addEventListener('click', () => App.actions.deleteNote(btn.dataset.deleteNoteYear, btn.dataset.deleteNote)));
       },
-      renderSettings() { if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
+      renderSettings() { if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.letterTemplateInput && document.activeElement !== App.els.letterTemplateInput) App.els.letterTemplateInput.value = App.state.app.settings.letterTemplate || DEFAULT_LETTER_TEMPLATE; if (App.els.senderNameInput && document.activeElement !== App.els.senderNameInput) App.els.senderNameInput.value = App.state.app.settings.senderName || ''; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
       closeMobileMenu() {
         if (App.els.appRoot) App.els.appRoot.classList.remove('menu-open');
         if (App.els.mobileOverlay) {
@@ -2234,6 +2482,71 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.plannerApplyBtn?.addEventListener('click', () => App.ui.applyAutoPlan());
       App.els.pinSetupBtn?.addEventListener('click', () => App.ui.setupPin());
       App.els.holidaysToggle?.addEventListener('change', (e) => { App.state.app.settings.showHolidays = !!e.target.checked; App.store.save(); App.ui.renderAll(); });
+      // Visit Form modal
+      App.els.visitFormCloseBtn?.addEventListener('click', () => { App.ui.saveVisitFormState(); App.ui.closeModal(App.els.visitFormModal); });
+      App.els.vfCloseBtn2?.addEventListener('click', () => { App.ui.saveVisitFormState(); App.ui.closeModal(App.els.visitFormModal); });
+      App.els.vfVisitType?.addEventListener('change', (e) => {
+        if (!App.state.visitFormData) return;
+        App.state.visitFormData.visitType = e.target.value;
+        App.ui.vpDefaultsForType(App.state.visitFormData, e.target.value);
+        App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
+      });
+      App.els.vfNotesInput?.addEventListener('input', () => App.ui.saveVisitFormState());
+      App.els.vfAddMeetingBtn?.addEventListener('click', () => {
+        if (!App.state.visitFormData) return;
+        App.state.visitFormData.meetings.push({ id: App.utils.uid('vm'), type: 'meetingTypeMidweek', day: '', time: '', place: '' });
+        App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
+      });
+      App.els.vfAddDayBtn?.addEventListener('click', () => {
+        if (!App.state.visitFormData) return;
+        App.state.visitFormData.servicePlan.push({ id: App.utils.uid('vd'), label: 'Новый день', rows: [{ id: App.utils.uid('vr'), time: '', place: '', partner: '', kind: '', session: '' }] });
+        App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
+      });
+      App.els.vfAddPastoralBtn?.addEventListener('click', () => {
+        if (!App.state.visitFormData) return;
+        App.state.visitFormData.pastoralVisits.push({ id: App.utils.uid('vp'), name: '', day: '', time: '', partner: '', reason: '' });
+        App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
+      });
+      App.els.vfAddMealBtn?.addEventListener('click', () => {
+        if (!App.state.visitFormData) return;
+        App.state.visitFormData.meals.push({ id: App.utils.uid('vm'), day: '', time: '', place: '', host: '', phone: '', note: '' });
+        App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
+      });
+      App.els.vfGeneratePdfBtn?.addEventListener('click', () => {
+        App.ui.saveVisitFormState();
+        const doc = App.ui.buildVisitPdfDoc();
+        if (!doc) return;
+        const entry = App.state.app.entries.find((e) => e.id === App.state.visitFormEntryId);
+        doc.save(`${App.utils.slug(entry?.title || 'visit')}.pdf`);
+        App.utils.toast('PDF сформирован');
+      });
+      // Letter modal
+      App.els.letterModalCloseBtn?.addEventListener('click', () => App.ui.closeModal(App.els.letterModal));
+      App.els.letterResetBtn?.addEventListener('click', () => {
+        const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);
+        if (!entry) return;
+        const event = App.data.getEventById(entry.eventId);
+        if (App.els.letterTextInput) App.els.letterTextInput.value = App.ui.fillLetterTemplate(entry, event);
+      });
+      App.els.letterAttachPdfBtn?.addEventListener('click', () => {
+        const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);
+        if (!entry?.visitForm) return App.utils.toast('Сначала заполни «Формуляр визита» для этой записи.');
+        App.state.visitFormData = JSON.parse(JSON.stringify(entry.visitForm));
+        const doc = App.ui.buildVisitPdfDoc();
+        if (!doc) return;
+        doc.save(`${App.utils.slug(entry.title || 'visit')}.pdf`);
+        if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = '📎 График скачан — прикрепи его к письму вручную, если отправляешь через десктоп-почту.';
+      });
+      App.els.letterSendBtn?.addEventListener('click', () => App.ui.sendLetterNow());
+      // Settings: letter template
+      App.els.letterTemplateInput?.addEventListener('input', (e) => { App.state.app.settings.letterTemplate = e.target.value; App.store.save(); });
+      App.els.senderNameInput?.addEventListener('input', (e) => { App.state.app.settings.senderName = e.target.value; App.store.save(); });
+      App.els.letterTemplateResetBtn?.addEventListener('click', () => {
+        App.state.app.settings.letterTemplate = DEFAULT_LETTER_TEMPLATE;
+        App.store.save();
+        if (App.els.letterTemplateInput) App.els.letterTemplateInput.value = DEFAULT_LETTER_TEMPLATE;
+        App.utils.toast('Шаблон восстановлен');
+      });
       App.els.countdownUnitSelect?.addEventListener('change', (e) => { App.state.countdownUnit = e.target.value; App.ui.renderAll(); });
       App.els.checkRemindersBtnMain?.addEventListener('click', () => App.ui.openRemindersModal());
       App.els.exportCancelBtn?.addEventListener('click', () => { if (App.els.exportModal) App.els.exportModal.hidden = true; });
@@ -2274,7 +2587,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       document.querySelectorAll('.modal').forEach((modal) => modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.hidden = true;
       }));
-      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { App.ui.hideDayPopover(true); App.ui.closeCalendarEditor(); App.ui.closeModal(App.els.weekEditorModal); App.ui.closeModal(App.els.eventEditorModal); App.actions.closePdf(); if (App.els.exportModal) App.els.exportModal.hidden = true; App.ui.closeMobileMenu(); } });
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { App.ui.hideDayPopover(true); App.ui.closeCalendarEditor(); App.ui.closeModal(App.els.weekEditorModal); App.ui.closeModal(App.els.eventEditorModal); App.ui.closeModal(App.els.visitFormModal); App.ui.closeModal(App.els.letterModal); App.actions.closePdf(); if (App.els.exportModal) App.els.exportModal.hidden = true; App.ui.closeMobileMenu(); } });
     },
 
     init() {
