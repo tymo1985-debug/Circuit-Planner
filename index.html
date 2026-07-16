@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.15.0</title>
+  <title>Service Year Planner v9.15.2</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="favicon.ico">
@@ -64,6 +64,7 @@
   :root[data-layout="minimal"] .sy-month-card{box-shadow:none !important;border:1px solid var(--line) !important}:root[data-layout="minimal"] .sy-period-bar{box-shadow:none}
   @media (max-width:1280px){.calendar-layout{grid-template-columns:1fr}}
   .day-cell.holiday .day-num{color:#b91c1c;font-weight:800}
+  [hidden]{display:none !important}
   .sy-day.holiday:not(.today) span{color:#b91c1c;font-weight:800}
   .holiday-mark{font-size:10px;margin-left:3px}
   .day-cell.drag-over{outline:2px dashed var(--accent);outline-offset:-3px;background:rgba(20,83,45,.08)}
@@ -208,7 +209,7 @@ body::before{display:none !important}
   <div class="app" id="appRoot">
     <div class="mobile-overlay" id="mobileOverlay" hidden></div>
     <aside class="sidebar">
-      <div class="brand"><div class="logo"><svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="150" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="336" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="120" y="140" width="272" height="256" rx="32" fill="#f4faf6"/><rect x="120" y="140" width="272" height="72" rx="32" fill="#15532d"/><rect x="120" y="180" width="272" height="32" fill="#15532d"/><circle cx="160" cy="252" r="10" fill="#bfe3cd"/><circle cx="200" cy="252" r="10" fill="#bfe3cd"/><circle cx="240" cy="252" r="10" fill="#bfe3cd"/><circle cx="160" cy="292" r="10" fill="#bfe3cd"/><path d="M204 318 L244 358 L316 274" fill="none" stroke="#1f7a45" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>Service Year Planner</h1><p>v9.15.0 • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo"><svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="150" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="336" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="120" y="140" width="272" height="256" rx="32" fill="#f4faf6"/><rect x="120" y="140" width="272" height="72" rx="32" fill="#15532d"/><rect x="120" y="180" width="272" height="32" fill="#15532d"/><circle cx="160" cy="252" r="10" fill="#bfe3cd"/><circle cx="200" cy="252" r="10" fill="#bfe3cd"/><circle cx="240" cy="252" r="10" fill="#bfe3cd"/><circle cx="160" cy="292" r="10" fill="#bfe3cd"/><path d="M204 318 L244 358 L316 274" fill="none" stroke="#1f7a45" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>Service Year Planner</h1><p>v9.15.2 • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
@@ -216,7 +217,7 @@ body::before{display:none !important}
       <div class="offline-banner" id="offlineBanner">Вы офлайн. Изменения сохраняются локально.</div>
       <header class="topbar">
         <div>
-          <div class="version-badge">Версия: v9.15.0</div>
+          <div class="version-badge">Версия: v9.15.2</div>
           <h2 id="screenTitle">Календарь</h2>
           <p id="screenSubtitle"></p>
         </div>
@@ -376,12 +377,14 @@ body::before{display:none !important}
       <div class="editor-actions"><button class="btn" id="plannerCancelBtn" type="button">Закрыть</button><button class="btn primary" id="plannerApplyBtn" type="button">Распределить и создать</button></div>
     </div>
   </div>
-  <div id="pinOverlay" hidden style="position:fixed;inset:0;z-index:99999;background:var(--bg,#f2f6f3);display:grid;place-items:center">
+  <div id="pinOverlay" hidden style="position:fixed;inset:0;z-index:99999;background:var(--bg,#f2f6f3)">
+    <div style="display:grid;place-items:center;height:100%">
     <div class="card" style="width:min(340px,90vw);text-align:center">
       <h3 style="margin-top:0">🔒 Введите PIN</h3>
       <input id="pinInput" type="password" inputmode="numeric" maxlength="8" style="text-align:center;font-size:22px;letter-spacing:8px" autocomplete="off" />
       <div class="small" id="pinError" style="color:var(--danger);min-height:18px;margin-top:8px"></div>
       <button class="btn primary full" id="pinSubmitBtn" type="button" style="margin-top:8px;width:100%">Открыть</button>
+    </div>
     </div>
   </div>
   <div class="modal" id="remindersModal" hidden>
