@@ -217,12 +217,8 @@
   // --- Merged from the standalone "Visit Planner / Формуляр посещения" project ---
   // Minimal i18n shim satisfying visit-pdf.js's contract: t(key), lang, WEEKDAYS, MEETING_TYPES, MEAL_DAY_KEYS.
   // Strings copied verbatim from that project's own ru dictionary so the generated PDF matches exactly.
-  const VP_I18N = {
-    lang: 'ru',
-    WEEKDAYS: ['weekdayMon','weekdayTue','weekdayWed','weekdayThu','weekdayFri','weekdaySat','weekdaySun'],
-    MEETING_TYPES: ['meetingTypeMidweek','meetingTypeWeekend','meetingTypeElders','meetingTypeWithElders','meetingTypePioneers','meetingTypeOther'],
-    MEAL_DAY_KEYS: ['weekdayWed','weekdayThu','weekdayFri','weekdaySat','weekdaySun'],
-    dict: {
+  const VP_I18N_DICTS = {
+    ru: {
       visitTypeMeeting: 'Собрание', visitTypeGroup: 'Группа', visitTypePregroup: 'Предгруппа',
       meetingTypeMidweek: 'Встреча середины недели', meetingTypeWeekend: 'Встреча выходного дня', meetingTypeElders: 'Встреча старейшин', meetingTypeWithElders: 'Встреча со старейшинами', meetingTypePioneers: 'Встреча с пионерами', meetingTypeOther: 'Другое',
       meetingTypeLabel: 'Тип встречи', dayLabel: 'День недели', timeLabel: 'Время', placeLabel: 'Место проведения',
@@ -234,8 +230,55 @@
       pdfMeetingsSchedule: 'Расписание встреч', pdfServicePlan: 'План служения', pdfPastoralVisits: 'Пастырские посещения', pdfMeals: 'Обеды', pdfNotes: 'Дополнительные заметки',
       pdfManualLinesTitle: 'Для заметок вручную', pdfGeneratedOn: 'Документ сформирован',
     },
-    t(key) { return this.dict[key] || key; },
+    uk: {
+      visitTypeMeeting: 'Збори', visitTypeGroup: 'Група', visitTypePregroup: 'Передгрупа',
+      meetingTypeMidweek: 'Зустріч серед тижня', meetingTypeWeekend: 'Зустріч на вихідних', meetingTypeElders: 'Зустріч старійшин', meetingTypeWithElders: 'Зустріч зі старійшинами', meetingTypePioneers: 'Зустріч з піонерами', meetingTypeOther: 'Інше',
+      meetingTypeLabel: 'Тип зустрічі', dayLabel: 'День тижня', timeLabel: 'Час', placeLabel: 'Місце проведення',
+      weekdayMon: 'Понеділок', weekdayTue: 'Вівторок', weekdayWed: 'Середа', weekdayThu: 'Четвер', weekdayFri: "П'ятниця", weekdaySat: 'Субота', weekdaySun: 'Неділя',
+      serviceTableTime: 'Час', serviceTablePlace: 'Місце проведення зустрічі', serviceTablePartner: 'З ким співпрацюю', serviceTableKind: 'Вид служіння',
+      pastoralName: "Ім'я", pastoralDay: 'День', pastoralTime: 'Час', pastoralReason: 'Причина пастирського відвідування',
+      mealDay: 'День', mealTime: 'Час', mealPlace: 'Місце', mealHost: 'Хто приймає', mealPhone: 'Телефон', mealNote: 'Примітка',
+      pdfPageForAlex: 'Формуляр для Олексія', pdfPageForLydia: 'Формуляр для Лідії', pdfVisitTypeLabel: 'Тип відвідування:',
+      pdfMeetingsSchedule: 'Розклад зустрічей', pdfServicePlan: 'План служіння', pdfPastoralVisits: 'Пастирські відвідування', pdfMeals: 'Обіди', pdfNotes: 'Додаткові нотатки',
+      pdfManualLinesTitle: 'Для нотаток вручну', pdfGeneratedOn: 'Документ сформовано',
+    },
+    en: {
+      visitTypeMeeting: 'Congregation', visitTypeGroup: 'Group', visitTypePregroup: 'Pregroup',
+      meetingTypeMidweek: 'Midweek meeting', meetingTypeWeekend: 'Weekend meeting', meetingTypeElders: "Elders' meeting", meetingTypeWithElders: 'Meeting with elders', meetingTypePioneers: 'Meeting with pioneers', meetingTypeOther: 'Other',
+      meetingTypeLabel: 'Meeting type', dayLabel: 'Day of week', timeLabel: 'Time', placeLabel: 'Place',
+      weekdayMon: 'Monday', weekdayTue: 'Tuesday', weekdayWed: 'Wednesday', weekdayThu: 'Thursday', weekdayFri: 'Friday', weekdaySat: 'Saturday', weekdaySun: 'Sunday',
+      serviceTableTime: 'Time', serviceTablePlace: 'Meeting place', serviceTablePartner: 'Working with', serviceTableKind: 'Type of ministry',
+      pastoralName: 'Name', pastoralDay: 'Day', pastoralTime: 'Time', pastoralReason: 'Reason for shepherding call',
+      mealDay: 'Day', mealTime: 'Time', mealPlace: 'Place', mealHost: 'Host', mealPhone: 'Phone', mealNote: 'Note',
+      pdfPageForAlex: "Alexei's form", pdfPageForLydia: "Lydia's form", pdfVisitTypeLabel: 'Visit type:',
+      pdfMeetingsSchedule: 'Meeting schedule', pdfServicePlan: 'Field service plan', pdfPastoralVisits: 'Shepherding calls', pdfMeals: 'Meals', pdfNotes: 'Additional notes',
+      pdfManualLinesTitle: 'For handwritten notes', pdfGeneratedOn: 'Document generated on',
+    },
+    pl: {
+      visitTypeMeeting: 'Zbór', visitTypeGroup: 'Grupa', visitTypePregroup: 'Pregrupa',
+      meetingTypeMidweek: 'Zebranie w tygodniu', meetingTypeWeekend: 'Zebranie weekendowe', meetingTypeElders: 'Zebranie starszych', meetingTypeWithElders: 'Spotkanie ze starszymi', meetingTypePioneers: 'Spotkanie z pionierami', meetingTypeOther: 'Inne',
+      meetingTypeLabel: 'Rodzaj spotkania', dayLabel: 'Dzień tygodnia', timeLabel: 'Godzina', placeLabel: 'Miejsce',
+      weekdayMon: 'Poniedziałek', weekdayTue: 'Wtorek', weekdayWed: 'Środa', weekdayThu: 'Czwartek', weekdayFri: 'Piątek', weekdaySat: 'Sobota', weekdaySun: 'Niedziela',
+      serviceTableTime: 'Godzina', serviceTablePlace: 'Miejsce spotkania', serviceTablePartner: 'Współpracuję z', serviceTableKind: 'Rodzaj służby',
+      pastoralName: 'Imię', pastoralDay: 'Dzień', pastoralTime: 'Godzina', pastoralReason: 'Powód odwiedzin pasterskich',
+      mealDay: 'Dzień', mealTime: 'Godzina', mealPlace: 'Miejsce', mealHost: 'Kto przyjmuje', mealPhone: 'Telefon', mealNote: 'Uwaga',
+      pdfPageForAlex: 'Formularz dla Aleksieja', pdfPageForLydia: 'Formularz dla Lidii', pdfVisitTypeLabel: 'Rodzaj odwiedzin:',
+      pdfMeetingsSchedule: 'Harmonogram spotkań', pdfServicePlan: 'Plan służby', pdfPastoralVisits: 'Odwiedziny pasterskie', pdfMeals: 'Posiłki', pdfNotes: 'Dodatkowe uwagi',
+      pdfManualLinesTitle: 'Na notatki odręczne', pdfGeneratedOn: 'Dokument utworzono',
+    },
   };
+  function buildVpI18n(lang) {
+    const safeLang = VP_I18N_DICTS[lang] ? lang : 'ru';
+    return {
+      lang: safeLang,
+      WEEKDAYS: ['weekdayMon','weekdayTue','weekdayWed','weekdayThu','weekdayFri','weekdaySat','weekdaySun'],
+      MEETING_TYPES: ['meetingTypeMidweek','meetingTypeWeekend','meetingTypeElders','meetingTypeWithElders','meetingTypePioneers','meetingTypeOther'],
+      MEAL_DAY_KEYS: ['weekdayWed','weekdayThu','weekdayFri','weekdaySat','weekdaySun'],
+      dict: VP_I18N_DICTS[safeLang],
+      t(key) { return this.dict[key] || key; },
+    };
+  }
+  const VP_LANG_NAMES = { ru: 'Русский', uk: 'Українська', en: 'English', pl: 'Polski' };
 
   const DEFAULT_LETTER_TEMPLATE = `Час летить непомітно! Ми з дружиною дуже раді, що прийшов час відвідати ваш збір. Знову для нас велика радість провести з вами час протягом тижня служіння!
 
@@ -275,7 +318,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.23.0',
+      version: '9.27.1',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -361,6 +404,24 @@
       daysDiff(a, b) { const da = this.parseLocalDate(this.iso(a)); const db = this.parseLocalDate(this.iso(b)); if (!da || !db) return 0; return Math.round((da - db) / 86400000); },
       overlaps(startA, endA, startB, endB) { return startA <= endB && endA >= startB; },
       getServiceYearForDate(date) { const d = new Date(date); return d.getMonth() >= App.config.serviceYearStartMonth ? d.getFullYear() : d.getFullYear() - 1; },
+      haversineKm(lat1, lng1, lat2, lng2) {
+        if ([lat1, lng1, lat2, lng2].some((v) => typeof v !== 'number' || Number.isNaN(v))) return null;
+        const R = 6371;
+        const toRad = (v) => (v * Math.PI) / 180;
+        const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      },
+      async geocodeAddress(address) {
+        if (!address || !address.trim()) return null;
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(address)}`);
+          if (!res.ok) return null;
+          const data = await res.json();
+          if (data && data[0]) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), displayName: data[0].display_name };
+        } catch (err) { console.error('Geocoding failed', err); }
+        return null;
+      },
       easterDate(year) {
         // Anonymous Gregorian computus
         const a = year % 19, b = Math.floor(year / 100), c = year % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), month = Math.floor((h + l - 7 * m + 114) / 31) - 1, day = ((h + l - 7 * m + 114) % 31) + 1;
@@ -516,7 +577,7 @@
             if (!Array.isArray(out.letterPages[suffix])) out.letterPages[suffix] = [JSON.parse(JSON.stringify(defaultPage))];
           });
         }
-        if (typeof out.memoTemplate !== 'string' || !out.memoTemplate) out.memoTemplate = DEFAULT_MEMO_TEMPLATE; if (typeof out.senderName !== 'string') out.senderName = ''; if (typeof out.senderAddress !== 'string') out.senderAddress = ''; if (typeof out.senderPhone !== 'string') out.senderPhone = ''; if (typeof out.senderEmail !== 'string') out.senderEmail = ''; if (!out.emailMethod || !['mailto','owa'].includes(out.emailMethod)) out.emailMethod = 'mailto'; if (typeof out.owaUrl !== 'string' || !out.owaUrl) out.owaUrl = 'https://outlook.office.com/mail/deeplink/compose'; return out;
+        if (typeof out.memoTemplate !== 'string' || !out.memoTemplate) out.memoTemplate = DEFAULT_MEMO_TEMPLATE; if (typeof out.senderName !== 'string') out.senderName = ''; if (typeof out.senderAddress !== 'string') out.senderAddress = ''; if (typeof out.senderPhone !== 'string') out.senderPhone = ''; if (typeof out.senderEmail !== 'string') out.senderEmail = ''; if (!out.emailMethod || !['mailto','owa'].includes(out.emailMethod)) out.emailMethod = 'mailto'; if (typeof out.owaUrl !== 'string' || !out.owaUrl) out.owaUrl = 'https://outlook.office.com/mail/deeplink/compose'; if (typeof out.homeAddress !== 'string') out.homeAddress = 'Praha, Česká republika'; if (typeof out.homeLat !== 'number') out.homeLat = null; if (typeof out.homeLng !== 'number') out.homeLng = null; return out;
       },
       createDefaultData() {
         return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version: App.config.version } };
@@ -548,7 +609,7 @@
       normalizeApp(appData) {
         const app = appData && typeof appData === 'object' ? appData : this.createDefaultData();
         app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version: App.config.version };
-        app.events = App.utils.uniqueBy(app.events.map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '', visitType: item.visitType || '', contactName: item.contactName || '', contactPhone: item.contactPhone || '', contactEmail: item.contactEmail || '', contactNote: item.contactNote || '', congNumber: item.congNumber || '' })), (item) => item.id);
+        app.events = App.utils.uniqueBy(app.events.map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '', visitType: item.visitType || '', contactName: item.contactName || '', contactPhone: item.contactPhone || '', contactEmail: item.contactEmail || '', contactNote: item.contactNote || '', congNumber: item.congNumber || '', lat: typeof item.lat === 'number' ? item.lat : null, lng: typeof item.lng === 'number' ? item.lng : null, formLanguage: item.formLanguage || '' })), (item) => item.id);
         app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: item.title || '', note: item.note || '', resultNote: item.resultNote || '', visitForm: item.visitForm || null, flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => item.id);
         Object.keys(app.serviceYears).forEach((year) => {
           const sy = app.serviceYears[year] || {}; if (!sy.weeks || typeof sy.weeks !== 'object') sy.weeks = {};
@@ -704,12 +765,15 @@
         if (App.els.eventContactEmailInput) App.els.eventContactEmailInput.value = '';
         if (App.els.eventContactNoteInput) App.els.eventContactNoteInput.value = '';
         if (App.els.eventCongNumberInput) App.els.eventCongNumberInput.value = '';
+        App.state.editingEventCoords = null;
+        if (App.els.eventDistanceStatus) App.els.eventDistanceStatus.textContent = '';
+        if (App.els.eventFormLanguageSelect) App.els.eventFormLanguageSelect.value = '';
         if (App.els.deleteEventBtn) App.els.deleteEventBtn.hidden = true;
       },
       saveEventTemplate() {
         try {
           const name = App.els.eventNameInput?.value.trim(); if (!name) return App.utils.toast(App.utils.t('enter_event_name'));
-          const payload = { id: App.state.editingEventId || App.utils.uid('evt'), name, color: App.utils.clampColor(App.els.eventColorInput?.value), address: App.els.eventAddressInput?.value.trim() || '', schedule: App.els.eventScheduleInput?.value.trim() || '', visitType: App.els.eventVisitTypeInput?.value || '', contactName: App.els.eventContactNameInput?.value.trim() || '', contactPhone: App.els.eventContactPhoneInput?.value.trim() || '', contactEmail: App.els.eventContactEmailInput?.value.trim() || '', contactNote: App.els.eventContactNoteInput?.value.trim() || '', congNumber: App.els.eventCongNumberInput?.value.trim() || '' };
+          const payload = { id: App.state.editingEventId || App.utils.uid('evt'), name, color: App.utils.clampColor(App.els.eventColorInput?.value), address: App.els.eventAddressInput?.value.trim() || '', schedule: App.els.eventScheduleInput?.value.trim() || '', visitType: App.els.eventVisitTypeInput?.value || '', contactName: App.els.eventContactNameInput?.value.trim() || '', contactPhone: App.els.eventContactPhoneInput?.value.trim() || '', contactEmail: App.els.eventContactEmailInput?.value.trim() || '', contactNote: App.els.eventContactNoteInput?.value.trim() || '', congNumber: App.els.eventCongNumberInput?.value.trim() || '', lat: App.state.editingEventCoords?.lat ?? null, lng: App.state.editingEventCoords?.lng ?? null, formLanguage: App.els.eventFormLanguageSelect?.value || '' };
           const index = App.state.app.events.findIndex((event) => event.id === payload.id); if (index >= 0) App.state.app.events[index] = payload; else App.state.app.events.push(payload);
           // Dedup by id only — a content-based key here previously risked collapsing two
           // distinct events that happened to share name/color/address/schedule.
@@ -1035,7 +1099,8 @@
           'statsModal','statsModalTitle','statsModalSub','statsModalBody','statsModalCloseBtn','statsModalOkBtn','statsBtn','plannerBtn',
           'plannerModal','plannerModalCloseBtn','plannerStartInput','plannerEndInput','plannerEventsList','plannerPreview','plannerCancelBtn','plannerApplyBtn',
           'pinOverlay','pinInput','pinError','pinSubmitBtn','pinSetupBtn','holidaysToggle','editorResultInput','editorResultLabel',
-          'eventCongNumberInput','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow',
+          'eventCongNumberInput','eventFormLanguageSelect','geocodeEventBtn','eventDistanceStatus','homeAddressInput','geocodeHomeBtn','homeGeocodeStatus','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow',
+          'vfLanguageSelect','vfLanguageReminder',
           'visitFormModal','visitFormSub','visitFormCloseBtn','vfVisitType','vfMeetingsList','vfAddMeetingBtn','vfServiceDaysList','vfAddDayBtn','vfPastoralHeading','vfPastoralList','vfAddPastoralBtn','vfMealsList','vfAddMealBtn','vfNotesInput','vfCloseBtn2','vfGeneratePdfBtn',
           'letterModal','letterModalSub','letterModalCloseBtn','letterTextInput','letterAttachStatus','letterResetBtn','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn',
           'noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
@@ -1919,7 +1984,14 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.plannerStartInput && !App.els.plannerStartInput.value) App.els.plannerStartInput.value = App.utils.iso(new Date());
         if (App.els.plannerEndInput && !App.els.plannerEndInput.value) App.els.plannerEndInput.value = App.utils.iso(stats.syEnd);
         if (App.els.plannerEventsList) App.els.plannerEventsList.innerHTML = stats.unvisited.length
-          ? stats.unvisited.map((ev) => `<label style="display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:12px"><input type="checkbox" data-planner-event="${App.utils.escapeAttr(ev.id)}" style="width:auto" checked /><span class="dot" style="background:${App.utils.clampColor(ev.color)}"></span>${App.utils.escapeHtml(ev.name)}</label>`).join('')
+          ? stats.unvisited.map((ev) => {
+              const settings = App.state.app.settings;
+              const hasHome = typeof settings.homeLat === 'number' && typeof settings.homeLng === 'number';
+              const hasCoords = typeof ev.lat === 'number' && typeof ev.lng === 'number';
+              const km = (hasHome && hasCoords) ? App.utils.haversineKm(settings.homeLat, settings.homeLng, ev.lat, ev.lng) : null;
+              const distLabel = km !== null ? `<span class="small" style="color:var(--muted)">~${Math.round(km)} км</span>` : `<span class="small" style="color:var(--muted)">без координат</span>`;
+              return `<label style="display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:12px"><input type="checkbox" data-planner-event="${App.utils.escapeAttr(ev.id)}" style="width:auto" checked /><span class="dot" style="background:${App.utils.clampColor(ev.color)}"></span><span style="flex:1">${App.utils.escapeHtml(ev.name)}</span>${distLabel}</label>`;
+            }).join('')
           : `<div class="empty">${App.utils.t('unvisited_none')}</div>`;
         if (App.els.plannerPreview) App.els.plannerPreview.textContent = '';
         this.openModal(App.els.plannerModal);
@@ -1930,26 +2002,94 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (!rs || !re || rs > re) return App.utils.toast(App.utils.t('wrong_end_date'));
         const selectedIds = Array.from(document.querySelectorAll('[data-planner-event]:checked')).map((el) => el.dataset.plannerEvent);
         if (!selectedIds.length) return App.utils.toast(App.utils.t('planner_nothing'));
-        // Collect busy weeks (any entry overlapping that week)
+
+        const NEAR_KM = 100; // day-trip range from home — can return every week
+        const CLUSTER_KM = 150; // congregations within this of each other join the same away-tour
+        const MAX_TOUR_WEEKS = 6; // "можем оставаться на посещениях от пяти до максимум шести недель"
+
+        const settings = App.state.app.settings;
+        const hasHome = typeof settings.homeLat === 'number' && typeof settings.homeLng === 'number';
+        const selectedEvents = selectedIds.map((id) => App.data.getEventById(id)).filter(Boolean);
+        const withDistance = selectedEvents.map((ev) => {
+          const hasCoords = typeof ev.lat === 'number' && typeof ev.lng === 'number';
+          const distance = (hasHome && hasCoords) ? App.utils.haversineKm(settings.homeLat, settings.homeLng, ev.lat, ev.lng) : null;
+          return { event: ev, distance };
+        });
+        // Congregations without coordinates are treated as "near" by default — we simply can't
+        // tell how far they are, so they shouldn't be forced into a far-away tour.
+        const nearList = withDistance.filter((e) => e.distance === null || e.distance <= NEAR_KM);
+        const farPool = withDistance.filter((e) => e.distance !== null && e.distance > NEAR_KM);
+        const uncoded = withDistance.filter((e) => e.distance === null).length;
+
+        // Greedy geographic clustering: repeatedly take the farthest remaining congregation as a
+        // seed and pull in every other remaining one within CLUSTER_KM of any cluster member.
+        const clusters = [];
+        const remaining = [...farPool];
+        while (remaining.length) {
+          remaining.sort((a, b) => b.distance - a.distance);
+          const cluster = [remaining.shift()];
+          let grew = true;
+          while (grew) {
+            grew = false;
+            for (let i = remaining.length - 1; i >= 0; i -= 1) {
+              const candidate = remaining[i];
+              const closeToCluster = cluster.some((m) => App.utils.haversineKm(m.event.lat, m.event.lng, candidate.event.lat, candidate.event.lng) <= CLUSTER_KM);
+              if (closeToCluster) { cluster.push(candidate); remaining.splice(i, 1); grew = true; }
+            }
+          }
+          // Order the tour starting from the member closest to home (natural way in/out), so
+          // consecutive weeks move outward instead of jumping randomly between cities.
+          cluster.sort((a, b) => a.distance - b.distance);
+          clusters.push(cluster);
+        }
+        // A cluster with more congregations than fit in one stretch becomes several consecutive tours.
+        const tours = [];
+        clusters.forEach((cluster) => { for (let i = 0; i < cluster.length; i += MAX_TOUR_WEEKS) tours.push(cluster.slice(i, i + MAX_TOUR_WEEKS)); });
+
         const isWeekBusy = (weekStart, weekEnd) => (App.state.app.entries || []).some((entry) => {
           const es = App.utils.parseLocalDate(entry.start), ee = App.utils.parseLocalDate(entry.end);
           return es && ee && App.utils.overlaps(es, ee, weekStart, weekEnd);
         });
-        let cursor = App.utils.startOfWeek(rs);
-        if (cursor < rs) cursor = App.utils.addDays(cursor, 7);
+        const occupied = new Set();
+        const weekFree = (weekStart) => !occupied.has(App.utils.iso(weekStart)) && !isWeekBusy(weekStart, App.utils.addDays(weekStart, 6));
         const assignments = [];
-        for (const eventId of selectedIds) {
-          while (cursor <= re && isWeekBusy(cursor, App.utils.addDays(cursor, 6))) cursor = App.utils.addDays(cursor, 7);
+
+        // Place each far-away tour into the first run of fully-free consecutive weeks that fits it.
+        tours.forEach((tour) => {
+          let cursor = App.utils.startOfWeek(rs); if (cursor < rs) cursor = App.utils.addDays(cursor, 7);
+          while (cursor <= re) {
+            let fits = true;
+            for (let k = 0; k < tour.length; k += 1) { if (!weekFree(App.utils.addDays(cursor, k * 7))) { fits = false; break; } }
+            if (fits) {
+              tour.forEach((member, k) => {
+                const weekStart = App.utils.addDays(cursor, k * 7);
+                occupied.add(App.utils.iso(weekStart));
+                const vStart = App.utils.addDays(weekStart, 1), vEnd = App.utils.addDays(weekStart, 6);
+                assignments.push({ eventId: member.event.id, event: member.event, start: App.utils.iso(vStart), end: App.utils.iso(vEnd) });
+              });
+              break;
+            }
+            cursor = App.utils.addDays(cursor, 7);
+          }
+        });
+
+        // Fill remaining free weeks with the near (day-trip) congregations, in list order.
+        let cursor = App.utils.startOfWeek(rs); if (cursor < rs) cursor = App.utils.addDays(cursor, 7);
+        for (const { event } of nearList) {
+          while (cursor <= re && !weekFree(cursor)) cursor = App.utils.addDays(cursor, 7);
           if (cursor > re) break;
-          const event = App.data.getEventById(eventId);
-          // Visit Tue–Sun of that week (typical circuit visit span)
+          occupied.add(App.utils.iso(cursor));
           const vStart = App.utils.addDays(cursor, 1), vEnd = App.utils.addDays(cursor, 6);
-          assignments.push({ eventId, event, start: App.utils.iso(vStart), end: App.utils.iso(vEnd) });
+          assignments.push({ eventId: event.id, event, start: App.utils.iso(vStart), end: App.utils.iso(vEnd) });
           cursor = App.utils.addDays(cursor, 7);
         }
+
         if (!assignments.length) return App.utils.toast(App.utils.t('planner_no_free_weeks'));
+        assignments.sort((a, b) => String(a.start).localeCompare(String(b.start)));
         const summary = assignments.map((a) => `${a.event?.name}: ${App.utils.prettyDate(a.start)} — ${App.utils.prettyDate(a.end)}`).join('\n');
-        if (!window.confirm(`${App.utils.t('planner_confirm')} (${assignments.length}):\n\n${summary}`)) return;
+        const clusterNote = tours.length ? `\n\n${tours.length > clusters.length ? tours.length : clusters.length} дальн. выезд(ов) сгруппировано вместе.` : '';
+        const uncodedNote = uncoded ? `\n⚠️ ${uncoded} собрание(й) без координат учтено как «рядом» — добавь адрес и нажми 📍 в редакторе собрания для точной группировки.` : '';
+        if (!window.confirm(`${App.utils.t('planner_confirm')} (${assignments.length}):${uncodedNote}\n\n${summary}${clusterNote}`)) return;
         assignments.forEach((a) => App.state.app.entries.push({ id: App.utils.uid('entry'), eventId: a.eventId, start: a.start, end: a.end, title: a.event?.name || '', note: '', flags: { f302: false, letter: false }, resultNote: '', source: 'entry' }));
         App.store.save();
         this.closeModal(App.els.plannerModal);
@@ -2180,6 +2320,61 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.state.app.settings['letterTemplate' + suffix] = html;
         App.store.save();
       },
+      renderEventDistanceStatus() {
+        if (!App.els.eventDistanceStatus) return;
+        const coords = App.state.editingEventCoords;
+        const settings = App.state.app.settings;
+        if (!coords) { App.els.eventDistanceStatus.textContent = ''; return; }
+        if (typeof settings.homeLat === 'number' && typeof settings.homeLng === 'number') {
+          const km = App.utils.haversineKm(settings.homeLat, settings.homeLng, coords.lat, coords.lng);
+          App.els.eventDistanceStatus.textContent = km === null ? '📍 Координаты сохранены' : `📍 ~${Math.round(km)} км от дома`;
+        } else {
+          App.els.eventDistanceStatus.textContent = '📍 Координаты сохранены (укажи место проживания в Настройках, чтобы видеть расстояние)';
+        }
+      },
+      async geocodeCurrentEvent() {
+        const address = App.els.eventAddressInput?.value.trim();
+        if (!address) return App.utils.toast('Сначала укажи адрес собрания');
+        if (App.els.eventDistanceStatus) App.els.eventDistanceStatus.textContent = 'Определяю координаты…';
+        const result = await App.utils.geocodeAddress(address);
+        if (!result) { if (App.els.eventDistanceStatus) App.els.eventDistanceStatus.textContent = '⚠️ Не удалось определить координаты по этому адресу'; return; }
+        App.state.editingEventCoords = { lat: result.lat, lng: result.lng };
+        // If editing an existing (already saved) event, persist immediately so the user doesn't have to remember to hit Save.
+        if (App.state.editingEventId) {
+          const existing = App.data.getEventById(App.state.editingEventId);
+          if (existing) { existing.lat = result.lat; existing.lng = result.lng; App.store.save(); }
+        }
+        App.ui.renderEventDistanceStatus();
+      },
+      async geocodeHome() {
+        const address = App.els.homeAddressInput?.value.trim();
+        if (!address) return App.utils.toast('Сначала укажи город проживания');
+        if (App.els.homeGeocodeStatus) App.els.homeGeocodeStatus.textContent = 'Определяю координаты…';
+        const result = await App.utils.geocodeAddress(address);
+        if (!result) { if (App.els.homeGeocodeStatus) App.els.homeGeocodeStatus.textContent = '⚠️ Не удалось определить координаты по этому адресу'; return; }
+        App.state.app.settings.homeLat = result.lat;
+        App.state.app.settings.homeLng = result.lng;
+        App.store.save();
+        if (App.els.homeGeocodeStatus) App.els.homeGeocodeStatus.textContent = `📍 Найдено: ${result.displayName || address}`;
+        App.utils.toast('Место проживания сохранено');
+      },
+      retranslateVisitFormWeekdays(oldLang, newLang) {
+        const state = App.state.visitFormData; if (!state) return;
+        const weekdayKeys = ['weekdayMon','weekdayTue','weekdayWed','weekdayThu','weekdayFri','weekdaySat','weekdaySun'];
+        const newDict = VP_I18N_DICTS[newLang] || VP_I18N_DICTS.ru;
+        // A day label may have been typed in ANY language (including before this feature existed,
+        // or after manual edits) — match it against every known language's weekday names, not just
+        // the one it was supposedly created in, then rewrite it in the newly selected language.
+        const findKeyForLabel = (label) => weekdayKeys.find((key) => Object.values(VP_I18N_DICTS).some((dict) => dict[key] === label));
+        (state.servicePlan || []).forEach((day) => {
+          const key = findKeyForLabel(day.label);
+          if (key) day.label = newDict[key];
+        });
+        (state.meals || []).forEach((meal) => {
+          const key = findKeyForLabel(meal.day);
+          if (key) meal.day = newDict[key];
+        });
+      },
       showPinGateIfNeeded() {
         const stored = this.getStoredPin();
         if (!stored || !App.els.pinOverlay) return;
@@ -2216,7 +2411,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         };
         const pastoralCount = { pregroup: 0, group: 2, meeting: 3 };
         if (!state.servicePlan.length && dayLabels[type]) {
-          state.servicePlan = dayLabels[type].map((dayKey) => ({ id: App.utils.uid('vd'), label: VP_I18N.t(dayKey), rows: [{ id: App.utils.uid('vr'), time: '', place: '', partner: '', kind: '', session: '' }] }));
+          state.servicePlan = dayLabels[type].map((dayKey) => ({ id: App.utils.uid('vd'), label: buildVpI18n(state.language).t(dayKey), rows: [{ id: App.utils.uid('vr'), time: '', place: '', partner: '', kind: '', session: '' }] }));
         }
         if (!state.pastoralVisits.length) {
           const count = pastoralCount[type] || 0;
@@ -2233,14 +2428,29 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.state.visitFormEntryId = entry.id;
         const visitTypeMap = { congregation: 'meeting', group: 'group', pregroup: 'pregroup' };
         const saved = entry.visitForm;
-        const state = saved ? JSON.parse(JSON.stringify(saved)) : { visitType: visitTypeMap[event?.visitType] || 'meeting', meetings: [], servicePlan: [], pastoralVisits: [], meals: [], notes: '' };
+        const defaultLang = event?.formLanguage || App.state.app.settings.language || 'ru';
+        const state = saved ? JSON.parse(JSON.stringify(saved)) : { visitType: visitTypeMap[event?.visitType] || 'meeting', language: defaultLang, meetings: [], servicePlan: [], pastoralVisits: [], meals: [], notes: '' };
+        if (!state.language) state.language = defaultLang; // older saved forms predating this field
         this.vpDefaultsForType(state, state.visitType);
         App.state.visitFormData = state;
         if (App.els.vfVisitType) App.els.vfVisitType.value = state.visitType;
+        if (App.els.vfLanguageSelect) App.els.vfLanguageSelect.value = state.language;
         if (App.els.vfNotesInput) App.els.vfNotesInput.value = state.notes || '';
         if (App.els.visitFormSub) App.els.visitFormSub.textContent = `${entry.title || event?.name || ''} · ${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}`;
+        this.renderVisitFormLanguageReminder();
         this.renderVisitFormLists();
         this.openModal(App.els.visitFormModal);
+      },
+      renderVisitFormLanguageReminder() {
+        if (!App.els.vfLanguageReminder) return;
+        const lang = App.state.visitFormData?.language || 'ru';
+        const interfaceLang = App.state.app.settings.language || 'ru';
+        const langName = VP_LANG_NAMES[lang] || lang;
+        if (lang !== interfaceLang) {
+          App.els.vfLanguageReminder.innerHTML = `⚠️ Обрати внимание: формуляр составляется на языке <strong>${App.utils.escapeHtml(langName)}</strong>, а интерфейс программы сейчас на языке <strong>${App.utils.escapeHtml(VP_LANG_NAMES[interfaceLang] || interfaceLang)}</strong>. Проверь, что это правильный язык для данного собрания, прежде чем заполнять поля.`;
+        } else {
+          App.els.vfLanguageReminder.innerHTML = `🌐 Формуляр составляется на языке: <strong>${App.utils.escapeHtml(langName)}</strong> (совпадает с языком интерфейса).`;
+        }
       },
       saveVisitFormState() {
         const entry = App.state.app.entries.find((e) => e.id === App.state.visitFormEntryId);
@@ -2252,11 +2462,12 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       renderVisitFormLists() {
         const state = App.state.visitFormData; if (!state) return;
         const esc = App.utils.escapeHtml, escA = App.utils.escapeAttr;
+        const vpi = buildVpI18n(state.language);
         // Meetings
         if (App.els.vfMeetingsList) App.els.vfMeetingsList.innerHTML = state.meetings.length ? state.meetings.map((m) => `
           <div class="card" style="padding:10px;box-shadow:none" data-row-id="${escA(m.id)}" data-row-kind="meeting">
             <div class="form-grid">
-              <label><span class="small">Тип</span><select data-field="type">${VP_I18N.MEETING_TYPES.map((mt) => `<option value="${mt}" ${m.type === mt ? 'selected' : ''}>${esc(VP_I18N.t(mt))}</option>`).join('')}</select></label>
+              <label><span class="small">Тип</span><select data-field="type">${vpi.MEETING_TYPES.map((mt) => `<option value="${mt}" ${m.type === mt ? 'selected' : ''}>${esc(vpi.t(mt))}</option>`).join('')}</select></label>
               <label><span class="small">День</span><input data-field="day" type="text" value="${escA(m.day)}" /></label>
               <label><span class="small">Время</span><input data-field="time" type="text" value="${escA(m.time)}" /></label>
               <label><span class="small">Место</span><input data-field="place" type="text" value="${escA(m.place)}" /></label>
@@ -2267,14 +2478,23 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.vfServiceDaysList) App.els.vfServiceDaysList.innerHTML = state.servicePlan.map((day) => `
           <div class="card" style="padding:10px;box-shadow:none" data-day-id="${escA(day.id)}">
             <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><input data-day-field="label" type="text" value="${escA(day.label)}" style="font-weight:700" /><button class="btn danger" type="button" data-remove-day style="white-space:nowrap">Удалить день</button></div>
-            ${day.rows.map((r) => `
+            ${day.rows.map((r) => {
+              const listId = r.session === 'before' ? 'vfTimeOptionsBefore' : r.session === 'after' ? 'vfTimeOptionsAfter' : 'vfTimeOptionsDefault';
+              return `
               <div class="form-grid" data-row-id="${escA(r.id)}" data-row-kind="service" data-day-id="${escA(day.id)}" style="margin-bottom:8px">
-                <label><span class="small">Время</span><input data-field="time" type="text" value="${escA(r.time)}" /></label>
+                <label><span class="small">Время</span>
+                  <div class="session-toggle">
+                    <button type="button" class="session-toggle-btn ${r.session === 'before' ? 'active' : ''}" data-set-session="before">До обеда</button>
+                    <button type="button" class="session-toggle-btn ${r.session === 'after' ? 'active' : ''}" data-set-session="after">После обеда</button>
+                  </div>
+                  <input data-field="time" type="text" list="${listId}" value="${escA(r.time)}" placeholder="чч:мм" />
+                </label>
                 <label><span class="small">Место</span><input data-field="place" type="text" value="${escA(r.place)}" /></label>
                 <label><span class="small">С кем</span><input data-field="partner" type="text" value="${escA(r.partner)}" /></label>
                 <label><span class="small">Вид служения</span><input data-field="kind" type="text" value="${escA(r.kind)}" /></label>
                 <button class="btn danger" type="button" data-remove-row style="grid-column:1 / -1">Удалить строку</button>
-              </div>`).join('')}
+              </div>`;
+            }).join('')}
             <button class="btn" type="button" data-add-service-row="${escA(day.id)}">+ Строка</button>
           </div>`).join('') || '<div class="empty">Дни ещё не добавлены</div>';
         // Pastoral visits — hidden entirely for pregroup, matching the original app's rule
@@ -2296,11 +2516,12 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
             </div>`).join('') : `<div class="empty">Посещения ещё не добавлены</div>`;
         }
         // Meals
+        const MEAL_TIME_OPTIONS = ['12:30', '12:45', '13:00', '13:30'];
         if (App.els.vfMealsList) App.els.vfMealsList.innerHTML = state.meals.length ? state.meals.map((m) => `
           <div class="card" style="padding:10px;box-shadow:none" data-row-id="${escA(m.id)}" data-row-kind="meal">
             <div class="form-grid">
-              <label><span class="small">День</span><input data-field="day" type="text" value="${escA(m.day)}" /></label>
-              <label><span class="small">Время</span><input data-field="time" type="text" value="${escA(m.time)}" /></label>
+              <label><span class="small">День</span><select data-field="day"><option value=""></option>${vpi.MEAL_DAY_KEYS.map((dk) => { const label = vpi.t(dk); return `<option value="${escA(label)}" ${m.day === label ? 'selected' : ''}>${esc(label)}</option>`; }).join('')}</select></label>
+              <label><span class="small">Время</span><select data-field="time"><option value=""></option>${MEAL_TIME_OPTIONS.map((tm) => `<option value="${tm}" ${m.time === tm ? 'selected' : ''}>${tm}</option>`).join('')}</select></label>
               <label><span class="small">Место</span><input data-field="place" type="text" value="${escA(m.place)}" /></label>
               <label><span class="small">Кто принимает</span><input data-field="host" type="text" value="${escA(m.host)}" /></label>
               <label><span class="small">Телефон</span><input data-field="phone" type="text" value="${escA(m.phone)}" /></label>
@@ -2341,6 +2562,11 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           dayCard.querySelectorAll('[data-row-kind="service"]').forEach((row) => {
             const r = day.rows.find((rr) => rr.id === row.dataset.rowId); if (!r) return;
             row.querySelectorAll('[data-field]').forEach((input) => input.addEventListener('input', () => { r[input.dataset.field] = input.value; App.ui.saveVisitFormState(); }));
+            row.querySelectorAll('[data-set-session]').forEach((btn) => btn.addEventListener('click', () => {
+              const chosen = btn.dataset.setSession;
+              r.session = r.session === chosen ? '' : chosen; // click again to clear
+              App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
+            }));
             row.querySelector('[data-remove-row]')?.addEventListener('click', () => {
               const idx = day.rows.findIndex((rr) => rr.id === r.id); if (idx >= 0) day.rows.splice(idx, 1);
               App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
@@ -2352,7 +2578,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const state = App.state.visitFormData;
         if (!state) return null;
         if (typeof window.PdfGenerator === 'undefined' || !window.jspdf) { App.utils.toast('Модуль PDF ещё не загрузился, попробуйте ещё раз через секунду.'); return null; }
-        return window.PdfGenerator.generate(state, VP_I18N);
+        return window.PdfGenerator.generate(state, buildVpI18n(state.language));
       },
       // ===================== Letter PDF (preserves the original document's layout) =====================
       buildLetterPdfDoc(entry, event) {
@@ -2714,6 +2940,9 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           if (App.els.eventContactEmailInput) App.els.eventContactEmailInput.value = event?.contactEmail || '';
           if (App.els.eventContactNoteInput) App.els.eventContactNoteInput.value = event?.contactNote || '';
           if (App.els.eventCongNumberInput) App.els.eventCongNumberInput.value = event?.congNumber || '';
+          App.state.editingEventCoords = (typeof event?.lat === 'number' && typeof event?.lng === 'number') ? { lat: event.lat, lng: event.lng } : null;
+          App.ui.renderEventDistanceStatus();
+          if (App.els.eventFormLanguageSelect) App.els.eventFormLanguageSelect.value = event?.formLanguage || '';
           App.ui.openModal(App.els.eventEditorModal);
           if (App.els.deleteEventBtn) App.els.deleteEventBtn.hidden = false;
           App.els.eventNameInput?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -2752,7 +2981,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         }));
         document.querySelectorAll('[data-delete-note]').forEach((btn) => btn.addEventListener('click', () => App.actions.deleteNote(btn.dataset.deleteNoteYear, btn.dataset.deleteNote)));
       },
-      renderSettings() { if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.letterTemplateEditor && document.activeElement !== App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = App.state.app.settings['letterTemplate' + (App.state.letterEditingType || 'Congregation')] || DEFAULT_LETTER_TEMPLATE_HTML; this.renderLetterPagesList(); if (App.els.senderNameInput && document.activeElement !== App.els.senderNameInput) App.els.senderNameInput.value = App.state.app.settings.senderName || ''; if (App.els.senderAddressInput && document.activeElement !== App.els.senderAddressInput) App.els.senderAddressInput.value = App.state.app.settings.senderAddress || ''; if (App.els.senderPhoneInput && document.activeElement !== App.els.senderPhoneInput) App.els.senderPhoneInput.value = App.state.app.settings.senderPhone || ''; if (App.els.senderEmailInput && document.activeElement !== App.els.senderEmailInput) App.els.senderEmailInput.value = App.state.app.settings.senderEmail || ''; if (App.els.emailMethodSelect) App.els.emailMethodSelect.value = App.state.app.settings.emailMethod || 'mailto'; if (App.els.owaUrlInput && document.activeElement !== App.els.owaUrlInput) App.els.owaUrlInput.value = App.state.app.settings.owaUrl || 'https://outlook.office.com/mail/deeplink/compose'; if (App.els.owaUrlRow) App.els.owaUrlRow.style.display = (App.state.app.settings.emailMethod === 'owa') ? '' : 'none'; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
+      renderSettings() { if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.letterTemplateEditor && document.activeElement !== App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = App.state.app.settings['letterTemplate' + (App.state.letterEditingType || 'Congregation')] || DEFAULT_LETTER_TEMPLATE_HTML; this.renderLetterPagesList(); if (App.els.senderNameInput && document.activeElement !== App.els.senderNameInput) App.els.senderNameInput.value = App.state.app.settings.senderName || ''; if (App.els.senderAddressInput && document.activeElement !== App.els.senderAddressInput) App.els.senderAddressInput.value = App.state.app.settings.senderAddress || ''; if (App.els.senderPhoneInput && document.activeElement !== App.els.senderPhoneInput) App.els.senderPhoneInput.value = App.state.app.settings.senderPhone || ''; if (App.els.senderEmailInput && document.activeElement !== App.els.senderEmailInput) App.els.senderEmailInput.value = App.state.app.settings.senderEmail || ''; if (App.els.emailMethodSelect) App.els.emailMethodSelect.value = App.state.app.settings.emailMethod || 'mailto'; if (App.els.owaUrlInput && document.activeElement !== App.els.owaUrlInput) App.els.owaUrlInput.value = App.state.app.settings.owaUrl || 'https://outlook.office.com/mail/deeplink/compose'; if (App.els.owaUrlRow) App.els.owaUrlRow.style.display = (App.state.app.settings.emailMethod === 'owa') ? '' : 'none'; if (App.els.homeAddressInput && document.activeElement !== App.els.homeAddressInput) App.els.homeAddressInput.value = App.state.app.settings.homeAddress || ''; if (App.els.homeGeocodeStatus && typeof App.state.app.settings.homeLat === 'number') App.els.homeGeocodeStatus.textContent = `📍 Координаты сохранены (${App.state.app.settings.homeLat.toFixed(3)}, ${App.state.app.settings.homeLng.toFixed(3)})`; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
       closeMobileMenu() {
         if (App.els.appRoot) App.els.appRoot.classList.remove('menu-open');
         if (App.els.mobileOverlay) {
@@ -2847,6 +3076,15 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.ui.vpDefaultsForType(App.state.visitFormData, e.target.value);
         App.ui.saveVisitFormState(); App.ui.renderVisitFormLists();
       });
+      App.els.vfLanguageSelect?.addEventListener('change', (e) => {
+        if (!App.state.visitFormData) return;
+        const oldLang = App.state.visitFormData.language;
+        App.state.visitFormData.language = e.target.value;
+        App.ui.retranslateVisitFormWeekdays(oldLang, e.target.value);
+        App.ui.saveVisitFormState();
+        App.ui.renderVisitFormLanguageReminder();
+        App.ui.renderVisitFormLists();
+      });
       App.els.vfNotesInput?.addEventListener('input', () => App.ui.saveVisitFormState());
       App.els.vfAddMeetingBtn?.addEventListener('click', () => {
         if (!App.state.visitFormData) return;
@@ -2912,6 +3150,9 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.ui.renderLetterPagesList();
       }));
       App.els.senderNameInput?.addEventListener('input', (e) => { App.state.app.settings.senderName = e.target.value; App.store.save(); });
+      App.els.geocodeEventBtn?.addEventListener('click', () => App.ui.geocodeCurrentEvent());
+      App.els.geocodeHomeBtn?.addEventListener('click', () => App.ui.geocodeHome());
+      App.els.homeAddressInput?.addEventListener('input', (e) => { App.state.app.settings.homeAddress = e.target.value; App.store.save(); });
       App.els.senderAddressInput?.addEventListener('input', (e) => { App.state.app.settings.senderAddress = e.target.value; App.store.save(); });
       App.els.senderPhoneInput?.addEventListener('input', (e) => { App.state.app.settings.senderPhone = e.target.value; App.store.save(); });
       App.els.senderEmailInput?.addEventListener('input', (e) => { App.state.app.settings.senderEmail = e.target.value; App.store.save(); });

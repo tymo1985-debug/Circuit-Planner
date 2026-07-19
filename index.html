@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.23.0</title>
+  <title>Service Year Planner v9.27.1</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="favicon.ico">
@@ -77,6 +77,9 @@
   .rte-editor{min-height:220px;max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface)}
   .rte-editor div{margin-bottom:10px}
   .rte-editor:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .session-toggle{display:flex;gap:4px;margin-bottom:4px}
+  .session-toggle-btn{font-size:11px;padding:3px 7px;border-radius:8px;border:1px solid var(--line);background:var(--surface2);color:var(--muted);cursor:pointer}
+  .session-toggle-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
   [hidden]{display:none !important}
   .sy-day.holiday:not(.today) span{color:#b91c1c;font-weight:800}
   .holiday-mark{font-size:10px;margin-left:3px}
@@ -222,7 +225,7 @@ body::before{display:none !important}
   <div class="app" id="appRoot">
     <div class="mobile-overlay" id="mobileOverlay" hidden></div>
     <aside class="sidebar">
-      <div class="brand"><div class="logo"><svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="150" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="336" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="120" y="140" width="272" height="256" rx="32" fill="#f4faf6"/><rect x="120" y="140" width="272" height="72" rx="32" fill="#15532d"/><rect x="120" y="180" width="272" height="32" fill="#15532d"/><circle cx="160" cy="252" r="10" fill="#bfe3cd"/><circle cx="200" cy="252" r="10" fill="#bfe3cd"/><circle cx="240" cy="252" r="10" fill="#bfe3cd"/><circle cx="160" cy="292" r="10" fill="#bfe3cd"/><path d="M204 318 L244 358 L316 274" fill="none" stroke="#1f7a45" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>Service Year Planner</h1><p>v9.23.0 • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo"><svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="150" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="336" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="120" y="140" width="272" height="256" rx="32" fill="#f4faf6"/><rect x="120" y="140" width="272" height="72" rx="32" fill="#15532d"/><rect x="120" y="180" width="272" height="32" fill="#15532d"/><circle cx="160" cy="252" r="10" fill="#bfe3cd"/><circle cx="200" cy="252" r="10" fill="#bfe3cd"/><circle cx="240" cy="252" r="10" fill="#bfe3cd"/><circle cx="160" cy="292" r="10" fill="#bfe3cd"/><path d="M204 318 L244 358 L316 274" fill="none" stroke="#1f7a45" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>Service Year Planner</h1><p>v9.27.1 • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
@@ -232,7 +235,7 @@ body::before{display:none !important}
         <div style="display:flex;align-items:center;gap:14px">
           <button class="btn mobile-menu-btn" id="mobileMenuToggleBtn" type="button" aria-label="Открыть меню" aria-expanded="false">☰ Меню</button>
           <div>
-            <div class="version-badge">Версия: v9.23.0</div>
+            <div class="version-badge">Версия: v9.27.1</div>
             <h2 id="screenTitle">Календарь</h2>
             <p id="screenSubtitle"></p>
           </div>
@@ -285,8 +288,9 @@ body::before{display:none !important}
   <option value="#8e24aa">🟣 Пурпурный</option>
   <option value="#f4511e">🟠 Рыжий</option>
   <option value="#43a047">🟢 Светло-зелёный</option>
-</select></div><div><label class="small">Адрес</label><input id="eventAddressInput" type="text" /></div><div><label class="small">Расписание</label><input id="eventScheduleInput" type="text" placeholder="Ср 19:00, Сб 10:00" /></div><div><label class="small">Тип визита (для напоминаний S302/письмо)</label><select id="eventVisitTypeInput"><option value="">Не визит (обычная запись)</option><option value="congregation">Собрание</option><option value="group">Группа</option><option value="pregroup">Предгруппа</option></select></div>
+</select></div><div><label class="small">Адрес</label><div style="display:flex;gap:6px"><input id="eventAddressInput" type="text" /><button class="icon-btn" type="button" id="geocodeEventBtn" title="Определить координаты для планирования">📍</button></div><div class="small" id="eventDistanceStatus" style="margin-top:4px;color:var(--muted)"></div></div><div><label class="small">Расписание</label><input id="eventScheduleInput" type="text" placeholder="Ср 19:00, Сб 10:00" /></div><div><label class="small">Тип визита (для напоминаний S302/письмо)</label><select id="eventVisitTypeInput"><option value="">Не визит (обычная запись)</option><option value="congregation">Собрание</option><option value="group">Группа</option><option value="pregroup">Предгруппа</option></select></div>
 <div><label class="small">№ собрания (для писем, необязательно)</label><input id="eventCongNumberInput" type="text" placeholder="Например: 14761" /></div>
+<div><label class="small">🌐 Язык формуляра визита по умолчанию</label><select id="eventFormLanguageSelect"><option value="">Как язык интерфейса</option><option value="ru">Русский</option><option value="uk">Українська</option><option value="en">English</option><option value="pl">Polski</option></select></div>
 <div style="grid-column:1 / -1;margin-top:6px;padding-top:12px;border-top:1px dashed var(--line)"><div class="small" style="font-weight:700;margin-bottom:8px">Контакт ответственного (не обязательно)</div></div>
 <div><label class="small">Имя ответственного</label><div style="display:flex;gap:6px"><input id="eventContactNameInput" type="text" placeholder="Например: брат Иван" /><button class="icon-btn copy-btn" type="button" data-copy-input="eventContactNameInput" title="Копировать" aria-label="Копировать">📋</button></div></div>
 <div><label class="small">Телефон</label><div style="display:flex;gap:6px"><input id="eventContactPhoneInput" type="tel" placeholder="+420 ..." /><button class="icon-btn copy-btn" type="button" data-copy-input="eventContactPhoneInput" title="Копировать" aria-label="Копировать">📋</button></div></div>
@@ -408,6 +412,15 @@ body::before{display:none !important}
 </div></div>
           </div>
           <div class="card" style="margin-top:16px">
+            <h3>Место проживания (для автопланирования)</h3>
+            <div class="small" style="margin-bottom:8px">Используется, чтобы «Авто-план» группировал дальние собрания (Германия, Австрия и т.д.) в один выезд, а не заставлял ездить туда-обратно каждую неделю.</div>
+            <div class="form-grid">
+              <div><label class="small">Город проживания</label><input id="homeAddressInput" type="text" placeholder="Praha, Česká republika" /></div>
+              <div style="display:flex;gap:10px;align-items:end"><button class="btn" id="geocodeHomeBtn" type="button">📍 Определить координаты</button></div>
+            </div>
+            <div class="small" id="homeGeocodeStatus" style="margin-top:8px;color:var(--muted)"></div>
+          </div>
+          <div class="card" style="margin-top:16px">
             <h3>Служебный год и резервные копии</h3>
             <div class="form-grid">
               <div>
@@ -473,7 +486,8 @@ body::before{display:none !important}
     <div class="modal-card" style="max-width:920px">
       <div class="modal-head"><div><h3>📋 Формуляр визита</h3><div class="modal-sub" id="visitFormSub">—</div></div><button class="icon-btn" id="visitFormCloseBtn" type="button" aria-label="Закрыть">✕</button></div>
       <div style="max-height:64vh;overflow:auto;padding-right:4px">
-        <div class="form-grid"><label><span class="small">Тип визита</span><select id="vfVisitType"><option value="meeting">Собрание</option><option value="group">Группа</option><option value="pregroup">Предгруппа</option></select></label></div>
+        <div class="form-grid"><label><span class="small">Тип визита</span><select id="vfVisitType"><option value="meeting">Собрание</option><option value="group">Группа</option><option value="pregroup">Предгруппа</option></select></label><label><span class="small">🌐 Язык формуляра (может отличаться от языка интерфейса!)</span><select id="vfLanguageSelect"><option value="ru">Русский</option><option value="uk">Українська</option><option value="en">English</option><option value="pl">Polski</option></select></label></div>
+        <div class="small" id="vfLanguageReminder" style="margin-top:6px;padding:8px 12px;border-radius:12px;background:var(--surface2);border:1px dashed var(--line)"></div>
 
         <h4 style="margin:18px 0 8px">Расписание встреч</h4>
         <div id="vfMeetingsList" class="grid" style="gap:8px"></div>
@@ -481,6 +495,9 @@ body::before{display:none !important}
 
         <h4 style="margin:18px 0 8px">План служения</h4>
         <div id="vfServiceDaysList" class="grid" style="gap:14px"></div>
+        <datalist id="vfTimeOptionsDefault"><option value="08:00"></option><option value="08:30"></option><option value="09:00"></option><option value="09:30"></option><option value="10:00"></option><option value="10:30"></option><option value="11:00"></option><option value="11:30"></option><option value="12:00"></option><option value="12:30"></option><option value="13:00"></option><option value="13:30"></option><option value="14:00"></option><option value="14:30"></option><option value="15:00"></option><option value="15:30"></option><option value="16:00"></option><option value="16:30"></option><option value="17:00"></option><option value="17:30"></option><option value="18:00"></option><option value="18:30"></option><option value="19:00"></option><option value="19:30"></option><option value="20:00"></option></datalist>
+        <datalist id="vfTimeOptionsBefore"><option value="10:00"></option><option value="10:15"></option><option value="10:30"></option><option value="10:45"></option><option value="11:00"></option><option value="11:15"></option><option value="11:30"></option></datalist>
+        <datalist id="vfTimeOptionsAfter"><option value="14:00"></option><option value="14:30"></option><option value="15:00"></option><option value="15:30"></option><option value="16:00"></option><option value="16:30"></option><option value="17:00"></option><option value="17:30"></option><option value="18:00"></option><option value="18:30"></option><option value="19:00"></option><option value="19:30"></option></datalist>
         <button class="btn" type="button" id="vfAddDayBtn" style="margin-top:8px">+ Добавить день</button>
 
         <h4 style="margin:18px 0 8px" id="vfPastoralHeading">Пастырские посещения</h4>
@@ -542,12 +559,12 @@ body::before{display:none !important}
   <div class="toast-wrap" id="toastWrap"></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-  <script src="fonts-dejavu-sans-normal.js"></script>
-  <script src="fonts-aptos-regular.js"></script>
-  <script src="fonts-aptos-bold.js"></script>
-  <script src="fonts-aptos-italic.js"></script>
-  <script src="fonts-aptos-bolditalic.js"></script>
-  <script src="fonts-dejavu-sans-bold.js"></script>
+  <script src="fonts/fonts-dejavu-sans-normal.js"></script>
+  <script src="fonts/fonts-aptos-regular.js"></script>
+  <script src="fonts/fonts-aptos-bold.js"></script>
+  <script src="fonts/fonts-aptos-italic.js"></script>
+  <script src="fonts/fonts-aptos-bolditalic.js"></script>
+  <script src="fonts/fonts-dejavu-sans-bold.js"></script>
   <script src="visit-pdf.js"></script>
   <script src="app.js" defer></script>
 </body>
