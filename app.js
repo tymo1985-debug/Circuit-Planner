@@ -237,29 +237,45 @@
     t(key) { return this.dict[key] || key; },
   };
 
-  const DEFAULT_LETTER_TEMPLATE = `До старійшин збору {congregation}{cong_number_suffix}
+  const DEFAULT_LETTER_TEMPLATE = `Час летить непомітно! Ми з дружиною дуже раді, що прийшов час відвідати ваш збір. Знову для нас велика радість провести з вами час протягом тижня служіння!
 
-Дорогі брати!
-
-Час летить непомітно! Ми з дружиною дуже раді, що прийшов час відвідати ваш збір. Знову для нас велика радість провести з вами час протягом тижня служіння!
-
-Візит відбудеться з {start_date} до {end_date}
+Візит відбудеться з {start_date} до {end_date}.
 
 Цей тиждень дасть нам можливість служити один одному, щоб Єгова зміцнив нас (Ісаї 41:10).
 
 Збір, безсумнівно, зрадіє, коли почує про це. Вже одразу ви можете заохочувати братів і сестер якомога активніше підтримувати тиждень служіння. Ви також можете нагадати вісникам про можливість служити в якості допоміжних піонерів з метою 15 або 30 годин в місяці візиту («Пасіть», розділ 15, абзац 1). Усіх, хто виконує будь-яку форму піонерського служіння в цьому місяці, сердечно запрошуємо на піонерську зустріч! Дорогі старійшини, ваші зусилля і підтримка на цьому тижні допоможуть нам усім отримати користь і найбільше заохочення.
 
-Для нас завжди особлива радість, коли ми співпрацюємо з вами у проповідуванні, наприклад, у громадських місцях (служіння зі стендом, служіння водіям-далекобійникам і т.д.). Ми також раді разом з вісниками відвідувати зацікавлених на повторних відвідинах та біблійні вивчення, на які нас вони запрошують. Можливо в зборі є діти чи підлітки, з якими вивчають Біблію — для нас буде велика честь, коли нас на такі вивчення запрошують. Якщо хтось хоче приєднатися до нас у служінні, але не має повторних відвідин або біблійних вивчень, він також може записатися на служіння разом з нами. В такому випадку ми ходимо разом з групою і можемо розділити з ним нашу радість в служінні.
+Для нас завжди особлива радість, коли ми співпрацюємо з вами у проповідуванні, наприклад, громадських місцях (служіння зі стендом, служіння водіям-далекобійникам і т.д.). Ми також раді разом з вісниками відвідувати зацікавлених на повторних відвідинах та біблійні вивчення, на які нас вони запрошують. Можливо в зборі є діти чи підлітки, з якими вивчають Біблію — для нас буде велика честь, коли нас на такі вивчення запрошують. Якщо хтось хоче приєднатися до нас у служінні, але не має повторних відвідин або біблійних вивчень, він також може записатися на служіння разом з нами. В такому випадку ми ходимо разом з групою і можемо розділити з ним нашу радість в служінні.`;
 
-Я вже з нетерпінням чекаю на цю зустріч і надсилаю вам теплі вітання братньої любові,
+  const DEFAULT_MEMO_TEMPLATE = `• Будь ласка, ознайомтесь з актуальною формою S-61 (видання 12/25) і заповніть сторінку 2 цієї форми і вишліть його мені. Думки з книги «Пасіть», розділ 10, абзаци 1-5 також допоможуть вам у підготовці до тижня візита
+• Зустріч з призначеними братами плануйте на вечір п'ятниці.
+• Заплануйте 2-3 пастирських візита і, по можливості, не відразу після зустріч для служіння. Будь ласка, залиште ранок четверга вільним.
+‣ Я буду радий відвідати молодих вісників; піонерів; літніх братів чи сестер, які відвідують зібрання лише по телефону або через ZOOM; старійшин, служителів збору та їхні сім'ї і, звичайно, тих, кого ви, як старійшини, вважаєте за потрібне відвідати (за бажанням, ви також можете запланувати «проблемні» візити).
+• Зустрічі для проповідницького служіння (ви можете організувати доступ через ZOOM):
+‣ Організуйте зустрічі для служіння згідно плану для служіння, який я вам висилаю. Час для служіння ви можете вибрати у відповідному полі формуляра
+‣ Виберіть час і місце для зустрічі який буде найліпше пасувати для вісників
+‣ Враховуйте так же потреби території, коли ви будете вибирати час і місце для зустрічей для служіння. Найліпше буде той час, коли буде більше можливостей зустріти людей на території
+‣ Також плануйте зустріч для служіння в неділю до або після зібрання (можемо вирішити під час зустрічі у вівторок)
+‣ Якщо ви вважаєте, що це необхідно, ви, як рада старійшин, можете запланувати додаткову зустріч для проповідницького служіння на ранок четверга. Цю зустріч може проводити один з призначених братів
+• Зустріч з піонерами плануйте в середу ввечері або в суботу, але не одразу після зустрічі для проповідування (старші, хворі або немічні піонери можуть відвідати цю зустріч через ZOOM) — наприклад, з піонерами о 14:00, а для служіння о 15:15 чи 15:30 (це про суботу)
+• Теми промов:
+‣ У вівторок тема службової промови: „Що ти зробиш «задля доброї новини»?" (Пісня 82).
+‣ Тема публічної промови „Як вам «пожати... вічне життя»?“ (Пісня 147)
+‣ Службова промова на вихідних «Нехай ваші серця не тривожаться» (Пісня 156).
 
-Ваш {sender}`;
+Коли я перевірятиму документи у вівторок у другій половині дня, мені знадобляться наступне:
+• Заповнений бланк S-61 та зазначені в ньому документи або папки, а також протокол зустрічі старійшин з пунктом про обговорення останнього звіту районного наглядача.
+• Якщо це можливо, ви можете надіслати мені частину даних в електронному вигляді заздалегідь. Все інше, що неможливо надіслати мені в електронному вигляді (наприклад, папки і т.д.), будь ласка, підготуйте для мене в місці нічлігу.
+• У вівторок ввечері перед зустріччю я хотів би зустрітися з одним із старійшин збору, з координатором ради старійшин, чи з іншим старійшиною. Ми можемо домовитися про час і місце зустрічі перед початком візиту.`;
+
+  function vpEscapeForHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  const DEFAULT_LETTER_TEMPLATE_HTML = DEFAULT_LETTER_TEMPLATE.split(/\n{2,}/).map((p) => `<div>${vpEscapeForHtml(p.trim())}</div>`).join('');
 
   const App = {
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.16.0',
+      version: '9.23.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -487,7 +503,20 @@
 
     store: {
       ensureSettingsDefaults(settings = {}) {
-        const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (typeof out.showHolidays !== 'boolean') out.showHolidays = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset || !['classic','compact','spacious','cards','minimal'].includes(out.layoutPreset)) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; if (typeof out.letterTemplate !== 'string' || !out.letterTemplate) out.letterTemplate = DEFAULT_LETTER_TEMPLATE; if (typeof out.senderName !== 'string') out.senderName = ''; return out;
+        const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (typeof out.showHolidays !== 'boolean') out.showHolidays = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset || !['classic','compact','spacious','cards','minimal'].includes(out.layoutPreset)) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; if (typeof out.letterTemplate !== 'string' || !out.letterTemplate) out.letterTemplate = DEFAULT_LETTER_TEMPLATE_HTML;
+        ['Congregation','Group','Pregroup'].forEach((suffix) => {
+          const key = 'letterTemplate' + suffix;
+          if (typeof out[key] !== 'string' || !out[key]) out[key] = out.letterTemplate || DEFAULT_LETTER_TEMPLATE_HTML;
+        });
+        if (!out.letterPages || typeof out.letterPages !== 'object') out.letterPages = {};
+        {
+          const memoHtml = (out.memoTemplate || DEFAULT_MEMO_TEMPLATE).split('\n').map((line) => `<div>${vpEscapeForHtml(line)}</div>`).join('');
+          const defaultPage = { id: 'p1', title: 'ПАМ\u2019ЯТКА ДЛЯ КООРДИНАТОРА РАДИ СТАРІЙШИН', html: memoHtml };
+          ['Congregation','Group','Pregroup'].forEach((suffix) => {
+            if (!Array.isArray(out.letterPages[suffix])) out.letterPages[suffix] = [JSON.parse(JSON.stringify(defaultPage))];
+          });
+        }
+        if (typeof out.memoTemplate !== 'string' || !out.memoTemplate) out.memoTemplate = DEFAULT_MEMO_TEMPLATE; if (typeof out.senderName !== 'string') out.senderName = ''; if (typeof out.senderAddress !== 'string') out.senderAddress = ''; if (typeof out.senderPhone !== 'string') out.senderPhone = ''; if (typeof out.senderEmail !== 'string') out.senderEmail = ''; if (!out.emailMethod || !['mailto','owa'].includes(out.emailMethod)) out.emailMethod = 'mailto'; if (typeof out.owaUrl !== 'string' || !out.owaUrl) out.owaUrl = 'https://outlook.office.com/mail/deeplink/compose'; return out;
       },
       createDefaultData() {
         return { settings: this.ensureSettingsDefaults({}), serviceYears: {}, events: [{ id:'evt_midweek', name:'Серединное собрание', color:'#1f7a45', address:'', schedule:'Ср 19:00' }, { id:'evt_weekend', name:'Выходное служение', color:'#2563eb', address:'', schedule:'Сб 10:00' }], entries: [], meta: { version: App.config.version } };
@@ -1006,9 +1035,9 @@
           'statsModal','statsModalTitle','statsModalSub','statsModalBody','statsModalCloseBtn','statsModalOkBtn','statsBtn','plannerBtn',
           'plannerModal','plannerModalCloseBtn','plannerStartInput','plannerEndInput','plannerEventsList','plannerPreview','plannerCancelBtn','plannerApplyBtn',
           'pinOverlay','pinInput','pinError','pinSubmitBtn','pinSetupBtn','holidaysToggle','editorResultInput','editorResultLabel',
-          'eventCongNumberInput','letterTemplateInput','letterTemplateResetBtn','senderNameInput',
+          'eventCongNumberInput','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow',
           'visitFormModal','visitFormSub','visitFormCloseBtn','vfVisitType','vfMeetingsList','vfAddMeetingBtn','vfServiceDaysList','vfAddDayBtn','vfPastoralHeading','vfPastoralList','vfAddPastoralBtn','vfMealsList','vfAddMealBtn','vfNotesInput','vfCloseBtn2','vfGeneratePdfBtn',
-          'letterModal','letterModalSub','letterModalCloseBtn','letterTextInput','letterAttachStatus','letterResetBtn','letterAttachPdfBtn','letterSendBtn',
+          'letterModal','letterModalSub','letterModalCloseBtn','letterTextInput','letterAttachStatus','letterResetBtn','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn',
           'noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
           'pdfCancelBtn','pdfExportConfirmBtn','pdfRangeCard','pdfRangeStartInput','pdfRangeEndInput','pdfRangeHelp','pdfHint',
@@ -1992,17 +2021,190 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       updatePinButton() {
         if (App.els.pinSetupBtn) App.els.pinSetupBtn.textContent = this.getStoredPin() ? `🔒 ${App.utils.t('pin_on')}` : `🔒 ${App.utils.t('pin_off')}`;
       },
+      wrapSelection(editor, styleProp, value) {
+        const sel = window.getSelection ? window.getSelection() : null;
+        if (!sel || !sel.rangeCount || sel.isCollapsed) return false;
+        const range = sel.getRangeAt(0);
+        if (editor.contains && !editor.contains(range.commonAncestorContainer)) return false;
+        let container = range.commonAncestorContainer;
+        if (container.nodeType === 3) container = container.parentNode;
+        if (container && container.dataset && container.dataset.rteStyleProp === styleProp && container.textContent === range.toString() && range.toString().length) {
+          // Selection exactly matches an existing styled span — toggle it off (unwrap).
+          const parent = container.parentNode;
+          while (container.firstChild) parent.insertBefore(container.firstChild, container);
+          parent.removeChild(container);
+          return true;
+        }
+        const span = document.createElement('span');
+        span.dataset.rteStyleProp = styleProp;
+        span.style[styleProp] = value;
+        try {
+          range.surroundContents(span);
+        } catch (_) {
+          const contents = range.extractContents();
+          span.appendChild(contents);
+          range.insertNode(span);
+        }
+        const newRange = document.createRange();
+        newRange.selectNodeContents(span);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+        return true;
+      },
+      onRteEditorInput(editor) {
+        const pageRef = editor.dataset.rtePage;
+        const type = App.state.letterEditingType || 'Congregation';
+        if (pageRef === 'body') {
+          App.ui.setLetterTemplateFor(type, editor.innerHTML);
+        } else {
+          const pages = App.state.app.settings.letterPages[type] || [];
+          const page = pages.find((p) => p.id === pageRef);
+          if (page) { page.html = editor.innerHTML; App.store.save(); }
+        }
+      },
+      bindRteEditor(editor) {
+        if (!editor || editor.dataset.rteBound) return;
+        editor.dataset.rteBound = '1';
+        editor.addEventListener('focus', () => { App.state.activeRteEditor = editor; });
+        editor.addEventListener('click', () => { App.state.activeRteEditor = editor; });
+        editor.addEventListener('input', () => App.ui.onRteEditorInput(editor));
+      },
+      wireRteToolbar() {
+        document.querySelectorAll('[data-rte-cmd]').forEach((btn) => {
+          if (btn.dataset.rteWired) return;
+          btn.dataset.rteWired = '1';
+          // Prevent the button's mousedown from stealing focus/collapsing the selection —
+          // otherwise by the time 'click' fires, window.getSelection() no longer reflects
+          // what the user actually selected in the editor.
+          btn.addEventListener('mousedown', (e) => e.preventDefault());
+          btn.addEventListener('click', () => {
+            const editor = App.state.activeRteEditor || App.els.letterTemplateEditor;
+            if (!editor) return;
+            const cmd = btn.dataset.rteCmd;
+            const map = { bold: ['fontWeight', 'bold'], italic: ['fontStyle', 'italic'], underline: ['textDecoration', 'underline'] };
+            const [prop, value] = map[cmd] || [];
+            if (!prop || !App.ui.wrapSelection(editor, prop, value)) { App.utils.toast('Сначала выдели текст в редакторе'); return; }
+            App.ui.onRteEditorInput(editor);
+          });
+        });
+        document.querySelectorAll('[data-rte-size]').forEach((btn) => {
+          if (btn.dataset.rteWired) return;
+          btn.dataset.rteWired = '1';
+          btn.addEventListener('mousedown', (e) => e.preventDefault());
+          btn.addEventListener('click', () => {
+            const editor = App.state.activeRteEditor || App.els.letterTemplateEditor;
+            if (!editor) return;
+            if (!App.ui.wrapSelection(editor, 'fontSize', `${btn.dataset.rteSize}pt`)) { App.utils.toast('Сначала выдели текст в редакторе'); return; }
+            App.ui.onRteEditorInput(editor);
+          });
+        });
+        App.ui.bindRteEditor(App.els.letterTemplateEditor);
+      },
+      renderLetterPagesList() {
+        const type = App.state.letterEditingType || 'Congregation';
+        const pages = App.state.app.settings.letterPages[type] || [];
+        if (!App.els.letterPagesList) return;
+        if (!pages.length) { App.els.letterPagesList.innerHTML = `<div class="empty">Дополнительных страниц нет — только письмо на странице 1.</div>`; return; }
+        App.els.letterPagesList.innerHTML = pages.map((page, i) => `
+          <div class="card" style="padding:14px;box-shadow:none;border:1px solid var(--line)" data-page-card="${App.utils.escapeAttr(page.id)}">
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+              <span class="small" style="white-space:nowrap">Стр. ${i + 2}:</span>
+              <input type="text" data-page-title="${App.utils.escapeAttr(page.id)}" value="${App.utils.escapeAttr(page.title || '')}" placeholder="Заголовок страницы (необязательно)" style="flex:1" />
+              <button class="btn danger" type="button" data-remove-page="${App.utils.escapeAttr(page.id)}" style="white-space:nowrap">Удалить страницу</button>
+            </div>
+            <div class="rte-editor" data-rte-page="${App.utils.escapeAttr(page.id)}" contenteditable="true">${page.html || ''}</div>
+          </div>`).join('');
+        pages.forEach((page) => {
+          const card = App.els.letterPagesList.querySelector(`[data-page-card="${page.id}"]`);
+          if (!card) return;
+          const editor = card.querySelector('.rte-editor');
+          App.ui.bindRteEditor(editor);
+          card.querySelector('[data-page-title]')?.addEventListener('input', (e) => { page.title = e.target.value; App.store.save(); });
+          card.querySelector('[data-remove-page]')?.addEventListener('click', () => {
+            if (!window.confirm('Удалить эту страницу письма?')) return;
+            const idx = pages.findIndex((p) => p.id === page.id);
+            if (idx >= 0) pages.splice(idx, 1);
+            App.store.save();
+            App.ui.renderLetterPagesList();
+          });
+        });
+      },
+      parseRichLetterBlocks(html) {
+        const container = document.createElement('div');
+        container.innerHTML = html;
+        const walkRuns = (node, inherited) => {
+          const runs = [];
+          (node.childNodes || []).forEach((child) => {
+            if (child.nodeType === 3) {
+              if (child.textContent) runs.push({ text: child.textContent, ...inherited });
+            } else if (child.nodeType === 1) {
+              const style = child.style || {};
+              const tag = (child.tagName || '').toUpperCase();
+              const next = {
+                bold: inherited.bold || style.fontWeight === 'bold' || tag === 'B' || tag === 'STRONG',
+                italic: inherited.italic || style.fontStyle === 'italic' || tag === 'I' || tag === 'EM',
+                underline: inherited.underline || style.textDecoration === 'underline' || tag === 'U',
+                size: (style.fontSize ? parseInt(style.fontSize, 10) : null) || inherited.size,
+              };
+              runs.push(...walkRuns(child, next));
+            }
+          });
+          return runs;
+        };
+        const readBlock = (el) => {
+          const style = el.style || {};
+          const baseline = { bold: style.fontWeight === 'bold', italic: style.fontStyle === 'italic', underline: style.textDecoration === 'underline', size: style.fontSize ? parseInt(style.fontSize, 10) : null };
+          const runs = walkRuns(el, baseline).filter((r) => r.text);
+          return runs.length ? runs : ((el.textContent || '').trim() ? [{ text: el.textContent.trim(), ...baseline }] : []);
+        };
+        const blocks = [];
+        if (!container.children.length) {
+          const runs = readBlock(container);
+          if (runs.length) blocks.push({ runs });
+          return blocks;
+        }
+        Array.from(container.children).forEach((el) => {
+          const runs = readBlock(el);
+          if (runs.length) blocks.push({ runs });
+        });
+        return blocks;
+      },
+      letterTypeSuffix(visitType) {
+        return visitType === 'group' ? 'Group' : visitType === 'pregroup' ? 'Pregroup' : 'Congregation';
+      },
+      getLetterTemplateFor(visitType) {
+        const suffix = this.letterTypeSuffix(visitType);
+        return App.state.app.settings['letterTemplate' + suffix] || DEFAULT_LETTER_TEMPLATE_HTML;
+      },
+      setLetterTemplateFor(suffix, html) {
+        App.state.app.settings['letterTemplate' + suffix] = html;
+        App.store.save();
+      },
       showPinGateIfNeeded() {
         const stored = this.getStoredPin();
         if (!stored || !App.els.pinOverlay) return;
         App.els.pinOverlay.hidden = false;
-        const tryUnlock = () => {
-          const value = (App.els.pinInput?.value || '').trim();
-          if (this.pinHash(value) === stored) { App.els.pinOverlay.hidden = true; if (App.els.pinInput) App.els.pinInput.value = ''; if (App.els.pinError) App.els.pinError.textContent = ''; }
-          else { if (App.els.pinError) App.els.pinError.textContent = App.utils.t('pin_wrong'); if (App.els.pinInput) { App.els.pinInput.value = ''; App.els.pinInput.focus(); } }
-        };
-        App.els.pinSubmitBtn?.addEventListener('click', tryUnlock);
-        App.els.pinInput?.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryUnlock(); });
+        if (App.els.pinInput) App.els.pinInput.value = '';
+        if (App.els.pinError) App.els.pinError.textContent = '';
+        if (!App.state.pinGateWired) {
+          App.state.pinGateWired = true;
+          const tryUnlock = () => {
+            const currentStored = this.getStoredPin();
+            const value = (App.els.pinInput?.value || '').trim();
+            if (!currentStored || this.pinHash(value) === currentStored) { App.els.pinOverlay.hidden = true; if (App.els.pinInput) App.els.pinInput.value = ''; if (App.els.pinError) App.els.pinError.textContent = ''; }
+            else { if (App.els.pinError) App.els.pinError.textContent = App.utils.t('pin_wrong'); if (App.els.pinInput) { App.els.pinInput.value = ''; App.els.pinInput.focus(); } }
+          };
+          App.els.pinSubmitBtn?.addEventListener('click', tryUnlock);
+          App.els.pinInput?.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryUnlock(); });
+          // Installed PWAs on phones typically suspend/resume the same page instance instead of
+          // reloading it when reopened from the home screen — init() only runs once at true cold
+          // start, so without this the lock screen would only ever appear the very first time.
+          // Re-check whenever the app becomes visible again after being backgrounded.
+          const recheck = () => { if (document.visibilityState === 'visible') App.ui.showPinGateIfNeeded(); };
+          document.addEventListener('visibilitychange', recheck);
+          window.addEventListener('pageshow', recheck);
+          window.addEventListener('focus', recheck);
+        }
         setTimeout(() => App.els.pinInput?.focus(), 100);
       },
       // ===================== Merged: Visit Form (formerly a separate app) =====================
@@ -2152,12 +2354,142 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (typeof window.PdfGenerator === 'undefined' || !window.jspdf) { App.utils.toast('Модуль PDF ещё не загрузился, попробуйте ещё раз через секунду.'); return null; }
         return window.PdfGenerator.generate(state, VP_I18N);
       },
-      // ===================== Merged: pre-visit letter =====================
-      fillLetterTemplate(entry, event) {
-        const tpl = App.state.app.settings.letterTemplate || DEFAULT_LETTER_TEMPLATE;
+      // ===================== Letter PDF (preserves the original document's layout) =====================
+      buildLetterPdfDoc(entry, event) {
+        if (!window.jspdf) { App.utils.toast('Модуль PDF ещё не загрузился, попробуйте ещё раз через секунду.'); return null; }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+        const FONT = 'Aptos';
+        if (window.APTOS_REGULAR_B64) {
+          doc.addFileToVFS('Aptos.ttf', window.APTOS_REGULAR_B64);
+          doc.addFont('Aptos.ttf', FONT, 'normal');
+        } else if (window.DEJAVU_SANS_NORMAL_B64) {
+          // Fallback if the Aptos font file is ever missing from the build.
+          doc.addFileToVFS('DejaVuSans.ttf', window.DEJAVU_SANS_NORMAL_B64);
+          doc.addFont('DejaVuSans.ttf', FONT, 'normal');
+        }
+        if (window.APTOS_BOLD_B64) { doc.addFileToVFS('Aptos-Bold.ttf', window.APTOS_BOLD_B64); doc.addFont('Aptos-Bold.ttf', FONT, 'bold'); }
+        else if (window.DEJAVU_SANS_BOLD_B64) { doc.addFileToVFS('DejaVuSans-Bold.ttf', window.DEJAVU_SANS_BOLD_B64); doc.addFont('DejaVuSans-Bold.ttf', FONT, 'bold'); }
+        if (window.APTOS_ITALIC_B64) { doc.addFileToVFS('Aptos-Italic.ttf', window.APTOS_ITALIC_B64); doc.addFont('Aptos-Italic.ttf', FONT, 'italic'); }
+        if (window.APTOS_BOLDITALIC_B64) { doc.addFileToVFS('Aptos-BoldItalic.ttf', window.APTOS_BOLDITALIC_B64); doc.addFont('Aptos-BoldItalic.ttf', FONT, 'bolditalic'); }
+        const hasRealBold = !!(window.APTOS_BOLD_B64 || window.DEJAVU_SANS_BOLD_B64);
+        const hasRealItalic = !!window.APTOS_ITALIC_B64;
+        const hasRealBoldItalic = !!window.APTOS_BOLDITALIC_B64;
+        doc.setFont(FONT, 'normal');
+        const margin = 54, pageW = doc.internal.pageSize.getWidth(), pageH = doc.internal.pageSize.getHeight();
+        const bottomLimit = pageH - margin - 16;
+        const settings = App.state.app.settings;
+        const ukDate = (d) => { const dt = new Date(d); return Number.isNaN(dt.getTime()) ? '—' : dt.toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' }); };
+
+        const drawHeader = () => {
+          doc.setFont(FONT, 'normal'); doc.setFontSize(9.5); doc.setTextColor(60, 64, 74);
+          const lines = [settings.senderName, settings.senderAddress, [settings.senderPhone].filter(Boolean).join(' '), settings.senderEmail].filter(Boolean);
+          let hy = margin;
+          lines.forEach((line) => { doc.text(line, pageW - margin, hy, { align: 'right' }); hy += 13; });
+          doc.setTextColor(30, 34, 44);
+          return hy + 14;
+        };
+        const drawFooter = (pageNum, totalPages) => {
+          doc.setFont(FONT, 'normal'); doc.setFontSize(8.5); doc.setTextColor(140, 146, 158);
+          doc.text(`${pageNum} von ${totalPages}`, margin, pageH - 24);
+          doc.setTextColor(30, 34, 44);
+        };
+        const ensureSpace = (y, needed) => {
+          if (y + needed > bottomLimit) { doc.addPage(); return drawHeader(); }
+          return y;
+        };
+        // Renders one paragraph from an array of styled runs ({text,bold,italic,size}), wrapping
+        // words onto new lines as needed — each word keeps its own run's formatting, so a
+        // single bold or italic word in the middle of a normal sentence renders correctly.
+        const resolveStyle = (bold, italic) => {
+          if (bold && italic) return hasRealBoldItalic ? 'bolditalic' : (hasRealBold ? 'bold' : 'normal');
+          if (bold) return hasRealBold ? 'bold' : 'normal';
+          if (italic) return hasRealItalic ? 'italic' : 'normal';
+          return 'normal';
+        };
+        const addRichParagraph = (y, runs, opts = {}) => {
+          const defaultSize = opts.size || 11;
+          const maxWidth = pageW - margin * 2;
+          const words = [];
+          (runs || []).forEach((run) => {
+            const size = run.size || defaultSize;
+            const bold = !!run.bold;
+            const italic = !!run.italic;
+            const underline = !!run.underline;
+            String(run.text || '').split(/(\s+)/).filter((s) => s.length).forEach((part) => words.push({ text: part, bold, italic, underline, size }));
+          });
+          let line = []; let lineWidth = 0;
+          const lineHeight = defaultSize * 1.4;
+          const drawWord = (w, x, wordY) => {
+            const style = resolveStyle(w.bold, w.italic);
+            doc.setFont(FONT, style);
+            doc.setFontSize(w.size);
+            doc.text(w.text, x, wordY);
+            // Synthetic bold fallback: only needed if bold was requested but no real bold face is embedded.
+            if (w.bold && style === 'normal' && hasRealBold === false) doc.text(w.text, x + 0.35, wordY);
+            if (w.underline && w.text.trim()) {
+              const width = doc.getTextWidth(w.text);
+              const underlineY = wordY + w.size * 0.09;
+              doc.setDrawColor(30, 34, 44); doc.setLineWidth(Math.max(0.5, w.size * 0.045));
+              doc.line(x, underlineY, x + width, underlineY);
+            }
+          };
+          const flushLine = () => {
+            if (!line.length) return;
+            y = ensureSpace(y, lineHeight);
+            let x = opts.align === 'center' ? (pageW - lineWidth) / 2 : margin;
+            line.forEach((w) => {
+              doc.setFont(FONT, resolveStyle(w.bold, w.italic)); doc.setFontSize(w.size);
+              drawWord(w, x, y);
+              x += doc.getTextWidth(w.text);
+            });
+            y += lineHeight;
+            line = []; lineWidth = 0;
+          };
+          words.forEach((w) => {
+            if (!line.length && /^\s+$/.test(w.text)) return; // no leading space at line start
+            doc.setFont(FONT, resolveStyle(w.bold, w.italic));
+            doc.setFontSize(w.size);
+            const wWidth = doc.getTextWidth(w.text);
+            if (lineWidth + wWidth > maxWidth && line.length) flushLine();
+            line.push(w); lineWidth += wWidth;
+          });
+          flushLine();
+          return y + (opts.gap ?? 8);
+        };
+        const singleRun = (text, opts = {}) => [{ text, bold: !!opts.bold, italic: !!opts.italic, size: opts.size }];
+
+        // ---- Page 1: personal letter ----
+        let y = drawHeader();
+        const congNumberSuffix = event?.congNumber ? ` (${event.congNumber})` : '';
+        y = addRichParagraph(y, singleRun(`До старійшин збору ${entry?.title || event?.name || ''}${congNumberSuffix}`, { bold: true, size: 11.5 }), { size: 11.5, gap: 20 });
+        doc.setFont(FONT, 'normal'); doc.setFontSize(11); doc.text(ukDate(new Date()), pageW - margin, y - 8, { align: 'right' });
+        y = addRichParagraph(y, singleRun('Дорогі брати!', { bold: true }), { gap: 14 });
+        const bodyHtml = App.ui.substitutePlaceholders(App.ui.getLetterTemplateFor(event?.visitType), entry, event);
+        App.ui.parseRichLetterBlocks(bodyHtml).forEach((block) => { y = addRichParagraph(y, block.runs, { size: 11, gap: 14 }); });
+        y += 6;
+        y = addRichParagraph(y, singleRun('Я вже з нетерпінням чекаю на цю зустріч і надсилаю вам теплі вітання братньої любові,'), { gap: 22 });
+        y = addRichParagraph(y, singleRun(`Ваш ${settings.senderName || ''}`, { bold: true }), {});
+
+        // ---- Additional pages (configurable per visit type: add/remove in settings) ----
+        const suffix = App.ui.letterTypeSuffix(event?.visitType);
+        const extraPages = App.state.app.settings.letterPages?.[suffix] || [];
+        extraPages.forEach((page) => {
+          doc.addPage();
+          y = drawHeader();
+          if (page.title && page.title.trim()) y = addRichParagraph(y, singleRun(page.title.trim(), { bold: true, size: 12.5 }), { size: 12.5, align: 'center', gap: 18 });
+          const pageHtml = App.ui.substitutePlaceholders(page.html || '', entry, event);
+          App.ui.parseRichLetterBlocks(pageHtml).forEach((block) => { y = addRichParagraph(y, block.runs, { size: 10, gap: 10 }); });
+        });
+
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let p = 1; p <= totalPages; p += 1) { doc.setPage(p); drawFooter(p, totalPages); }
+        return doc;
+      },
+      substitutePlaceholders(tpl, entry, event) {
         const congNumberSuffix = event?.congNumber ? ` (${event.congNumber})` : '';
         const ukDate = (d) => { const dt = new Date(d); return Number.isNaN(dt.getTime()) ? '—' : dt.toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' }); };
-        return tpl
+        return String(tpl || '')
           .replace(/\{congregation\}/g, entry?.title || event?.name || '')
           .replace(/\{cong_number_suffix\}/g, congNumberSuffix)
           .replace(/\{cong_number\}/g, event?.congNumber || '')
@@ -2165,6 +2497,12 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           .replace(/\{end_date\}/g, ukDate(entry?.end))
           .replace(/\{today\}/g, ukDate(new Date()))
           .replace(/\{sender\}/g, App.state.app.settings.senderName || '');
+      },
+      fillLetterTemplate(entry, event) {
+        const congNumberSuffix = event?.congNumber ? ` (${event.congNumber})` : '';
+        const html = this.substitutePlaceholders(this.getLetterTemplateFor(event?.visitType), entry, event);
+        const body = this.parseRichLetterBlocks(html).map((b) => b.runs.map((r) => r.text).join('')).join('\n\n');
+        return `До старійшин збору ${entry?.title || event?.name || ''}${congNumberSuffix}\n\nДорогі брати!\n\n${body}\n\nЯ вже з нетерпінням чекаю на цю зустріч і надсилаю вам теплі вітання братньої любові,\n\nВаш ${App.state.app.settings.senderName || ''}`;
       },
       openLetterModal(itemId) {
         const item = App.data.getCalendarItemById(itemId);
@@ -2175,33 +2513,46 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.state.letterEntryId = entry.id;
         if (App.els.letterModalSub) App.els.letterModalSub.textContent = `${entry.title || event?.name || ''} · ${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}`;
         if (App.els.letterTextInput) App.els.letterTextInput.value = this.fillLetterTemplate(entry, event);
-        if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = entry.visitForm ? '📎 График визита готов и будет прикреплён.' : '⚠️ График визита ещё не заполнен — можно отправить только текст письма, либо сначала открыть «Формуляр визита».';
+        if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = entry.visitForm ? '📎 Письмо (3 стр.) и график визита будут отправлены как PDF-вложения.' : '📎 Письмо будет отправлено как PDF-вложение (3 стр.). График визита ещё не заполнен — если нужен, сначала открой «Формуляр визита».';
         this.openModal(App.els.letterModal);
       },
       async sendLetterNow() {
         const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);
         const event = entry ? App.data.getEventById(entry.eventId) : null;
         const text = App.els.letterTextInput?.value || '';
-        const hasForm = !!entry?.visitForm;
-        let pdfBlob = null, pdfName = 'visit-schedule.pdf';
-        if (hasForm) {
+        const files = [];
+        try {
+          const letterDoc = this.buildLetterPdfDoc(entry, event);
+          if (letterDoc) files.push(new File([letterDoc.output('blob')], `${App.utils.slug(entry?.title || 'letter')}-letter.pdf`, { type: 'application/pdf' }));
+        } catch (err) { console.error('Letter PDF build failed', err); }
+        if (entry?.visitForm) {
           try {
             App.state.visitFormData = JSON.parse(JSON.stringify(entry.visitForm));
-            const doc = this.buildVisitPdfDoc();
-            if (doc) { pdfBlob = doc.output('blob'); pdfName = `${App.utils.slug(entry.title || 'visit')}.pdf`; }
-          } catch (err) { console.error('PDF build for sharing failed', err); }
+            const scheduleDoc = this.buildVisitPdfDoc();
+            if (scheduleDoc) files.push(new File([scheduleDoc.output('blob')], `${App.utils.slug(entry.title || 'visit')}-schedule.pdf`, { type: 'application/pdf' }));
+          } catch (err) { console.error('Schedule PDF build for sharing failed', err); }
         }
-        const mailto = () => { window.location.href = `mailto:${encodeURIComponent(event?.contactEmail || '')}?subject=${encodeURIComponent(App.utils.t('letter_subject'))}&body=${encodeURIComponent(text)}`; };
-        if (navigator.share && pdfBlob && navigator.canShare && navigator.canShare({ files: [new File([pdfBlob], pdfName, { type: 'application/pdf' })] })) {
+        const mailto = () => {
+          const to = event?.contactEmail || '';
+          const subject = App.utils.t('letter_subject');
+          if (App.state.app.settings.emailMethod === 'owa') {
+            const base = App.state.app.settings.owaUrl || 'https://outlook.office.com/mail/deeplink/compose';
+            const url = `${base}?to=${encodeURIComponent(to)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+          } else {
+            window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+          }
+        };
+        if (navigator.share && files.length && navigator.canShare && navigator.canShare({ files })) {
           try {
-            await navigator.share({ text, files: [new File([pdfBlob], pdfName, { type: 'application/pdf' })] });
+            await navigator.share({ text, files });
             App.utils.toast('Отправлено');
             return;
           } catch (err) { /* user cancelled or unsupported — fall through to fallback below */ }
         }
-        if (pdfBlob) {
-          App.utils.downloadBlob(pdfBlob, pdfName);
-          App.utils.toast('График скачан — прикрепи его к письму вручную.');
+        if (files.length) {
+          files.forEach((f) => App.utils.downloadBlob(f, f.name));
+          App.utils.toast(files.length > 1 ? 'Файлы скачаны — прикрепи их к письму вручную.' : 'Файл скачан — прикрепи его к письму вручную.');
         }
         mailto();
       },
@@ -2401,7 +2752,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         }));
         document.querySelectorAll('[data-delete-note]').forEach((btn) => btn.addEventListener('click', () => App.actions.deleteNote(btn.dataset.deleteNoteYear, btn.dataset.deleteNote)));
       },
-      renderSettings() { if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.letterTemplateInput && document.activeElement !== App.els.letterTemplateInput) App.els.letterTemplateInput.value = App.state.app.settings.letterTemplate || DEFAULT_LETTER_TEMPLATE; if (App.els.senderNameInput && document.activeElement !== App.els.senderNameInput) App.els.senderNameInput.value = App.state.app.settings.senderName || ''; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
+      renderSettings() { if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.letterTemplateEditor && document.activeElement !== App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = App.state.app.settings['letterTemplate' + (App.state.letterEditingType || 'Congregation')] || DEFAULT_LETTER_TEMPLATE_HTML; this.renderLetterPagesList(); if (App.els.senderNameInput && document.activeElement !== App.els.senderNameInput) App.els.senderNameInput.value = App.state.app.settings.senderName || ''; if (App.els.senderAddressInput && document.activeElement !== App.els.senderAddressInput) App.els.senderAddressInput.value = App.state.app.settings.senderAddress || ''; if (App.els.senderPhoneInput && document.activeElement !== App.els.senderPhoneInput) App.els.senderPhoneInput.value = App.state.app.settings.senderPhone || ''; if (App.els.senderEmailInput && document.activeElement !== App.els.senderEmailInput) App.els.senderEmailInput.value = App.state.app.settings.senderEmail || ''; if (App.els.emailMethodSelect) App.els.emailMethodSelect.value = App.state.app.settings.emailMethod || 'mailto'; if (App.els.owaUrlInput && document.activeElement !== App.els.owaUrlInput) App.els.owaUrlInput.value = App.state.app.settings.owaUrl || 'https://outlook.office.com/mail/deeplink/compose'; if (App.els.owaUrlRow) App.els.owaUrlRow.style.display = (App.state.app.settings.emailMethod === 'owa') ? '' : 'none'; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
       closeMobileMenu() {
         if (App.els.appRoot) App.els.appRoot.classList.remove('menu-open');
         if (App.els.mobileOverlay) {
@@ -2473,6 +2824,11 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.remindersModalCloseBtn?.addEventListener('click', () => App.ui.closeRemindersModal());
       App.els.remindersModalOkBtn?.addEventListener('click', () => App.ui.closeRemindersModal());
       App.els.checkRemindersBtn?.addEventListener('click', () => App.ui.openRemindersModal());
+      document.querySelectorAll('.settings-tab').forEach((btn) => btn.addEventListener('click', () => {
+        document.querySelectorAll('.settings-tab').forEach((b) => b.classList.toggle('active', b === btn));
+        const panels = { appearance: 'settingsPanelAppearance', letter: 'settingsPanelLetter', data: 'settingsPanelData' };
+        Object.entries(panels).forEach(([key, id]) => { const el = document.getElementById(id); if (el) el.hidden = btn.dataset.settingsTab !== key; });
+      }));
       App.els.statsBtn?.addEventListener('click', () => App.ui.openStatsModal());
       App.els.statsModalCloseBtn?.addEventListener('click', () => App.ui.closeModal(App.els.statsModal));
       App.els.statsModalOkBtn?.addEventListener('click', () => App.ui.closeModal(App.els.statsModal));
@@ -2528,23 +2884,67 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const event = App.data.getEventById(entry.eventId);
         if (App.els.letterTextInput) App.els.letterTextInput.value = App.ui.fillLetterTemplate(entry, event);
       });
+      App.els.letterPreviewPdfBtn?.addEventListener('click', () => {
+        const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);
+        if (!entry) return;
+        const event = App.data.getEventById(entry.eventId);
+        const doc = App.ui.buildLetterPdfDoc(entry, event);
+        if (!doc) return;
+        doc.save(`${App.utils.slug(entry.title || 'letter')}-letter.pdf`);
+      });
       App.els.letterAttachPdfBtn?.addEventListener('click', () => {
         const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);
         if (!entry?.visitForm) return App.utils.toast('Сначала заполни «Формуляр визита» для этой записи.');
         App.state.visitFormData = JSON.parse(JSON.stringify(entry.visitForm));
         const doc = App.ui.buildVisitPdfDoc();
         if (!doc) return;
-        doc.save(`${App.utils.slug(entry.title || 'visit')}.pdf`);
-        if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = '📎 График скачан — прикрепи его к письму вручную, если отправляешь через десктоп-почту.';
+        doc.save(`${App.utils.slug(entry.title || 'visit')}-schedule.pdf`);
+        if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = '📎 График скачан отдельно — «Отправить» приложит письмо и график вместе, если платформа поддерживает.';
       });
       App.els.letterSendBtn?.addEventListener('click', () => App.ui.sendLetterNow());
       // Settings: letter template
-      App.els.letterTemplateInput?.addEventListener('input', (e) => { App.state.app.settings.letterTemplate = e.target.value; App.store.save(); });
+      App.els.letterTemplateEditor?.addEventListener('input', (e) => { App.ui.setLetterTemplateFor(App.state.letterEditingType || 'Congregation', e.target.innerHTML); });
+      App.ui.wireRteToolbar();
+      document.querySelectorAll('.letter-type-tab').forEach((btn) => btn.addEventListener('click', () => {
+        document.querySelectorAll('.letter-type-tab').forEach((b) => b.classList.toggle('active', b === btn));
+        App.state.letterEditingType = btn.dataset.letterType;
+        if (App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = App.state.app.settings['letterTemplate' + btn.dataset.letterType] || DEFAULT_LETTER_TEMPLATE_HTML;
+        App.ui.renderLetterPagesList();
+      }));
       App.els.senderNameInput?.addEventListener('input', (e) => { App.state.app.settings.senderName = e.target.value; App.store.save(); });
-      App.els.letterTemplateResetBtn?.addEventListener('click', () => {
-        App.state.app.settings.letterTemplate = DEFAULT_LETTER_TEMPLATE;
+      App.els.senderAddressInput?.addEventListener('input', (e) => { App.state.app.settings.senderAddress = e.target.value; App.store.save(); });
+      App.els.senderPhoneInput?.addEventListener('input', (e) => { App.state.app.settings.senderPhone = e.target.value; App.store.save(); });
+      App.els.senderEmailInput?.addEventListener('input', (e) => { App.state.app.settings.senderEmail = e.target.value; App.store.save(); });
+      App.els.emailMethodSelect?.addEventListener('change', (e) => { App.state.app.settings.emailMethod = e.target.value; App.store.save(); if (App.els.owaUrlRow) App.els.owaUrlRow.style.display = e.target.value === 'owa' ? '' : 'none'; });
+      App.els.owaUrlInput?.addEventListener('input', (e) => { App.state.app.settings.owaUrl = e.target.value; App.store.save(); });
+      App.els.addLetterPageBtn?.addEventListener('click', () => {
+        const type = App.state.letterEditingType || 'Congregation';
+        const pages = App.state.app.settings.letterPages[type] || (App.state.app.settings.letterPages[type] = []);
+        pages.push({ id: App.utils.uid('lp'), title: '', html: '<div></div>' });
         App.store.save();
-        if (App.els.letterTemplateInput) App.els.letterTemplateInput.value = DEFAULT_LETTER_TEMPLATE;
+        App.ui.renderLetterPagesList();
+      });
+      App.els.previewLetterPdfBtn?.addEventListener('click', () => {
+        const type = App.state.letterEditingType || 'Congregation';
+        const visitTypeMap = { Congregation: 'congregation', Group: 'group', Pregroup: 'pregroup' };
+        const sampleEvent = { id: 'preview', name: 'Приклад — ' + { Congregation: 'Собрание', Group: 'Группа', Pregroup: 'Предгруппа' }[type], visitType: visitTypeMap[type], congNumber: '00000', address: '', schedule: '' };
+        const today = new Date();
+        const end = new Date(today); end.setDate(end.getDate() + 5);
+        const sampleEntry = { id: 'preview', title: sampleEvent.name, start: App.utils.iso(today), end: App.utils.iso(end), note: '' };
+        const doc = App.ui.buildLetterPdfDoc(sampleEntry, sampleEvent);
+        if (!doc) return;
+        try {
+          const url = doc.output('bloburl');
+          window.open(url, '_blank');
+        } catch (err) {
+          console.error('Preview failed, falling back to download', err);
+          doc.save('preview-letter.pdf');
+        }
+      });
+      App.els.letterTemplateResetBtn?.addEventListener('click', () => {
+        const type = App.state.letterEditingType || 'Congregation';
+        App.ui.setLetterTemplateFor(type, DEFAULT_LETTER_TEMPLATE_HTML);
+        if (App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = DEFAULT_LETTER_TEMPLATE_HTML;
         App.utils.toast('Шаблон восстановлен');
       });
       App.els.countdownUnitSelect?.addEventListener('change', (e) => { App.state.countdownUnit = e.target.value; App.ui.renderAll(); });

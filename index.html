@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.16.0</title>
+  <title>Service Year Planner v9.23.0</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="favicon.ico">
@@ -64,13 +64,26 @@
   :root[data-layout="minimal"] .sy-month-card{box-shadow:none !important;border:1px solid var(--line) !important}:root[data-layout="minimal"] .sy-period-bar{box-shadow:none}
   @media (max-width:1280px){.calendar-layout{grid-template-columns:1fr}}
   .day-cell.holiday .day-num{color:#b91c1c;font-weight:800}
+  .settings-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .settings-tab{opacity:.65}
+  .settings-tab.active{opacity:1;background:var(--accent);color:#fff;border-color:var(--accent)}
+  .letter-type-tab{opacity:.65}
+  .letter-type-tab.active{opacity:1;background:var(--accent);color:#fff;border-color:var(--accent)}
+  .settings-panel{display:grid;gap:16px}
+  .rte-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+  .rte-btn{min-width:40px;padding:8px 12px}
+  .rte-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .rte-font-note{color:var(--muted)}
+  .rte-editor{min-height:220px;max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface)}
+  .rte-editor div{margin-bottom:10px}
+  .rte-editor:focus{outline:2px solid var(--accent);outline-offset:1px}
   [hidden]{display:none !important}
   .sy-day.holiday:not(.today) span{color:#b91c1c;font-weight:800}
   .holiday-mark{font-size:10px;margin-left:3px}
   .day-cell.drag-over{outline:2px dashed var(--accent);outline-offset:-3px;background:rgba(20,83,45,.08)}
   @media (min-width:1201px){.app{grid-template-columns:280px 1fr !important}.sidebar{display:flex !important;position:relative !important;left:auto !important;top:auto !important;width:auto !important;z-index:1 !important}.bottom-nav{display:none !important}.mobile-menu-btn{display:none !important}.mobile-overlay{display:none !important}}
   @media (min-width:768px) and (max-width:1200px){body::before{display:none!important}.app{grid-template-columns:1fr!important}.sidebar{position:fixed;left:-296px;top:0;bottom:0;width:280px;transition:left .24s ease;z-index:1501}.mobile-menu-btn{display:inline-flex!important}.app.menu-open .sidebar{left:0}.main{padding:18px}.dow-row,.week-row{grid-template-columns:38px 1fr}.topbar h2{font-size:24px}}
-  @media (max-width:767px){body::before{display:none !important}.app{grid-template-columns:1fr !important}.sidebar{display:flex !important;position:fixed !important;top:0 !important;left:-296px !important;bottom:0 !important;width:280px !important;z-index:1501 !important;transition:left .24s ease !important;filter:none !important;opacity:1 !important;pointer-events:auto !important}.app.menu-open .sidebar{left:0 !important}.mobile-menu-btn{display:inline-flex !important}.mobile-overlay.show{display:block !important}.bottom-nav{display:block !important}.main{padding:16px 16px 96px !important}.topbar{position:sticky;top:0;z-index:1200;background:var(--bg);padding-top:4px}.actions{gap:8px}.actions .btn,.actions label.btn{padding:10px 12px}.form-grid,.pdf-grid{grid-template-columns:1fr !important}.dow-row,.week-row{display:grid;grid-template-columns:46px 1fr;}.topbar h2{font-size:24px}}
+  @media (max-width:767px){body::before{display:none !important}.app{grid-template-columns:1fr !important}.sidebar{display:flex !important;position:fixed !important;top:0 !important;left:-296px !important;bottom:0 !important;width:280px !important;z-index:1501 !important;transition:left .24s ease !important;filter:none !important;opacity:1 !important;pointer-events:auto !important}.app.menu-open .sidebar{left:0 !important}.mobile-menu-btn{display:inline-flex !important}.mobile-overlay.show{display:block !important}.bottom-nav{display:block !important}.main{padding:16px 16px 96px !important}.topbar{position:sticky;top:0;z-index:1200;background:var(--bg);padding-top:4px}.actions{gap:8px}.actions .btn,.actions label.btn,.mobile-menu-btn{padding:10px 12px}.form-grid,.pdf-grid{grid-template-columns:1fr !important}.dow-row,.week-row{display:grid;grid-template-columns:46px 1fr;}.topbar h2{font-size:24px}}
   .week-row:hover .week-days{background: rgba(20,83,45,.06)}
   .day-cell.today-col{background: linear-gradient(to bottom, rgba(20,83,45,.08), transparent 55%)}
   .day-cell.today-col.weekend{background: linear-gradient(to bottom, rgba(20,83,45,.10), transparent 55%)}
@@ -209,20 +222,20 @@ body::before{display:none !important}
   <div class="app" id="appRoot">
     <div class="mobile-overlay" id="mobileOverlay" hidden></div>
     <aside class="sidebar">
-      <div class="brand"><div class="logo"><svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="150" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="336" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="120" y="140" width="272" height="256" rx="32" fill="#f4faf6"/><rect x="120" y="140" width="272" height="72" rx="32" fill="#15532d"/><rect x="120" y="180" width="272" height="32" fill="#15532d"/><circle cx="160" cy="252" r="10" fill="#bfe3cd"/><circle cx="200" cy="252" r="10" fill="#bfe3cd"/><circle cx="240" cy="252" r="10" fill="#bfe3cd"/><circle cx="160" cy="292" r="10" fill="#bfe3cd"/><path d="M204 318 L244 358 L316 274" fill="none" stroke="#1f7a45" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>Service Year Planner</h1><p>v9.16.0 • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo"><svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="150" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="336" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="120" y="140" width="272" height="256" rx="32" fill="#f4faf6"/><rect x="120" y="140" width="272" height="72" rx="32" fill="#15532d"/><rect x="120" y="180" width="272" height="32" fill="#15532d"/><circle cx="160" cy="252" r="10" fill="#bfe3cd"/><circle cx="200" cy="252" r="10" fill="#bfe3cd"/><circle cx="240" cy="252" r="10" fill="#bfe3cd"/><circle cx="160" cy="292" r="10" fill="#bfe3cd"/><path d="M204 318 L244 358 L316 274" fill="none" stroke="#1f7a45" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>Service Year Planner</h1><p>v9.23.0 • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
     <main class="main">
       <div class="offline-banner" id="offlineBanner">Вы офлайн. Изменения сохраняются локально.</div>
       <header class="topbar">
-        <div>
-          <div class="version-badge">Версия: v9.16.0</div>
-          <h2 id="screenTitle">Календарь</h2>
-          <p id="screenSubtitle"></p>
-        </div>
-        <div class="actions">
+        <div style="display:flex;align-items:center;gap:14px">
           <button class="btn mobile-menu-btn" id="mobileMenuToggleBtn" type="button" aria-label="Открыть меню" aria-expanded="false">☰ Меню</button>
+          <div>
+            <div class="version-badge">Версия: v9.23.0</div>
+            <h2 id="screenTitle">Календарь</h2>
+            <p id="screenSubtitle"></p>
+          </div>
         </div>
       </header>
       <section id="calendar" class="screen active">
@@ -281,7 +294,15 @@ body::before{display:none !important}
 <div style="grid-column:1 / -1"><label class="small">Заметка о собрании/группе</label><textarea id="eventContactNoteInput" rows="2" placeholder="Любая полезная информация"></textarea></div>
 </div><div class="editor-actions"><button class="btn" id="resetEventBtn" type="button">Очистить</button><button class="btn danger" id="deleteEventBtn" type="button" hidden>Удалить собрание</button><button class="btn primary" id="saveEventBtn" type="button">Сохранить собрание</button></div></div></div>
       <section id="notes" class="screen"><div class="toolbar"><input id="noteSearch" type="text" placeholder="Поиск по заметкам" /></div><div class="card"><div id="notesList" class="grid"></div></div></section>
-      <section id="settings" class="screen"><div class="grid" style="grid-template-columns:repeat(2,1fr)"><div class="card"><h3>Внешний вид</h3><div class="form-grid"><div><label class="small">Язык</label><select id="languageSelect"><option value="ru">Русский</option><option value="en">English</option><option value="uk">Українська</option><option value="pl">Polski</option></select></div><div><label class="small">Тема</label><select id="themeSelect"><option value="light">Светлая</option><option value="dark">Тёмная</option></select></div>
+      <section id="settings" class="screen">
+        <div class="settings-tabs">
+          <button class="chip settings-tab active" data-settings-tab="appearance" type="button">🎨 Внешний вид</button>
+          <button class="chip settings-tab" data-settings-tab="letter" type="button">✉ Письмо</button>
+          <button class="chip settings-tab" data-settings-tab="data" type="button">💾 Данные и бэкап</button>
+        </div>
+
+        <div class="settings-panel" id="settingsPanelAppearance">
+          <div class="card"><h3>Внешний вид</h3><div class="form-grid"><div><label class="small">Язык</label><select id="languageSelect"><option value="ru">Русский</option><option value="en">English</option><option value="uk">Українська</option><option value="pl">Polski</option></select></div><div><label class="small">Тема</label><select id="themeSelect"><option value="light">Светлая</option><option value="dark">Тёмная</option></select></div>
 <div>
 <label class="small">Цвет интерфейса</label>
 <select id="accentSelect">
@@ -310,14 +331,71 @@ body::before{display:none !important}
  <option value="125">125% — Огромный</option>
 </select>
 <div class="layout-help">Меняет размер текста, кнопок и календаря.</div>
-</div><div><label class="small">Макет календаря</label><select id="layoutPresetSelect"></select><div class="layout-help">Доступно 5 вариантов отображения календаря.</div></div></div></div><div class="card"><h3>Управление данными</h3><div class="grid"><button class="btn full" id="settingsPdfBtn" type="button">PDF / Печать</button>
+</div><div><label class="small">Макет календаря</label><select id="layoutPresetSelect"></select><div class="layout-help">Доступно 5 вариантов отображения календаря.</div></div></div></div>
+        </div>
+
+        <div class="settings-panel" id="settingsPanelLetter" hidden>
+          <div class="card"><h3>Отправитель и шапка письма</h3><div style="margin-top:8px"><label class="small">Ваше имя (для подписи «Ваш {sender}» и шапки письма)</label><input id="senderNameInput" type="text" placeholder="Например: Олексій Тимощук" /></div>
+<div class="form-grid" style="margin-top:8px">
+<div><label class="small">Адрес (в шапке письма)</label><input id="senderAddressInput" type="text" placeholder="ul. Przejazd 2, 05-082 Blizne, Poland" /></div>
+<div><label class="small">Телефон (в шапке письма)</label><input id="senderPhoneInput" type="text" placeholder="+48 886 260 883 (WhatsApp)" /></div>
+<div style="grid-column:1 / -1"><label class="small">E-mail (в шапке письма)</label><input id="senderEmailInput" type="text" placeholder="name@jwpub.org" /></div>
+</div>
+<div class="form-grid" style="margin-top:8px">
+<div><label class="small">Способ отправки письма</label><select id="emailMethodSelect"><option value="mailto">Почтовый клиент (mailto)</option><option value="owa">Outlook Web App (OWA)</option></select></div>
+<div id="owaUrlRow"><label class="small">Ссылка OWA для составления письма</label><input id="owaUrlInput" type="text" placeholder="https://outlook.office.com/mail/deeplink/compose" /></div>
+</div></div>
+
+          <div class="card" style="margin-top:16px">
+            <h3>Текст письма</h3>
+            <div class="small" style="margin-bottom:8px">Отдельный текст для каждого типа визита. Плейсхолдеры: {congregation}, {cong_number}, {start_date}, {end_date}, {today}, {sender}. Выдели нужное слово или фразу мышью в любом из редакторов ниже, затем нажми «B» или размер — форматируется только выделенный фрагмент.</div>
+            <div class="settings-tabs" style="margin-bottom:12px">
+              <button class="chip letter-type-tab active" data-letter-type="Congregation" type="button">Собрание</button>
+              <button class="chip letter-type-tab" data-letter-type="Group" type="button">Группа</button>
+              <button class="chip letter-type-tab" data-letter-type="Pregroup" type="button">Предгруппа</button>
+            </div>
+            <div class="rte-toolbar">
+              <button class="btn rte-btn" type="button" data-rte-cmd="bold" title="Жирный (выдели текст)"><strong>B</strong></button>
+              <button class="btn rte-btn" type="button" data-rte-cmd="italic" title="Курсив (выдели текст — см. примечание ниже)"><em>I</em></button>
+              <button class="btn rte-btn" type="button" data-rte-cmd="underline" title="Подчеркнуть (выдели текст)"><u>U</u></button>
+              <span class="small" style="margin-left:6px">Размер:</span>
+              <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="9">9</button>
+              <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="10">10</button>
+              <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="11">11</button>
+              <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="12">12</button>
+              <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="14">14</button>
+              <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="16">16</button>
+              <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="18">18</button>
+              <span class="small rte-font-note">Выдели текст в редакторе, затем нажми нужную кнопку. Шрифт: Aptos</span>
+            </div>
+            <div class="small" style="color:var(--muted);margin-bottom:6px">Обычный текст (без выделения) отображается 11pt, не жирным.</div>
+            <div class="small" style="font-weight:700;margin:4px 0">Страница 1 — само письмо</div>
+            <div id="letterTemplateEditor" class="rte-editor" data-rte-page="body" contenteditable="true"></div>
+            <div class="small" style="margin-top:8px;color:var(--muted)">Шрифт в PDF — Aptos (с полной поддержкой кириллицы). Жирный (имитация двойной обводкой — в архиве не было отдельного файла Aptos Bold) и подчёркивание работают в PDF корректно. ⚠️ Курсив пока отображается только на экране — настоящего курсивного файла шрифта нет, а «наклон» текста без визуальной проверки результата слишком рискован для PDF. Если пришлёшь Aptos Italic (.ttf) — добавлю по-настоящему.</div>
+            <div style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="letterTemplateResetBtn" type="button">Сбросить страницу 1 к стандартной</button></div>
+
+            <div class="small" style="font-weight:700;margin:20px 0 8px">Дополнительные страницы (2, 3...)</div>
+            <div id="letterPagesList" class="grid" style="gap:16px"></div>
+            <button class="btn" id="addLetterPageBtn" type="button" style="margin-top:10px">+ Добавить страницу</button>
+
+            <div class="editor-actions" style="margin-top:20px;justify-content:flex-start">
+              <button class="btn primary" id="previewLetterPdfBtn" type="button">👁 Предпросмотр PDF (на примере)</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-panel" id="settingsPanelData" hidden>
+          <div class="grid" style="grid-template-columns:repeat(2,1fr)">
+          <div class="card"><h3>Экспорт и печать</h3><div class="grid"><button class="btn full" id="settingsPdfBtn" type="button">PDF / Печать</button>
 <div class="actions settings-actions" style="margin-top:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
   <button class="btn" id="themeBtn" type="button">Тема</button>
   <button class="btn primary" id="exportBtn" type="button">Экспорт</button>
   <label class="btn" for="importInput">Импорт JSON</label>
   <input id="importInput" type="file" accept=".json,application/json,text/plain" hidden />
 </div>
-
+<p class="small" style="margin-top:4px">PDF использует системную печать браузера.</p>
+</div></div>
+          <div class="card"><h3>Синхронизация</h3>
 <div class="sync-card">
   <h4 id="syncTitle">Ручная синхронизация</h4>
   <p class="small" id="syncHint">Без API: на основном ноутбуке скачайте файл синхронизации и поместите его в Google Drive. На другом устройстве скачайте этот файл из Drive и загрузите здесь.</p>
@@ -327,29 +405,30 @@ body::before{display:none !important}
     <input id="syncImportInput" type="file" accept=".json,application/json,text/plain" hidden />
   </div>
   <div class="sync-status" id="syncStatus">Синхронизация ещё не выполнялась.</div>
-</div>
-<div class="card" style="box-shadow:none;border:1px dashed var(--line);border-radius:18px;padding:14px;background:var(--surface2)">
-  <div class="form-grid">
-    <div>
-      <label class="small">Добавить служебный год</label>
-      <input id="addYearInput" type="number" inputmode="numeric" placeholder="например 2029" />
-      <div class="small" style="margin-top:6px">Введите первый год (например 2029 для 2029/2030). Служебный год: 1 сентября — 31 августа.</div>
-    </div>
-    <div style="display:grid;gap:10px;align-content:end">
-      <button class="btn" id="addNextYearBtn" type="button">Добавить следующий год</button>
-      <button class="btn primary" id="addYearBtn" type="button">Добавить</button>
-    </div>
-  </div>
-</div>
-<div style="display:flex;justify-content:flex-start;gap:12px;flex-wrap:wrap"><button class="btn primary" id="backupBtn" type="button">Создать backup</button><button class="btn" id="pinSetupBtn" type="button">🔒 PIN-код: выкл</button><label class="btn" style="display:flex;align-items:center;gap:8px"><input id="holidaysToggle" type="checkbox" style="width:auto" /> Праздники CZ/AT/DE</label></div>
-<div style="margin-top:16px"><label class="small">Ваше имя (для подписи «Ваш {sender}»)</label><input id="senderNameInput" type="text" placeholder="Например: Олексій Тимощук" /></div>
-<div style="margin-top:16px"><label class="small">Шаблон письма перед визитом (плейсхолдеры: {congregation}, {cong_number}, {start_date}, {end_date}, {today}, {sender})</label><textarea id="letterTemplateInput" rows="10"></textarea><div style="margin-top:8px"><button class="btn" id="letterTemplateResetBtn" type="button">Сбросить к стандартному</button></div></div>
-<div class="card" style="margin-top:14px;box-shadow:none;border:1px dashed var(--danger);border-radius:18px;padding:14px;background:rgba(185,28,28,.06)">
-  <div class="small" style="color:var(--danger);font-weight:700;margin-bottom:8px">Опасная зона</div>
-  <div class="small" style="margin-bottom:10px">Необратимое действие: все локальные данные приложения будут удалены безвозвратно. Перед этим рекомендуем создать backup.</div>
-  <button class="btn danger" id="resetAppBtn" type="button">Сбросить приложение</button>
-</div>
-</div><p class="small" style="margin-top:12px">PDF использует системную печать браузера.</p></div></div></section>
+</div></div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <h3>Служебный год и резервные копии</h3>
+            <div class="form-grid">
+              <div>
+                <label class="small">Добавить служебный год</label>
+                <input id="addYearInput" type="number" inputmode="numeric" placeholder="например 2029" />
+                <div class="small" style="margin-top:6px">Введите первый год (например 2029 для 2029/2030). Служебный год: 1 сентября — 31 августа.</div>
+              </div>
+              <div style="display:grid;gap:10px;align-content:end">
+                <button class="btn" id="addNextYearBtn" type="button">Добавить следующий год</button>
+                <button class="btn primary" id="addYearBtn" type="button">Добавить</button>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-start;gap:12px;flex-wrap:wrap;margin-top:14px"><button class="btn primary" id="backupBtn" type="button">Создать backup</button><button class="btn" id="pinSetupBtn" type="button">🔒 PIN-код: выкл</button><label class="btn" style="display:flex;align-items:center;gap:8px"><input id="holidaysToggle" type="checkbox" style="width:auto" /> Праздники CZ/AT/DE</label></div>
+          </div>
+          <div class="card" style="margin-top:14px;box-shadow:none;border:1px dashed var(--danger);border-radius:18px;padding:14px;background:rgba(185,28,28,.06)">
+            <div class="small" style="color:var(--danger);font-weight:700;margin-bottom:8px">Опасная зона</div>
+            <div class="small" style="margin-bottom:10px">Необратимое действие: все локальные данные приложения будут удалены безвозвратно. Перед этим рекомендуем создать backup.</div>
+            <button class="btn danger" id="resetAppBtn" type="button">Сбросить приложение</button>
+          </div>
+        </div>
+      </section>
     </main>
     <nav class="bottom-nav" id="bottomNav"><div class="bottom-nav-row" id="bottomNavRow"></div></nav>
   </div>
@@ -423,7 +502,7 @@ body::before{display:none !important}
       <div class="modal-head"><div><h3>✉ Письмо перед визитом</h3><div class="modal-sub" id="letterModalSub">—</div></div><button class="icon-btn" id="letterModalCloseBtn" type="button" aria-label="Закрыть">✕</button></div>
       <textarea id="letterTextInput" rows="16" style="font-family:inherit"></textarea>
       <div class="small" id="letterAttachStatus" style="margin-top:8px"></div>
-      <div class="editor-actions"><button class="btn" id="letterResetBtn" type="button">Восстановить шаблон</button><button class="btn" id="letterAttachPdfBtn" type="button">📎 Прикрепить график</button><button class="btn primary" id="letterSendBtn" type="button">📤 Отправить</button></div>
+      <div class="editor-actions"><button class="btn" id="letterResetBtn" type="button">Восстановить шаблон</button><button class="btn" id="letterPreviewPdfBtn" type="button">📄 Письмо PDF</button><button class="btn" id="letterAttachPdfBtn" type="button">📎 + график визита</button><button class="btn primary" id="letterSendBtn" type="button">📤 Отправить</button></div>
     </div>
   </div>
   <div class="modal" id="remindersModal" hidden>
@@ -464,6 +543,10 @@ body::before{display:none !important}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <script src="fonts-dejavu-sans-normal.js"></script>
+  <script src="fonts-aptos-regular.js"></script>
+  <script src="fonts-aptos-bold.js"></script>
+  <script src="fonts-aptos-italic.js"></script>
+  <script src="fonts-aptos-bolditalic.js"></script>
   <script src="fonts-dejavu-sans-bold.js"></script>
   <script src="visit-pdf.js"></script>
   <script src="app.js" defer></script>
