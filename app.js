@@ -318,7 +318,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.28.0',
+      version: '9.28.1',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -1828,20 +1828,8 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const sy = App.utils.getServiceYearForDate(date);
         const weekId = App.utils.weekIdForDate(date);
         const week = App.data.getWeek(sy, weekId);
-        const weekEvent = App.data.getEventById(week.eventId);
         const weekStart = App.utils.parseLocalDate(week.start);
         const weekEnd = App.utils.parseLocalDate(week.end);
-        const weekItem = week.eventId ? {
-          id: `week:${weekId}`,
-          source: 'week',
-          refId: weekId,
-          eventId: week.eventId,
-          title: weekEvent?.name || App.utils.t('event'),
-          note: week.note || '',
-          start: week.start,
-          end: week.end,
-          flags: { f302: !!week.flagS302, letter: !!week.flagLetter }
-        } : null;
         const flagBadges = (flags = {}) => this.flagBadgesHtml(flags);
         const flagToggles = (scope, id, flags = {}) => this.flagTogglesHtml(scope, id, flags);
         const dayEntries = App.state.app.entries
@@ -1868,32 +1856,6 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           .sort((a,b) => (a.start || '').localeCompare(b.start || ''));
         App.els.calendarSideTitle.textContent = App.utils.t('day_details_title');
         App.els.calendarSideMeta.textContent = `${App.utils.prettyDateLong(date)} · W${App.utils.weekNumber(date)} · ${App.utils.prettyDate(weekStart)} — ${App.utils.prettyDate(weekEnd)}`;
-        const weekAddress = weekEvent?.address ? `<a href="${App.utils.mapUrl(weekEvent.address)}" target="_blank" rel="noopener noreferrer">${App.utils.escapeHtml(weekEvent.address)}</a>` : App.utils.escapeHtml(App.utils.t('no_address'));
-        const weekActions = weekItem ? `
-          <div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${weekAddress}</div></div>
-          <div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(weekEvent?.schedule || App.utils.t('no_schedule'))}</div></div>
-          ${flagToggles('week', weekId, weekItem.flags)}
-          <div class="calendar-action-grid">
-            <button class="btn" type="button" id="syAddEntryBtn">${App.utils.t('add_entry')}</button>
-            <button class="btn" type="button" id="syEditWeekBtn">${App.utils.t('edit_week_event')}</button>
-            <button class="btn" type="button" id="syOpenWeekBtn">${App.utils.t('open_week')}</button>
-            <a class="btn" href="${App.utils.googleCalendarUrl(weekItem, weekEvent)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a>
-            <button class="btn" type="button" data-ics-id="${App.utils.escapeAttr(weekItem.id)}">${App.utils.t('apple_calendar')}</button>
-            ${weekEvent?.address ? `<a class="btn" href="${App.utils.mapUrl(weekEvent.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}
-          </div>` : `
-          ${flagToggles('week', weekId, { f302: !!week.flagS302, letter: !!week.flagLetter })}
-          <div class="calendar-action-grid">
-            <button class="btn" type="button" id="syAddEntryBtn">${App.utils.t('add_entry')}</button>
-            <button class="btn" type="button" id="syEditWeekBtn">${App.utils.t('edit_week_event')}</button>
-            <button class="btn" type="button" id="syOpenWeekBtn">${App.utils.t('open_week')}</button>
-          </div>`;
-        const weekBlock = `
-          <div class="side-row">
-            <div class="side-label">${App.utils.t('week_planned')}</div>
-            <div class="side-value">${weekEvent ? `<span class="pill"><span class="dot" style="background:${App.utils.clampColor(weekEvent.color)}"></span>${App.utils.escapeHtml(weekEvent.name)}${flagBadges(weekItem?.flags)}</span>` : App.utils.escapeHtml(App.utils.t('no_template'))}</div>
-          </div>
-          <div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(week.note || App.utils.t('no_note'))}</div></div>
-          ${weekActions}`;
         const entriesBlock = `
           <div class="side-row"><div class="side-label">${App.utils.t('entries_on_day')}</div><div class="side-value">${dayEntries.length ? '' : App.utils.escapeHtml(App.utils.t('no_entries_day'))}</div></div>
           ${dayEntries.map((it) => {
@@ -1911,23 +1873,15 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
                 ${it.event?.address ? `<a class="btn" href="${App.utils.mapUrl(it.event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}
               </div>
             </div>`;
-          }).join('')}`;
-        App.els.calendarSideDetails.innerHTML = `${weekBlock}${entriesBlock}`;
+          }).join('')}
+          <div class="calendar-action-grid" style="margin-top:10px"><button class="btn" type="button" id="syAddEntryBtn">${App.utils.t('add_entry')}</button></div>`;
+        App.els.calendarSideDetails.innerHTML = entriesBlock;
         document.getElementById('syAddEntryBtn')?.addEventListener('click', () => App.actions.openCalendarEditorForCreate(dateIso));
-        document.getElementById('syEditWeekBtn')?.addEventListener('click', () => App.actions.openCalendarEditorForItem(`week:${weekId}`));
-        document.getElementById('syOpenWeekBtn')?.addEventListener('click', () => {
-          App.state.selectedScreen = 'weeks';
-          App.state.selectedYear = sy;
-          App.state.selectedWeekId = weekId;
-          App.ui.renderAll();
-          App.ui.openModal(App.els.weekEditorModal);
-        });
         document.querySelectorAll('[data-edit-calendar-item]').forEach((btn) => btn.addEventListener('click', (e) => {
           e.stopPropagation();
           App.actions.openCalendarEditorForItem(btn.dataset.editCalendarItem);
         }));
         document.querySelectorAll('[data-ics-id]').forEach((btn) => btn.addEventListener('click', () => App.actions.exportSingleEventIcs(btn.dataset.icsId)));
-        document.querySelectorAll('[data-week-flag]').forEach((input) => input.addEventListener('change', () => App.actions.toggleWeekSentFlag(sy, input.dataset.weekId, input.dataset.weekFlag, input.checked)));
         document.querySelectorAll('[data-entry-flag]').forEach((input) => input.addEventListener('change', () => App.actions.toggleEntrySentFlag(input.dataset.entryId, input.dataset.entryFlag, input.checked)));
       },
       openCalendarEditor(data, isEdit) {
