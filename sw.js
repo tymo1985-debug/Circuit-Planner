@@ -20,7 +20,12 @@ const APP_SHELL_URLS = [
   './favicon.ico',
   './manifest.webmanifest',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  // CDN libs: precache so PDF export works offline even before the second visit
+  // (on the very first load the SW doesn't control the page yet, so runtime
+  // caching alone would miss them).
+  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -99,10 +104,13 @@ async function cacheFirst(request) {
   // Revalidate in the background even on a cache hit, so replacing an icon/font
   // file (without also touching sw.js) eventually reaches returning users
   // instead of being served from cache forever.
+  // Write into CACHE_STATIC (not RUNTIME): these same-origin fonts/icons are
+  // precached there at install, and putting revalidated copies into a second
+  // cache would double the ~3.4 MB font payload in storage.
   const revalidate = fetch(request)
     .then(async (res) => {
       if (res && res.ok) {
-        const cache = await caches.open(CACHE_RUNTIME);
+        const cache = await caches.open(CACHE_STATIC);
         try {
           await cache.put(request, res.clone());
         } catch (_) {}
@@ -155,7 +163,9 @@ async function staleWhileRevalidate(request) {
     })
     .catch(() => cached);
 
-  return cached || fetchPromise;
+  // Never resolve respondWith() with undefined: if there is no cached copy and
+  // the network fails, return a proper error Response instead of a TypeError.
+  return cached || fetchPromise.then((res) => res || Response.error());
 }
 
 self.addEventListener('fetch', (event) => {
@@ -174,13 +184,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  if (isAppShellRequest(request)) {
-    event.respondWith(networkFirst(request, request.destination === 'document' ? './index.html' : null));
+  // Font bundles are .js files (destination === 'script'), so without this
+  // explicit path check they would fall into the app-shell network-first branch,
+  // contradicting the cache-first promise above and hitting the network on every
+  // load for ~3.4 MB of rarely-changing assets. cacheFirst still revalidates in
+  // the background, so a replaced font eventually reaches returning users.
+  if (isSameOrigin(url) && (url.pathname.includes('/fonts/') || ['image', 'font'].includes(request.destination))) {
+    event.respondWith(cacheFirst(request));
     return;
   }
 
-  if (['image', 'font'].includes(request.destination)) {
-    event.respondWith(cacheFirst(request));
+  if (isAppShellRequest(request)) {
+    event.respondWith(networkFirst(request, request.destination === 'document' ? './index.html' : null));
     return;
   }
 

@@ -1,7 +1,7 @@
 {
   "name": "Service Year Planner",
   "short_name": "SY Planner",
-  "description": "Планировщик служебного года (v9.0). Работает офлайн, хранит данные локально.",
+  "description": "Планировщик служебного года. Работает офлайн, хранит данные локально.",
   "lang": "ru",
   "id": "./",
   "start_url": "./?source=pwa",
