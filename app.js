@@ -318,16 +318,14 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.29.0',
+      version: '9.30.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
       serviceYearStartMonth: 8,
       navItems: [
         { id: 'calendar', icon: '📆', tKey: 'nav_calendar' },
-        { id: 'weeks', icon: '🗓️', tKey: 'nav_weeks' },
         { id: 'events', icon: '🎯', tKey: 'nav_events' },
-        { id: 'notes', icon: '📝', tKey: 'nav_notes' },
         { id: 'settings', icon: '⚙️', tKey: 'nav_settings' }
       ],
       layoutPresets: [
@@ -819,21 +817,6 @@
         App.ui.closeModal(App.els.eventEditorModal);
         App.utils.toast(App.utils.t('delete_template'));
       },
-      deleteNote(year, weekId) {
-        const week = App.state.app.serviceYears?.[year]?.weeks?.[weekId];
-        if (!week) return;
-        if (!window.confirm(App.utils.t('delete_note_confirm'))) return;
-        week.note = '';
-        App.store.save();
-        App.ui.renderAll();
-        App.utils.toast(App.utils.t('delete_note'));
-      },
-      saveWeek() {
-        if (!App.state.selectedWeekId) return; const week = App.data.getWeek(App.state.selectedYear, App.state.selectedWeekId); week.flagLetter = !!App.els.flagLetter?.checked; week.flagS302 = !!App.els.flagS302?.checked; week.note = App.els.weekNoteInput?.value.trim() || ''; App.store.save(); App.ui.renderAll(); App.utils.toast(App.utils.t('week_saved'));
-      },
-      deleteWeek() {
-        if (!App.state.selectedWeekId) return; if (!window.confirm(App.utils.t('clear_week_confirm'))) return; const week = App.data.getWeek(App.state.selectedYear, App.state.selectedWeekId); week.eventId = ''; week.priority = 'normal'; week.flagLetter = false; week.flagS302 = false; week.note = ''; App.store.save(); App.ui.renderAll(); App.utils.toast(App.utils.t('week_deleted'));
-      },
       openCalendarEditorForCreate(dateIso) {
         App.state.calendarEditingTarget = { mode: 'create', source: 'entry', refId: null };
         App.ui.openCalendarEditor({ eventId: '', start: dateIso, end: dateIso, note: '' }, false);
@@ -1005,7 +988,7 @@
         let start = App.utils.iso(monthStart), end = App.utils.iso(monthEnd);
         if (['custom-range','custom-range-calendar'].includes(type)) { start = App.els.pdfRangeStartInput?.value || start; end = App.els.pdfRangeEndInput?.value || end; }
         if (type === 'half-year-agenda') end = App.utils.iso(new Date(App.state.calendarYear, App.state.calendarMonth + 6, 0));
-        if (['year-agenda','year-overview','notes-report','visits-schedule'].includes(type)) { start = App.utils.iso(bounds.start); end = App.utils.iso(bounds.end); }
+        if (['year-agenda','year-overview','visits-schedule'].includes(type)) { start = App.utils.iso(bounds.start); end = App.utils.iso(bounds.end); }
         return { start, end, sy };
       },
       collectPrintItems(startIso, endIso) {
@@ -1031,20 +1014,10 @@
         if (range.start > range.end) { App.utils.toast(App.utils.t('wrong_end_date')); return ''; }
         const items = this.collectPrintItems(range.start, range.end);
         const esc = (v) => App.utils.escapeHtml(v);
-        const titles = { 'month-grid':App.utils.t('month_grid'), 'custom-range-calendar':App.utils.t('period_calendar'), 'month-agenda':App.utils.t('month_list'), 'half-year-agenda':App.utils.t('half_year'), 'year-agenda':App.utils.t('year_events'), 'custom-range':App.utils.t('list_period'), 'year-overview':App.utils.t('year_overview'), 'notes-report':App.utils.t('notes_report'), 'visits-schedule':App.utils.t('visits_schedule') };
+        const titles = { 'month-grid':App.utils.t('month_grid'), 'custom-range-calendar':App.utils.t('period_calendar'), 'month-agenda':App.utils.t('month_list'), 'half-year-agenda':App.utils.t('half_year'), 'year-agenda':App.utils.t('year_events'), 'custom-range':App.utils.t('list_period'), 'year-overview':App.utils.t('year_overview'), 'visits-schedule':App.utils.t('visits_schedule') };
         const title = titles[type] || App.utils.t('pdf_print');
         const flags = (f={}) => [f.letter ? App.utils.t('letter_short') : '', f.f302 ? App.utils.t('s302_short') : ''].filter(Boolean).map((x)=>`<span class="flag">${esc(x)}</span>`).join(' ');
         const agenda = () => items.length ? `<table><thead><tr><th>${esc(App.utils.t('start'))}</th><th>${esc(App.utils.t('end'))}</th><th>${esc(App.utils.t('event'))}</th><th>${esc(App.utils.t('schedule'))}</th><th>${esc(App.utils.t('address'))}</th><th>${esc(App.utils.t('note'))}</th></tr></thead><tbody>${items.map((it)=>`<tr><td>${esc(App.utils.prettyDateLong(it.startDate))}</td><td>${esc(App.utils.prettyDateLong(it.endDate))}</td><td><span class="dot" style="background:${App.utils.clampColor(it.color)}"></span>${esc(it.title)} ${flags(it.flags)}</td><td>${esc(it.schedule || App.utils.t('no_schedule'))}</td><td>${esc(it.address || App.utils.t('no_address'))}</td><td>${esc(it.note || App.utils.t('no_note'))}</td></tr>`).join('')}</tbody></table>` : `<div class="empty">${esc(App.utils.t('no_events_month'))}</div>`;
-        const notes = () => {
-          const rows = [];
-          const rs = App.utils.parseLocalDate(range.start), re = App.utils.parseLocalDate(range.end);
-          Object.keys(App.state.app.serviceYears || {}).sort((a,b)=>Number(a)-Number(b)).forEach((year)=>Object.values(App.state.app.serviceYears[year]?.weeks || {}).forEach((week)=>{
-            if (!week.note) return;
-            const ws = App.utils.parseLocalDate(week.start), we = App.utils.parseLocalDate(week.end);
-            if (ws && we && App.utils.overlaps(ws,we,rs,re)) rows.push({ year, week, event:App.data.getEventById(week.eventId) });
-          }));
-          return rows.length ? `<table><thead><tr><th>${esc(App.utils.t('service_year'))}</th><th>${esc(App.utils.t('week_details'))}</th><th>${esc(App.utils.t('event'))}</th><th>${esc(App.utils.t('note'))}</th></tr></thead><tbody>${rows.map(({year,week,event})=>`<tr><td>${App.utils.serviceYearLabel(Number(year))}</td><td>${esc(App.utils.prettyDateLong(week.start))} — ${esc(App.utils.prettyDateLong(week.end))}</td><td>${esc(event?.name || App.utils.t('no_template'))}</td><td>${esc(week.note)}</td></tr>`).join('')}</tbody></table>` : `<div class="empty">${esc(App.utils.t('no_notes'))}</div>`;
-        };
         const calendar = () => {
           const start = App.utils.parseLocalDate(range.start), end = App.utils.parseLocalDate(range.end), months = [];
           let cur = new Date(start.getFullYear(), start.getMonth(), 1), last = new Date(end.getFullYear(), end.getMonth(), 1);
@@ -1068,7 +1041,7 @@
             .sort((a, b) => String(a.entry.start).localeCompare(String(b.entry.start)));
           return rows.length ? `<table><thead><tr><th>№</th><th>${esc(App.utils.t('range_start'))}</th><th>${esc(App.utils.t('range_end'))}</th><th>${esc(App.utils.t('event'))}</th><th>${esc(App.utils.t('visit_type'))}</th><th>S-302</th><th>${esc(App.utils.t('letter_short'))}</th><th>${esc(App.utils.t('note'))}</th></tr></thead><tbody>${rows.map(({ entry, event }, i) => `<tr><td>${i + 1}</td><td>${esc(App.utils.prettyDateLong(entry.start))}</td><td>${esc(App.utils.prettyDateLong(entry.end))}</td><td><span class="dot" style="background:${App.utils.clampColor(event.color)}"></span>${esc(entry.title || event.name)}</td><td>${esc(visitLabel(event.visitType))}</td><td>${entry.flags?.f302 ? '✓' : '—'}</td><td>${entry.flags?.letter ? '✓' : '—'}</td><td>${esc(entry.note || '')}</td></tr>`).join('')}</tbody></table>` : `<div class="empty">${esc(App.utils.t('no_events_month'))}</div>`;
         };
-        const body = (type === 'month-grid' || type === 'custom-range-calendar') ? calendar() : type === 'notes-report' ? notes() : type === 'year-overview' ? overview() : type === 'visits-schedule' ? visitsSchedule() : agenda();
+        const body = (type === 'month-grid' || type === 'custom-range-calendar') ? calendar() : type === 'year-overview' ? overview() : type === 'visits-schedule' ? visitsSchedule() : agenda();
         const label = `${App.utils.prettyDateLong(App.utils.parseLocalDate(range.start))} — ${App.utils.prettyDateLong(App.utils.parseLocalDate(range.end))}`;
         return `<!doctype html><html lang="${App.utils.lang()}"><head><meta charset="utf-8"><title>${esc(title)}</title><style>*{box-sizing:border-box}body{font-family:Segoe UI,Arial,sans-serif;color:#16251d;margin:0;padding:22px;background:#fff;font-size:12px}h1{font-size:22px;margin:0 0 6px}h2{font-size:16px;margin:0 0 10px}.meta{color:#566;margin-bottom:18px}.print-months{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.print-month{break-inside:avoid;border:1px solid #ccd8d0;border-radius:12px;padding:12px}.cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal-dow span{text-align:center;color:#667;font-weight:600}.cal-day,.cal-empty{min-height:78px;border:1px solid #dde6e0;border-radius:8px;padding:5px}.cal-day strong{display:block;margin-bottom:3px}.cal-event{font-size:10px;margin:2px 0;padding:2px 4px;border-radius:6px;background:#f1f5f2;overflow:hidden;text-overflow:ellipsis}.dot{display:inline-block;width:8px;height:8px;border-radius:999px;margin-right:5px}.flag{display:inline-block;border:1px solid #ccd8d0;border-radius:999px;padding:1px 5px;margin-left:3px;font-size:10px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccd8d0;padding:7px;text-align:left;vertical-align:top}th{background:#eef5f0}.empty{border:1px dashed #ccd8d0;border-radius:10px;padding:20px;text-align:center;color:#667}@media print{body{padding:0}.print-month{page-break-inside:avoid}@page{size:A4 landscape;margin:10mm}}</style></head><body><h1>${esc(title)}</h1><div class="meta">${esc(label)} · Service Year Planner</div>${body}</body></html>`;
       },
@@ -1087,8 +1060,7 @@
       cacheElements() {
         [
           'appRoot','desktopNav','toastWrap','offlineBanner','sideStatus','screenTitle','screenSubtitle',
-          'weekSearch','yearSelect','eventFilter','weekList','weekEditorTitle','weekEditor','weekEditorModal','weekEditorCloseBtn',
-          'eventEditorModal','eventEditorCloseBtn','flagLetter','flagS302','weekNoteInput','saveWeekBtn',
+          'eventEditorModal','eventEditorCloseBtn',
           'monthLabel','calendarRangeLabel','calendarGrid','prevMonthBtn','todayMonthBtn','nextMonthBtn',
           'calendarYearSelect','calendarLayoutPresetSelect','layoutPresetSelect','calendarEditor','editorTitle',
           'editorMeta','editorEventSelect','editorStart','editorEnd','editorReadonly','editorCloseBtn',
@@ -1103,8 +1075,8 @@
           'eventCongNumberInput','eventFormLanguageSelect','eventVisitOnlyFields','geocodeEventBtn','eventDistanceStatus','homeAddressInput','geocodeHomeBtn','homeGeocodeStatus','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow',
           'vfLanguageSelect','vfLanguageReminder',
           'visitFormModal','visitFormSub','visitFormCloseBtn','vfVisitType','vfMeetingsList','vfAddMeetingBtn','vfServiceDaysList','vfAddDayBtn','vfPastoralHeading','vfPastoralList','vfAddPastoralBtn','vfMealsList','vfAddMealBtn','vfNotesInput','vfCloseBtn2','vfGeneratePdfBtn',
-          'letterModal','letterModalSub','letterModalCloseBtn','letterTextInput','letterAttachStatus','letterResetBtn','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn',
-          'noteSearch','notesList','languageSelect','themeSelect','accentSelect','fontSizeSelect',
+          'letterModal','letterModalSub','letterModalCloseBtn','letterTextInput','letterExtraPagesPreview','letterAttachStatus','letterResetBtn','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn',
+          'languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
           'pdfCancelBtn','pdfExportConfirmBtn','pdfRangeCard','pdfRangeStartInput','pdfRangeEndInput','pdfRangeHelp','pdfHint',
           'bottomNav','bottomNavRow','mobileOverlay','mobileMenuToggleBtn','exportModal','exportModalCloseBtn','exportCancelBtn',
@@ -1147,15 +1119,6 @@
           App.els.editorNoteLabel = document.getElementById('editorNoteLabel');
         }
       },
-      ensureWeekDeleteButton() {
-        const actions = App.els.weekEditor?.querySelector('.editor-actions');
-        if (!actions) return;
-        let btn = document.getElementById('deleteWeekBtn');
-        if (!btn) {
-          btn = document.createElement('button'); btn.type = 'button'; btn.id = 'deleteWeekBtn'; btn.className = 'btn danger'; actions.insertBefore(btn, App.els.saveWeekBtn || null); btn.addEventListener('click', () => App.actions.deleteWeek());
-        }
-        btn.textContent = App.utils.t('delete_week');
-      },
 
       localizeColorOptions() {
         if (!App.els.eventColorInput) return;
@@ -1182,16 +1145,12 @@
         if (App.els.offlineBanner) App.els.offlineBanner.textContent = App.utils.t('offline');
         if (App.els.toggleTeamPanelBtn) App.els.toggleTeamPanelBtn.textContent = App.state.calendarView === 'year' ? App.utils.t('calendar_view_month') : App.utils.t('calendar_view_year');
         if (App.els.todayMonthBtn) App.els.todayMonthBtn.textContent = App.utils.t('today');
-        if (App.els.weekSearch) App.els.weekSearch.placeholder = App.utils.t('weeks_search');
-        if (App.els.noteSearch) App.els.noteSearch.placeholder = App.utils.t('notes_search');
         if (App.els.eventScheduleInput) App.els.eventScheduleInput.placeholder = App.utils.t('placeholder_schedule');
         const headings = qa('#events h3, #settings h3');
         if (headings[0]) { headings[0].textContent = ''; headings[0].hidden = true; headings[0].style.display = 'none'; }
         if (headings[1]) headings[1].textContent = App.utils.t('event_editor');
         if (headings[2]) headings[2].textContent = App.utils.t('look_and_feel');
         if (headings[3]) headings[3].textContent = App.utils.t('data_management');
-        if (App.els.weekEditorTitle && !App.state.selectedWeekId) App.els.weekEditorTitle.textContent = App.utils.t('week_details');
-        if (App.els.saveWeekBtn) App.els.saveWeekBtn.textContent = App.utils.t('save');
         if (App.els.resetEventBtn) App.els.resetEventBtn.textContent = App.utils.t('clear');
         if (App.els.saveEventBtn) App.els.saveEventBtn.textContent = App.utils.t('save_event');
         if (App.els.settingsPdfBtn) App.els.settingsPdfBtn.textContent = App.utils.t('pdf_print');
@@ -1233,7 +1192,7 @@
           const h4 = App.els.pdfModal.querySelectorAll('.pdf-section h4'); if (h4[0]) h4[0].textContent = App.utils.t('month_grid'); if (h4[1]) h4[1].textContent = App.utils.t('reports');
           const opts = App.els.pdfModal.querySelectorAll('[data-pdf-type] strong');
           const desc = App.els.pdfModal.querySelectorAll('[data-pdf-type] span');
-          const pdfMap = [['month_grid','month_grid_desc'],['period_calendar','period_calendar_desc'],['month_list',''],['half_year',''],['year_events',''],['list_period',''],['year_overview',''],['notes_report','']];
+          const pdfMap = [['month_grid','month_grid_desc'],['period_calendar','period_calendar_desc'],['month_list',''],['half_year',''],['year_events',''],['list_period',''],['visits_schedule',''],['year_overview','']];
           opts.forEach((el, i) => { if (pdfMap[i]) el.textContent = App.utils.t(pdfMap[i][0]); });
           desc.forEach((el, i) => { if (pdfMap[i] && pdfMap[i][1]) el.textContent = App.utils.t(pdfMap[i][1]); });
           if (App.els.pdfRangeHelp) App.els.pdfRangeHelp.textContent = App.utils.t('choose_range');
@@ -1272,9 +1231,7 @@
         this.renderScreenHeader();
         this.renderCalendar();
         this.cleanupCalendarChrome();
-        this.renderWeeks();
         this.renderEvents();
-        this.renderNotes();
         this.renderSettings();
         this.renderStatus();
         this.updateReminderButtonBadge();
@@ -1584,7 +1541,7 @@ showServiceYearDayPopover(anchor, dateIso, pinned = false) {
  const popoverDayEntries = (info.dayEntries || []).filter((entry) => !(info.weekItem && entry.eventId === info.weekItem.eventId)); 
  popoverDayEntries.forEach((entry) => rows.push({ kind: App.utils.t('type_entry'), title: entry.title, color: entry.color, range: `${App.utils.prettyDate(entry.start)} — ${App.utils.prettyDate(entry.end)}`, note: entry.note || App.utils.t('no_note'), schedule: entry.schedule || App.utils.t('no_schedule') }));
  const listHtml = rows.length ? rows.map((row) => `<div class="day-popover-event"><i class="day-popover-dot" style="background:${App.utils.clampColor(row.color)}"></i><div><strong>${App.utils.escapeHtml(row.title)}</strong><span>${App.utils.escapeHtml(row.kind)} · ${App.utils.escapeHtml(row.range)}</span><span>${App.utils.escapeHtml(row.schedule)}</span>${row.note && row.note !== App.utils.t('no_note') ? `<span>${App.utils.escapeHtml(row.note)}</span>` : ''}</div></div>`).join('') : `<div class="empty" style="padding:12px">${App.utils.escapeHtml(App.utils.t('no_entries_day'))}</div>`;
- popover.innerHTML = `<div class="day-popover-title">${App.utils.escapeHtml(App.utils.prettyDateLong(info.date))}</div><div class="day-popover-meta">W${App.utils.weekNumber(info.date)} · ${App.utils.escapeHtml(App.utils.prettyDate(info.weekStart))} — ${App.utils.escapeHtml(App.utils.prettyDate(info.weekEnd))}</div><div class="day-popover-list">${listHtml}</div><div class="day-popover-actions"><button class="btn primary" type="button" data-popover-details="${App.utils.escapeAttr(dateIso)}">${App.utils.t('open')}</button><button class="btn" type="button" data-popover-add="${App.utils.escapeAttr(dateIso)}">${App.utils.t('add_entry')}</button>${info.weekItem ? `<button class="btn" type="button" data-popover-edit-week="${App.utils.escapeAttr(info.weekItem.id)}">${App.utils.t('edit')}</button>` : `<button class="btn" type="button" data-popover-open-week="${App.utils.escapeAttr(info.weekId)}" data-popover-year="${info.sy}">${App.utils.t('open_week')}</button>`}</div>`;
+ popover.innerHTML = `<div class="day-popover-title">${App.utils.escapeHtml(App.utils.prettyDateLong(info.date))}</div><div class="day-popover-meta">W${App.utils.weekNumber(info.date)} · ${App.utils.escapeHtml(App.utils.prettyDate(info.weekStart))} — ${App.utils.escapeHtml(App.utils.prettyDate(info.weekEnd))}</div><div class="day-popover-list">${listHtml}</div><div class="day-popover-actions"><button class="btn primary" type="button" data-popover-details="${App.utils.escapeAttr(dateIso)}">${App.utils.t('open')}</button><button class="btn" type="button" data-popover-add="${App.utils.escapeAttr(dateIso)}">${App.utils.t('add_entry')}</button>${info.weekItem ? `<button class="btn" type="button" data-popover-edit-week="${App.utils.escapeAttr(info.weekItem.id)}">${App.utils.t('edit')}</button>` : ''}</div>`;
  const rect = anchor.getBoundingClientRect(); const margin = 12;
  let left = rect.left + rect.width / 2 - 150; let top = rect.bottom + 8;
  popover.hidden = false; const box = popover.getBoundingClientRect();
@@ -1594,7 +1551,6 @@ showServiceYearDayPopover(anchor, dateIso, pinned = false) {
  popover.querySelector('[data-popover-details]')?.addEventListener('click', (e) => { e.stopPropagation(); App.state.calendarSelectedDateIso = dateIso; App.ui.renderServiceYearDayDetails(dateIso); App.ui.hideDayPopover(true); App.els.calendarSideTitle?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
  popover.querySelector('[data-popover-add]')?.addEventListener('click', (e) => { e.stopPropagation(); App.ui.hideDayPopover(true); App.actions.openCalendarEditorForCreate(dateIso); });
  popover.querySelector('[data-popover-edit-week]')?.addEventListener('click', (e) => { e.stopPropagation(); App.ui.hideDayPopover(true); App.actions.openCalendarEditorForItem(e.currentTarget.dataset.popoverEditWeek); });
- popover.querySelector('[data-popover-open-week]')?.addEventListener('click', (e) => { e.stopPropagation(); App.ui.hideDayPopover(true); App.state.selectedScreen = 'weeks'; App.state.selectedYear = Number(e.currentTarget.dataset.popoverYear || info.sy); App.state.selectedWeekId = e.currentTarget.dataset.popoverOpenWeek; App.ui.renderAll(); App.ui.openModal(App.els.weekEditorModal); });
 },
   renderCalendarYear(serviceYear) {
         this.ensureCalendarViewStyles();
@@ -1729,7 +1685,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
             (lanes[lane] = lanes[lane] || []).push(bar);
           });
         });
-        if (App.els.calendarGrid) App.els.calendarGrid.innerHTML = `<div class="grid-cal"><div class="dow-row"><div class="dow-corner"></div><div class="dow-days">${App.utils.dayNames().map((name) => `<div class="dow">${name}</div>`).join('')}</div></div>${weeks.map((week) => { const bars = (itemsByWeek.get(week.id) || []).slice(0, 4); const extraCount = Math.max(0, (itemsByWeek.get(week.id) || []).length - 4); return `<div class="week-row"><button class="week-num" data-open-week="${App.utils.escapeAttr(week.id)}" type="button">W${week.number}</button><div class="week-days">${week.days.map((day) => { const hol = App.utils.getHolidayNames(day.iso); return `<div class="day-cell ${day.inMonth ? '' : 'inactive'} ${day.isWeekend ? 'weekend' : ''} ${day.isToday ? 'today today-col' : ''} ${App.state.calendarSelectedDateIso === day.iso ? 'selected-day' : ''} ${hol ? 'holiday' : ''}" data-day="${App.utils.escapeAttr(day.iso)}" role="button" tabindex="0" ${hol ? `title="${App.utils.escapeAttr(hol.join(', '))}"` : ''}><div><span class="day-num">${day.day}</span>${day.day === 1 ? `<span class="day-month">${App.utils.monthName(day.month).slice(0, 3)}</span>` : ''}${hol ? '<span class="holiday-mark" aria-hidden="true">🎌</span>' : ''}</div><button class="day-add-btn" data-add-date="${App.utils.escapeAttr(day.iso)}" type="button" title="${App.utils.t('add_on_date')}" aria-label="${App.utils.escapeAttr(App.utils.t('add_on_date'))}">+</button></div>`; }).join('')}${bars.map((bar) => `<button class="event-bar" draggable="${bar.id.startsWith('entry:') ? 'true' : 'false'}" data-drag-entry="${bar.id.startsWith('entry:') ? App.utils.escapeAttr(bar.id) : ''}" data-detail-calendar-item="${App.utils.escapeAttr(bar.id)}" type="button" style="left:calc(${(bar.leftIndex / 7) * 100}% + 6px);width:calc(${(bar.span / 7) * 100}% - 12px);top:${34 + (bar.lane || 0) * 20}px;background:${App.utils.clampColor(bar.color)};">${App.utils.escapeHtml(bar.title)}</button>`).join('')}${extraCount ? `<div class="small" style="position:absolute;left:12px;bottom:6px">+ ${extraCount}</div>` : ''}</div></div>`; }).join('')}</div>`;
+        if (App.els.calendarGrid) App.els.calendarGrid.innerHTML = `<div class="grid-cal"><div class="dow-row"><div class="dow-corner"></div><div class="dow-days">${App.utils.dayNames().map((name) => `<div class="dow">${name}</div>`).join('')}</div></div>${weeks.map((week) => { const bars = (itemsByWeek.get(week.id) || []).slice(0, 4); const extraCount = Math.max(0, (itemsByWeek.get(week.id) || []).length - 4); return `<div class="week-row"><span class="week-num">W${week.number}</span><div class="week-days">${week.days.map((day) => { const hol = App.utils.getHolidayNames(day.iso); return `<div class="day-cell ${day.inMonth ? '' : 'inactive'} ${day.isWeekend ? 'weekend' : ''} ${day.isToday ? 'today today-col' : ''} ${App.state.calendarSelectedDateIso === day.iso ? 'selected-day' : ''} ${hol ? 'holiday' : ''}" data-day="${App.utils.escapeAttr(day.iso)}" role="button" tabindex="0" ${hol ? `title="${App.utils.escapeAttr(hol.join(', '))}"` : ''}><div><span class="day-num">${day.day}</span>${day.day === 1 ? `<span class="day-month">${App.utils.monthName(day.month).slice(0, 3)}</span>` : ''}${hol ? '<span class="holiday-mark" aria-hidden="true">🎌</span>' : ''}</div><button class="day-add-btn" data-add-date="${App.utils.escapeAttr(day.iso)}" type="button" title="${App.utils.t('add_on_date')}" aria-label="${App.utils.escapeAttr(App.utils.t('add_on_date'))}">+</button></div>`; }).join('')}${bars.map((bar) => `<button class="event-bar" draggable="${bar.id.startsWith('entry:') ? 'true' : 'false'}" data-drag-entry="${bar.id.startsWith('entry:') ? App.utils.escapeAttr(bar.id) : ''}" data-detail-calendar-item="${App.utils.escapeAttr(bar.id)}" type="button" style="left:calc(${(bar.leftIndex / 7) * 100}% + 6px);width:calc(${(bar.span / 7) * 100}% - 12px);top:${34 + (bar.lane || 0) * 20}px;background:${App.utils.clampColor(bar.color)};">${App.utils.escapeHtml(bar.title)}</button>`).join('')}${extraCount ? `<div class="small" style="position:absolute;left:12px;bottom:6px">+ ${extraCount}</div>` : ''}</div></div>`; }).join('')}</div>`;
         if (App.els.calendarYearSelect) { App.els.calendarYearSelect.innerHTML = Array.from({ length: 9 }, (_, i) => year - 4 + i).map((y) => `<option value="${y}">${y}</option>`).join(''); App.els.calendarYearSelect.value = String(year); }
         if (App.els.calendarQuickList) App.els.calendarQuickList.innerHTML = items.slice(0, 12).map((item) => `<button class="side-item" type="button" data-detail-calendar-item="${App.utils.escapeAttr(item.id)}"><strong>${App.utils.escapeHtml(item.title)}</strong><div class="small">${App.utils.prettyDate(item.start)} — ${App.utils.prettyDate(item.end)}</div><div class="small">${App.utils.escapeHtml(item.note || App.utils.t('no_note'))}</div></button>`).join('') || `<div class="empty">${App.utils.t('no_events_month')}</div>`;
         const detail = items.find((item) => item.id === App.state.calendarDetailId) || items[0] || null; this.renderCalendarDetails(detail); if (App.state.calendarSelectedDateIso) this.renderServiceYearDayDetails(App.state.calendarSelectedDateIso);
@@ -1738,7 +1694,6 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         document.querySelectorAll('.day-cell[data-day]').forEach((cell) => cell.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); App.state.calendarSelectedDateIso = cell.dataset.day; App.ui.renderCalendar(); App.ui.renderServiceYearDayDetails(cell.dataset.day); } }));
         document.querySelectorAll('[data-add-date]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.actions.openCalendarEditorForCreate(btn.dataset.addDate); }));
         document.querySelectorAll('[data-edit-calendar-item]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.actions.openCalendarEditorForItem(btn.dataset.editCalendarItem); }));
-        document.querySelectorAll('[data-open-week]').forEach((btn) => btn.addEventListener('click', () => { App.state.selectedScreen = 'weeks'; App.state.selectedYear = App.utils.getServiceYearForDate(btn.dataset.openWeek); App.state.selectedWeekId = btn.dataset.openWeek; App.ui.renderAll(); App.ui.openModal(App.els.weekEditorModal); }));
         // Drag-and-drop: move a visit entry to another day (shifts start+end by the same offset).
         document.querySelectorAll('[data-drag-entry]').forEach((bar) => {
           if (!bar.dataset.dragEntry) return;
@@ -2390,6 +2345,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const state = saved ? JSON.parse(JSON.stringify(saved)) : { visitType: visitTypeMap[event?.visitType] || 'meeting', language: defaultLang, meetings: [], servicePlan: [], pastoralVisits: [], meals: [], notes: '' };
         if (!state.language) state.language = defaultLang; // older saved forms predating this field
         this.vpDefaultsForType(state, state.visitType);
+        this.retranslateVisitFormWeekdays(null, state.language); // fixes any day names left over in the wrong language from before this feature existed, or from an interface-language fallback used previously
         App.state.visitFormData = state;
         if (App.els.vfVisitType) App.els.vfVisitType.value = state.visitType;
         if (App.els.vfLanguageSelect) App.els.vfLanguageSelect.value = state.language;
@@ -2697,7 +2653,19 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.state.letterEntryId = entry.id;
         if (App.els.letterModalSub) App.els.letterModalSub.textContent = `${entry.title || event?.name || ''} · ${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}`;
         if (App.els.letterTextInput) App.els.letterTextInput.value = this.fillLetterTemplate(entry, event);
-        if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = entry.visitForm ? '📎 Письмо (3 стр.) и график визита будут отправлены как PDF-вложения.' : '📎 Письмо будет отправлено как PDF-вложение (3 стр.). График визита ещё не заполнен — если нужен, сначала открой «Формуляр визита».';
+        const suffix = this.letterTypeSuffix(event?.visitType);
+        const extraPages = App.state.app.settings.letterPages?.[suffix] || [];
+        const totalPages = 1 + extraPages.length;
+        if (App.els.letterExtraPagesPreview) {
+          App.els.letterExtraPagesPreview.textContent = extraPages.length
+            ? extraPages.map((page, i) => {
+                const pageHtml = this.substitutePlaceholders(page.html || '', entry, event);
+                const pageText = this.parseRichLetterBlocks(pageHtml).map((b) => b.runs.map((r) => r.text).join('')).join('\n\n');
+                return `— Страница ${i + 2}${page.title ? ` (${page.title})` : ''} —\n${pageText}`;
+              }).join('\n\n')
+            : 'Дополнительных страниц для этого типа визита не настроено — письмо будет из одной страницы.';
+        }
+        if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = entry.visitForm ? `📎 Письмо (${totalPages} стр.) и график визита будут отправлены как PDF-вложения.` : `📎 Письмо будет отправлено как PDF-вложение (${totalPages} стр.). График визита ещё не заполнен — если нужен, сначала открой «Формуляр визита».`;
         this.openModal(App.els.letterModal);
       },
       async sendLetterNow() {
@@ -2796,50 +2764,6 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       showRemindersModalIfNeeded() {
         if (App.data.getUpcomingReminders().length) this.openRemindersModal();
       },
-      renderWeeks() {
-        this.renderYearOptions();
-        this.ensureWeekDeleteButton();
-        const year = App.state.selectedYear;
-        const weeks = App.data.getWeeksForYear(year);
-        const query = (App.state.weekSearch || '').trim().toLowerCase();
-        const filterOptions = ['<option value="all">' + App.utils.t('all_events') + '</option>'].concat(App.state.app.events.map((event) => `<option value="${App.utils.escapeAttr(event.id)}">${App.utils.escapeHtml(event.name)}</option>`));
-        if (App.els.eventFilter) { App.els.eventFilter.innerHTML = filterOptions.join(''); App.els.eventFilter.value = App.state.calendarEventFilter; }
-        const entriesForWeek = (week) => {
-          const ws = App.utils.parseLocalDate(week.start), we = App.utils.parseLocalDate(week.end);
-          if (!ws || !we) return [];
-          return (App.state.app.entries || []).filter((entry) => {
-            const es = App.utils.parseLocalDate(entry.start), ee = App.utils.parseLocalDate(entry.end);
-            return es && ee && App.utils.overlaps(es, ee, ws, we);
-          }).map((entry) => { const event = App.data.getEventById(entry.eventId); return { entry, event, title: entry.title || event?.name || App.utils.t('event') }; }).sort((a,b) => String(a.entry.start).localeCompare(String(b.entry.start)) || String(a.title).localeCompare(String(b.title)));
-        };
-        const filtered = weeks.filter((week) => {
-          const event = App.data.getEventById(week.eventId), entries = entriesForWeek(week);
-          const haystack = [week.note, event?.name, week.weekId, App.utils.prettyDate(week.start), App.utils.prettyDate(week.end), ...entries.flatMap(({ entry, event, title }) => [title, entry.note, event?.name, event?.schedule, event?.address])].join(' ').toLowerCase();
-          const filterMatch = App.state.calendarEventFilter === 'all' || week.eventId === App.state.calendarEventFilter || entries.some(({ entry }) => entry.eventId === App.state.calendarEventFilter);
-          return (!query || haystack.includes(query)) && filterMatch;
-        });
-        if (App.els.weekList) App.els.weekList.innerHTML = filtered.map((week) => {
-          const event = App.data.getEventById(week.eventId), entries = entriesForWeek(week), visible = entries.slice(0,3);
-          const entryPills = visible.map(({ event, title }) => `<span class="pill"><span class="dot" style="background:${App.utils.clampColor(event?.color || '#1f7a45')}"></span>${App.utils.escapeHtml(title)}</span>`).join('');
-          const more = entries.length > visible.length ? `<span class="pill">+${entries.length - visible.length}</span>` : '';
-          const notePreview = week.note || entries.map(({ entry }) => entry.note).filter(Boolean).join(' · ') || App.utils.t('no_note');
-          return `<button class="week-item ${App.state.selectedWeekId === week.weekId ? 'active' : ''}" data-week-select="${App.utils.escapeAttr(week.weekId)}" type="button"><div class="week-item-top"><strong>${App.utils.prettyDate(week.start)} — ${App.utils.prettyDate(week.end)}</strong><span class="badge">W${App.utils.weekNumber(week.start)}</span></div><div class="pill-row" style="margin-top:8px">${entryPills || `<span class="pill" style="opacity:.6">${App.utils.t('no_events_found')}</span>`}${more}${week.flagLetter ? `<span class="pill">${App.utils.t('letter')}</span>` : ''}${week.flagS302 ? `<span class="pill">${App.utils.t('s302')}</span>` : ''}</div><div class="small" style="margin-top:8px">${App.utils.escapeHtml(notePreview)}</div></button>`;
-        }).join('') || `<div class="empty">${App.utils.t('no_events_found')}</div>`;
-        document.querySelectorAll('[data-week-select]').forEach((btn) => btn.addEventListener('click', () => { App.state.selectedWeekId = btn.dataset.weekSelect; App.ui.renderWeeks(); App.ui.openModal(App.els.weekEditorModal); }));
-        const selected = App.state.selectedWeekId ? filtered.find((week) => week.weekId === App.state.selectedWeekId) : null;
-        if (!selected) { App.state.selectedWeekId = null; return; }
-        if (App.els.weekEditorTitle) App.els.weekEditorTitle.textContent = `${App.utils.t('week_details')}: ${App.utils.prettyDateLong(selected.start)} — ${App.utils.prettyDateLong(selected.end)}`;
-        if (App.els.flagLetter) App.els.flagLetter.checked = !!selected.flagLetter;
-        if (App.els.flagS302) App.els.flagS302.checked = !!selected.flagS302;
-        if (App.els.weekNoteInput) App.els.weekNoteInput.value = selected.note || '';
-        const selectedEntries = entriesForWeek(selected);
-        if (App.els.weekEditor) {
-          let block = document.getElementById('weekCalendarEntriesBlock');
-          if (!block) { block = document.createElement('div'); block.id = 'weekCalendarEntriesBlock'; block.style.marginTop = '14px'; const actions = App.els.weekEditor.querySelector('.editor-actions'); App.els.weekEditor.insertBefore(block, actions || null); }
-          block.innerHTML = `<div class="small" style="margin-bottom:8px">${App.utils.t('entries_on_day')}</div>${selectedEntries.length ? selectedEntries.map(({ entry, event, title }) => `<div class="side-item-card" style="margin-bottom:8px"><strong><span class="dot" style="background:${App.utils.clampColor(event?.color || '#1f7a45')}"></span>${App.utils.escapeHtml(title)}</strong><div class="small">${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}</div><div class="small">${App.utils.escapeHtml(entry.note || App.utils.t('no_note'))}</div><div class="entry-actions"><button class="btn primary" type="button" data-edit-calendar-item="entry:${App.utils.escapeAttr(entry.id)}">✎ ${App.utils.t('edit')}</button></div></div>`).join('') : `<div class="empty" style="padding:14px">${App.utils.t('no_entries_day')}</div>`}`;
-          block.querySelectorAll('[data-edit-calendar-item]').forEach((btn) => btn.addEventListener('click', () => App.actions.openCalendarEditorForItem(btn.dataset.editCalendarItem)));
-        }
-      },
       renderEvents() {
         const query = (App.state.eventSearch || '').trim().toLowerCase();
         const colorFilter = App.state.eventColorFilter || 'all';
@@ -2907,39 +2831,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           App.els.eventNameInput?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }));
       },
-      renderNotes() {
-        const query = (App.state.noteSearch || '').trim().toLowerCase();
-        const items = [];
-        Object.keys(App.state.app.serviceYears).sort((a,b) => Number(a) - Number(b)).forEach((year) => {
-          Object.values(App.state.app.serviceYears[year].weeks || {}).forEach((week) => {
-            if (!week.note) return;
-            const event = App.data.getEventById(week.eventId);
-            const haystack = `${week.note} ${event?.name || ''} ${week.weekId}`.toLowerCase();
-            if (query && !haystack.includes(query)) return;
-            items.push({ year, week, event });
-          });
-        });
-        if (App.els.notesList) App.els.notesList.innerHTML = items.map(({ year, week, event }) => `
-          <div class="note-row">
-            <div>
-              <strong>${App.utils.serviceYearLabel(Number(year))}</strong>
-              <div class="small">${App.utils.prettyDate(week.start)} — ${App.utils.prettyDate(week.end)} · ${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div>
-              <div style="margin-top:8px">${App.utils.escapeHtml(week.note)}</div>
-            </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
-              <button class="btn" type="button" data-jump-week="${App.utils.escapeAttr(week.weekId)}" data-jump-year="${year}">${App.utils.t('open')}</button>
-              <button class="btn danger" type="button" data-delete-note="${App.utils.escapeAttr(week.weekId)}" data-delete-note-year="${year}">${App.utils.t('delete_note')}</button>
-            </div>
-          </div>`).join('') || `<div class="empty">${App.utils.t('no_notes')}</div>`;
-        document.querySelectorAll('[data-jump-week]').forEach((btn) => btn.addEventListener('click', () => {
-          App.state.selectedScreen = 'weeks';
-          App.state.selectedYear = Number(btn.dataset.jumpYear);
-          App.state.selectedWeekId = btn.dataset.jumpWeek;
-          App.ui.renderAll();
-          App.ui.openModal(App.els.weekEditorModal);
-        }));
-        document.querySelectorAll('[data-delete-note]').forEach((btn) => btn.addEventListener('click', () => App.actions.deleteNote(btn.dataset.deleteNoteYear, btn.dataset.deleteNote)));
-      },
+
       renderSettings() { if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.letterTemplateEditor && document.activeElement !== App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = App.state.app.settings['letterTemplate' + (App.state.letterEditingType || 'Congregation')] || DEFAULT_LETTER_TEMPLATE_HTML; this.renderLetterPagesList(); if (App.els.senderNameInput && document.activeElement !== App.els.senderNameInput) App.els.senderNameInput.value = App.state.app.settings.senderName || ''; if (App.els.senderAddressInput && document.activeElement !== App.els.senderAddressInput) App.els.senderAddressInput.value = App.state.app.settings.senderAddress || ''; if (App.els.senderPhoneInput && document.activeElement !== App.els.senderPhoneInput) App.els.senderPhoneInput.value = App.state.app.settings.senderPhone || ''; if (App.els.senderEmailInput && document.activeElement !== App.els.senderEmailInput) App.els.senderEmailInput.value = App.state.app.settings.senderEmail || ''; if (App.els.emailMethodSelect) App.els.emailMethodSelect.value = App.state.app.settings.emailMethod || 'mailto'; if (App.els.owaUrlInput && document.activeElement !== App.els.owaUrlInput) App.els.owaUrlInput.value = App.state.app.settings.owaUrl || 'https://outlook.office.com/mail/deeplink/compose'; if (App.els.owaUrlRow) App.els.owaUrlRow.style.display = (App.state.app.settings.emailMethod === 'owa') ? '' : 'none'; if (App.els.homeAddressInput && document.activeElement !== App.els.homeAddressInput) App.els.homeAddressInput.value = App.state.app.settings.homeAddress || ''; if (App.els.homeGeocodeStatus && typeof App.state.app.settings.homeLat === 'number') App.els.homeGeocodeStatus.textContent = `📍 Координаты сохранены (${App.state.app.settings.homeLat.toFixed(3)}, ${App.state.app.settings.homeLng.toFixed(3)})`; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
       closeMobileMenu() {
         if (App.els.appRoot) App.els.appRoot.classList.remove('menu-open');
@@ -2962,12 +2854,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
     },
 
     bind() {
-      App.els.weekSearch?.addEventListener('input', (e) => { App.state.weekSearch = e.target.value; App.ui.renderWeeks(); });
-      App.els.noteSearch?.addEventListener('input', (e) => { App.state.noteSearch = e.target.value; App.ui.renderNotes(); });
-      App.els.yearSelect?.addEventListener('change', (e) => { App.state.selectedYear = Number(e.target.value); App.state.selectedWeekId = null; App.ui.renderWeeks(); });
-      App.els.eventFilter?.addEventListener('change', (e) => { App.state.calendarEventFilter = e.target.value; App.ui.renderAll(); });
       App.els.calendarEventQuickFilter?.addEventListener('change', (e) => { App.state.calendarEventFilter = e.target.value; App.ui.renderAll(); });
-      App.els.saveWeekBtn?.addEventListener('click', () => App.actions.saveWeek());
       App.els.resetEventBtn?.addEventListener('click', () => App.actions.resetEventForm());
       App.els.newEventBtn?.addEventListener('click', () => { App.actions.resetEventForm(); App.ui.openModal(App.els.eventEditorModal); App.els.eventNameInput?.focus(); });
       App.els.deleteEventBtn?.addEventListener('click', () => { if (App.state.editingEventId) App.actions.deleteEventTemplate(App.state.editingEventId); });
@@ -2980,7 +2867,6 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).then(done).catch(() => done());
         else done();
       }));
-      App.els.weekEditorCloseBtn?.addEventListener('click', () => App.ui.closeModal(App.els.weekEditorModal));
       App.els.eventEditorCloseBtn?.addEventListener('click', () => App.ui.closeModal(App.els.eventEditorModal));
       App.els.saveEventBtn?.addEventListener('click', () => App.actions.saveEventTemplate());
       App.els.eventSearchInput?.addEventListener('input', (e) => { App.state.eventSearch = e.target.value; App.ui.renderEvents(); });
