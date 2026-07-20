@@ -318,7 +318,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.27.1',
+      version: '9.28.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -3038,6 +3038,26 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.prevMonthBtn?.addEventListener('click', () => { if (App.state.calendarView === 'year') { const sy = App.utils.getServiceYearForDate(new Date(App.state.calendarYear, App.state.calendarMonth, 1)) - 1; App.state.calendarYear = sy; App.state.calendarMonth = App.config.serviceYearStartMonth; App.ui.renderCalendar(); return; } const date = new Date(App.state.calendarYear, App.state.calendarMonth - 1, 1); App.state.calendarMonth = date.getMonth(); App.state.calendarYear = date.getFullYear(); App.ui.renderCalendar(); });
       App.els.todayMonthBtn?.addEventListener('click', () => { const now = new Date(); App.state.calendarMonth = now.getMonth(); App.state.calendarYear = now.getFullYear(); App.state.calendarSelectedDateIso = App.utils.iso(now); App.ui.renderCalendar(); });
       App.els.nextMonthBtn?.addEventListener('click', () => { if (App.state.calendarView === 'year') { const sy = App.utils.getServiceYearForDate(new Date(App.state.calendarYear, App.state.calendarMonth, 1)) + 1; App.state.calendarYear = sy; App.state.calendarMonth = App.config.serviceYearStartMonth; App.ui.renderCalendar(); return; } const date = new Date(App.state.calendarYear, App.state.calendarMonth + 1, 1); App.state.calendarMonth = date.getMonth(); App.state.calendarYear = date.getFullYear(); App.ui.renderCalendar(); });
+      // Mobile swipe navigation: swipe left/right over the calendar to move a month (or a whole
+      // service year, in year view) — reuses the exact same prev/next button logic above.
+      if (App.els.calendarGrid) {
+        let touchStartX = 0, touchStartY = 0, touchStartTime = 0, touchActive = false;
+        App.els.calendarGrid.addEventListener('touchstart', (e) => {
+          if (e.touches.length !== 1) { touchActive = false; return; }
+          touchActive = true;
+          touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; touchStartTime = Date.now();
+        }, { passive: true });
+        App.els.calendarGrid.addEventListener('touchend', (e) => {
+          if (!touchActive) return;
+          touchActive = false;
+          const t = e.changedTouches[0];
+          const dx = t.clientX - touchStartX, dy = t.clientY - touchStartY, dt = Date.now() - touchStartTime;
+          // Require a clearly horizontal, deliberate swipe so vertical scrolling and taps aren't affected.
+          if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5 && dt < 600) {
+            if (dx < 0) App.els.nextMonthBtn?.click(); else App.els.prevMonthBtn?.click();
+          }
+        }, { passive: true });
+      }
       App.els.calendarYearSelect?.addEventListener('change', (e) => { App.state.calendarYear = Number(e.target.value); if (App.state.calendarView === 'year') App.state.calendarMonth = App.config.serviceYearStartMonth; App.ui.renderCalendar(); });
       App.els.toggleTeamPanelBtn?.addEventListener('click', () => { App.state.calendarView = App.state.calendarView === 'year' ? 'month' : 'year'; if (App.state.calendarView === 'year') { const now = new Date(); App.state.calendarSelectedDateIso = App.utils.iso(now); App.state.calendarYear = now.getFullYear(); App.state.calendarMonth = now.getMonth(); } App.state.app.settings.calendarView = App.state.calendarView; App.store.save(); App.ui.renderCalendar(); });
       App.els.editorCloseBtn?.addEventListener('click', () => App.ui.closeCalendarEditor());
