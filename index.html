@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.30.0</title>
+  <title>Service Year Planner v9.31.0</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="favicon.ico">
@@ -225,7 +225,7 @@ body::before{display:none !important}
   <div class="app" id="appRoot">
     <div class="mobile-overlay" id="mobileOverlay" hidden></div>
     <aside class="sidebar">
-      <div class="brand"><div class="logo"><svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="150" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="336" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="120" y="140" width="272" height="256" rx="32" fill="#f4faf6"/><rect x="120" y="140" width="272" height="72" rx="32" fill="#15532d"/><rect x="120" y="180" width="272" height="32" fill="#15532d"/><circle cx="160" cy="252" r="10" fill="#bfe3cd"/><circle cx="200" cy="252" r="10" fill="#bfe3cd"/><circle cx="240" cy="252" r="10" fill="#bfe3cd"/><circle cx="160" cy="292" r="10" fill="#bfe3cd"/><path d="M204 318 L244 358 L316 274" fill="none" stroke="#1f7a45" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>Service Year Planner</h1><p>v9.30.0 • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo"><svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="150" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="336" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="120" y="140" width="272" height="256" rx="32" fill="#f4faf6"/><rect x="120" y="140" width="272" height="72" rx="32" fill="#15532d"/><rect x="120" y="180" width="272" height="32" fill="#15532d"/><circle cx="160" cy="252" r="10" fill="#bfe3cd"/><circle cx="200" cy="252" r="10" fill="#bfe3cd"/><circle cx="240" cy="252" r="10" fill="#bfe3cd"/><circle cx="160" cy="292" r="10" fill="#bfe3cd"/><path d="M204 318 L244 358 L316 274" fill="none" stroke="#1f7a45" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>Service Year Planner</h1><p>v9.31.0 • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
@@ -235,7 +235,7 @@ body::before{display:none !important}
         <div style="display:flex;align-items:center;gap:14px">
           <button class="btn mobile-menu-btn" id="mobileMenuToggleBtn" type="button" aria-label="Открыть меню" aria-expanded="false">☰ Меню</button>
           <div>
-            <div class="version-badge">Версия: v9.30.0</div>
+            <div class="version-badge">Версия: v9.31.0</div>
             <h2 id="screenTitle">Календарь</h2>
             <p id="screenSubtitle"></p>
           </div>
@@ -354,6 +354,8 @@ body::before{display:none !important}
               <button class="chip letter-type-tab" data-letter-type="Group" type="button">Группа</button>
               <button class="chip letter-type-tab" data-letter-type="Pregroup" type="button">Предгруппа</button>
             </div>
+            <div id="letterEditorHome"></div>
+            <div id="letterEditorBlock">
             <div class="rte-toolbar">
               <button class="btn rte-btn" type="button" data-rte-cmd="bold" title="Жирный (выдели текст)"><strong>B</strong></button>
               <button class="btn rte-btn" type="button" data-rte-cmd="italic" title="Курсив (выдели текст — см. примечание ниже)"><em>I</em></button>
@@ -371,12 +373,13 @@ body::before{display:none !important}
             <div class="small" style="color:var(--muted);margin-bottom:6px">Обычный текст (без выделения) отображается 11pt, не жирным.</div>
             <div class="small" style="font-weight:700;margin:4px 0">Страница 1 — само письмо</div>
             <div id="letterTemplateEditor" class="rte-editor" data-rte-page="body" contenteditable="true"></div>
-            <div class="small" style="margin-top:8px;color:var(--muted)">Шрифт в PDF — Aptos (с полной поддержкой кириллицы). Жирный (имитация двойной обводкой — в архиве не было отдельного файла Aptos Bold) и подчёркивание работают в PDF корректно. ⚠️ Курсив пока отображается только на экране — настоящего курсивного файла шрифта нет, а «наклон» текста без визуальной проверки результата слишком рискован для PDF. Если пришлёшь Aptos Italic (.ttf) — добавлю по-настоящему.</div>
+            <div class="small" style="margin-top:8px;color:var(--muted)">Шрифт в PDF — Aptos (с полной поддержкой кириллицы). Жирный и подчёркивание работают в PDF по-настоящему (встроены реальные файлы Aptos Bold). ⚠️ Курсив пока отображается только на экране — файла Aptos Italic ещё нет в PDF-сборке.</div>
             <div style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="letterTemplateResetBtn" type="button">Сбросить страницу 1 к стандартной</button></div>
 
             <div class="small" style="font-weight:700;margin:20px 0 8px">Дополнительные страницы (2, 3...)</div>
             <div id="letterPagesList" class="grid" style="gap:16px"></div>
             <button class="btn" id="addLetterPageBtn" type="button" style="margin-top:10px">+ Добавить страницу</button>
+            </div>
 
             <div class="editor-actions" style="margin-top:20px;justify-content:flex-start">
               <button class="btn primary" id="previewLetterPdfBtn" type="button">👁 Предпросмотр PDF (на примере)</button>
@@ -514,14 +517,15 @@ body::before{display:none !important}
   <div class="modal" id="letterModal" hidden>
     <div class="modal-card">
       <div class="modal-head"><div><h3>✉ Письмо перед визитом</h3><div class="modal-sub" id="letterModalSub">—</div></div><button class="icon-btn" id="letterModalCloseBtn" type="button" aria-label="Закрыть">✕</button></div>
-      <label class="small" for="letterTextInput" style="display:block;margin-bottom:6px">Текст письма (страница 1) — используется как текст email-сообщения. Правки здесь <strong>не меняют</strong> сам PDF-документ — чтобы изменить содержание PDF навсегда, отредактируй шаблон в Настройках → Письмо.</label>
-      <textarea id="letterTextInput" rows="14" style="font-family:inherit"></textarea>
-      <details style="margin-top:10px">
-        <summary class="small" style="cursor:pointer;color:var(--muted)">👁 Показать дополнительные страницы (памятка и т.д. — идут только в PDF)</summary>
-        <div class="small" id="letterExtraPagesPreview" style="margin-top:8px;white-space:pre-wrap;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;max-height:220px;overflow:auto"></div>
+      <div class="small" style="margin-bottom:8px">Это тот же редактор, что и в Настройках → Письмо — правки здесь сохраняются в шаблон этого типа визита и сразу видны там тоже.</div>
+      <div id="letterEditorMount"></div>
+      <details style="margin-top:14px">
+        <summary class="small" style="cursor:pointer;color:var(--muted)">✉ Текст самого email-сообщения (для mailto/OWA — отдельно от текста письма выше)</summary>
+        <div class="small" style="margin-top:8px;color:var(--muted)">Обычно достаточно короткой фразы — само письмо уходит вложением PDF. Это поле — только тело email, не сам документ.</div>
+        <textarea id="letterEmailBodyInput" rows="4" style="font-family:inherit;margin-top:6px"></textarea>
       </details>
       <div class="small" id="letterAttachStatus" style="margin-top:8px"></div>
-      <div class="editor-actions"><button class="btn" id="letterResetBtn" type="button">Восстановить шаблон</button><button class="btn" id="letterPreviewPdfBtn" type="button">📄 Письмо PDF</button><button class="btn" id="letterAttachPdfBtn" type="button">📎 + график визита</button><button class="btn primary" id="letterSendBtn" type="button">📤 Отправить</button></div>
+      <div class="editor-actions"><button class="btn" id="letterPreviewPdfBtn" type="button">📄 Письмо PDF</button><button class="btn" id="letterAttachPdfBtn" type="button">📎 + график визита</button><button class="btn primary" id="letterSendBtn" type="button">📤 Отправить</button></div>
     </div>
   </div>
   <div class="modal" id="remindersModal" hidden>
