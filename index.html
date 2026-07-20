@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Service Year Planner v9.28.0</title>
+  <title>Service Year Planner v9.29.0</title>
   <meta name="theme-color" content="#14532d" />
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="favicon.ico">
@@ -225,7 +225,7 @@ body::before{display:none !important}
   <div class="app" id="appRoot">
     <div class="mobile-overlay" id="mobileOverlay" hidden></div>
     <aside class="sidebar">
-      <div class="brand"><div class="logo"><svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="150" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="336" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="120" y="140" width="272" height="256" rx="32" fill="#f4faf6"/><rect x="120" y="140" width="272" height="72" rx="32" fill="#15532d"/><rect x="120" y="180" width="272" height="32" fill="#15532d"/><circle cx="160" cy="252" r="10" fill="#bfe3cd"/><circle cx="200" cy="252" r="10" fill="#bfe3cd"/><circle cx="240" cy="252" r="10" fill="#bfe3cd"/><circle cx="160" cy="292" r="10" fill="#bfe3cd"/><path d="M204 318 L244 358 L316 274" fill="none" stroke="#1f7a45" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>Service Year Planner</h1><p>v9.28.0 • index.html + app.js</p></div></div>
+      <div class="brand"><div class="logo"><svg width="40" height="40" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="150" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="336" y="96" width="26" height="76" rx="13" fill="#e7f5ec"/><rect x="120" y="140" width="272" height="256" rx="32" fill="#f4faf6"/><rect x="120" y="140" width="272" height="72" rx="32" fill="#15532d"/><rect x="120" y="180" width="272" height="32" fill="#15532d"/><circle cx="160" cy="252" r="10" fill="#bfe3cd"/><circle cx="200" cy="252" r="10" fill="#bfe3cd"/><circle cx="240" cy="252" r="10" fill="#bfe3cd"/><circle cx="160" cy="292" r="10" fill="#bfe3cd"/><path d="M204 318 L244 358 L316 274" fill="none" stroke="#1f7a45" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h1>Service Year Planner</h1><p>v9.29.0 • index.html + app.js</p></div></div>
       <nav class="menu" id="desktopNav"></nav>
       <div class="summary"><strong>Быстрый статус</strong><div id="sideStatus" class="small"></div></div>
     </aside>
@@ -235,7 +235,7 @@ body::before{display:none !important}
         <div style="display:flex;align-items:center;gap:14px">
           <button class="btn mobile-menu-btn" id="mobileMenuToggleBtn" type="button" aria-label="Открыть меню" aria-expanded="false">☰ Меню</button>
           <div>
-            <div class="version-badge">Версия: v9.28.0</div>
+            <div class="version-badge">Версия: v9.29.0</div>
             <h2 id="screenTitle">Календарь</h2>
             <p id="screenSubtitle"></p>
           </div>
@@ -289,6 +289,7 @@ body::before{display:none !important}
   <option value="#f4511e">🟠 Рыжий</option>
   <option value="#43a047">🟢 Светло-зелёный</option>
 </select></div><div><label class="small">Адрес</label><div style="display:flex;gap:6px"><input id="eventAddressInput" type="text" /><button class="icon-btn" type="button" id="geocodeEventBtn" title="Определить координаты для планирования">📍</button></div><div class="small" id="eventDistanceStatus" style="margin-top:4px;color:var(--muted)"></div></div><div><label class="small">Расписание</label><input id="eventScheduleInput" type="text" placeholder="Ср 19:00, Сб 10:00" /></div><div><label class="small">Тип визита (для напоминаний S302/письмо)</label><select id="eventVisitTypeInput"><option value="">Не визит (обычная запись)</option><option value="congregation">Собрание</option><option value="group">Группа</option><option value="pregroup">Предгруппа</option></select></div>
+<div id="eventVisitOnlyFields" style="display:contents">
 <div><label class="small">№ собрания (для писем, необязательно)</label><input id="eventCongNumberInput" type="text" placeholder="Например: 14761" /></div>
 <div><label class="small">🌐 Язык формуляра визита по умолчанию</label><select id="eventFormLanguageSelect"><option value="">Как язык интерфейса</option><option value="ru">Русский</option><option value="uk">Українська</option><option value="en">English</option><option value="pl">Polski</option></select></div>
 <div style="grid-column:1 / -1;margin-top:6px;padding-top:12px;border-top:1px dashed var(--line)"><div class="small" style="font-weight:700;margin-bottom:8px">Контакт ответственного (не обязательно)</div></div>
@@ -296,6 +297,7 @@ body::before{display:none !important}
 <div><label class="small">Телефон</label><div style="display:flex;gap:6px"><input id="eventContactPhoneInput" type="tel" placeholder="+420 ..." /><button class="icon-btn copy-btn" type="button" data-copy-input="eventContactPhoneInput" title="Копировать" aria-label="Копировать">📋</button></div></div>
 <div><label class="small">E-mail</label><div style="display:flex;gap:6px"><input id="eventContactEmailInput" type="email" placeholder="name@example.com" /><button class="icon-btn copy-btn" type="button" data-copy-input="eventContactEmailInput" title="Копировать" aria-label="Копировать">📋</button></div></div>
 <div style="grid-column:1 / -1"><label class="small">Заметка о собрании/группе</label><textarea id="eventContactNoteInput" rows="2" placeholder="Любая полезная информация"></textarea></div>
+</div>
 </div><div class="editor-actions"><button class="btn" id="resetEventBtn" type="button">Очистить</button><button class="btn danger" id="deleteEventBtn" type="button" hidden>Удалить собрание</button><button class="btn primary" id="saveEventBtn" type="button">Сохранить собрание</button></div></div></div>
       <section id="notes" class="screen"><div class="toolbar"><input id="noteSearch" type="text" placeholder="Поиск по заметкам" /></div><div class="card"><div id="notesList" class="grid"></div></div></section>
       <section id="settings" class="screen">
@@ -402,11 +404,12 @@ body::before{display:none !important}
           <div class="card"><h3>Синхронизация</h3>
 <div class="sync-card">
   <h4 id="syncTitle">Ручная синхронизация</h4>
-  <p class="small" id="syncHint">Без API: на основном ноутбуке скачайте файл синхронизации и поместите его в Google Drive. На другом устройстве скачайте этот файл из Drive и загрузите здесь.</p>
+  <p class="small" id="syncHint">Без API: на основном ноутбуке скачайте файл синхронизации и поместите его в Google Drive (кнопка «Открыть Google Drive» откроет сайт в новой вкладке для загрузки файла). На другом устройстве скачайте этот файл из Drive и загрузите здесь.</p>
   <div class="sync-actions">
     <button class="btn primary" id="syncExportBtn" type="button">Скачать синхронизацию</button>
     <label class="btn" id="syncImportLabel" for="syncImportInput">Загрузить синхронизацию</label>
     <input id="syncImportInput" type="file" accept=".json,application/json,text/plain" hidden />
+    <a class="btn" href="https://drive.google.com/drive/my-drive" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px">📁 Открыть Google Drive</a>
   </div>
   <div class="sync-status" id="syncStatus">Синхронизация ещё не выполнялась.</div>
 </div></div>

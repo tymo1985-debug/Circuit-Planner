@@ -318,7 +318,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.28.1',
+      version: '9.29.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -760,6 +760,7 @@
         if (App.els.eventAddressInput) App.els.eventAddressInput.value = '';
         if (App.els.eventScheduleInput) App.els.eventScheduleInput.value = '';
         if (App.els.eventVisitTypeInput) App.els.eventVisitTypeInput.value = '';
+        App.ui.syncEventVisitFieldsVisibility();
         if (App.els.eventContactNameInput) App.els.eventContactNameInput.value = '';
         if (App.els.eventContactPhoneInput) App.els.eventContactPhoneInput.value = '';
         if (App.els.eventContactEmailInput) App.els.eventContactEmailInput.value = '';
@@ -1099,7 +1100,7 @@
           'statsModal','statsModalTitle','statsModalSub','statsModalBody','statsModalCloseBtn','statsModalOkBtn','statsBtn','plannerBtn',
           'plannerModal','plannerModalCloseBtn','plannerStartInput','plannerEndInput','plannerEventsList','plannerPreview','plannerCancelBtn','plannerApplyBtn',
           'pinOverlay','pinInput','pinError','pinSubmitBtn','pinSetupBtn','holidaysToggle','editorResultInput','editorResultLabel',
-          'eventCongNumberInput','eventFormLanguageSelect','geocodeEventBtn','eventDistanceStatus','homeAddressInput','geocodeHomeBtn','homeGeocodeStatus','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow',
+          'eventCongNumberInput','eventFormLanguageSelect','eventVisitOnlyFields','geocodeEventBtn','eventDistanceStatus','homeAddressInput','geocodeHomeBtn','homeGeocodeStatus','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow',
           'vfLanguageSelect','vfLanguageReminder',
           'visitFormModal','visitFormSub','visitFormCloseBtn','vfVisitType','vfMeetingsList','vfAddMeetingBtn','vfServiceDaysList','vfAddDayBtn','vfPastoralHeading','vfPastoralList','vfAddPastoralBtn','vfMealsList','vfAddMealBtn','vfNotesInput','vfCloseBtn2','vfGeneratePdfBtn',
           'letterModal','letterModalSub','letterModalCloseBtn','letterTextInput','letterAttachStatus','letterResetBtn','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn',
@@ -2274,6 +2275,9 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.state.app.settings['letterTemplate' + suffix] = html;
         App.store.save();
       },
+      syncEventVisitFieldsVisibility() {
+        if (App.els.eventVisitOnlyFields) App.els.eventVisitOnlyFields.style.display = App.els.eventVisitTypeInput?.value ? 'contents' : 'none';
+      },
       renderEventDistanceStatus() {
         if (!App.els.eventDistanceStatus) return;
         const coords = App.state.editingEventCoords;
@@ -2889,6 +2893,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           if (App.els.eventAddressInput) App.els.eventAddressInput.value = event?.address || '';
           if (App.els.eventScheduleInput) App.els.eventScheduleInput.value = event?.schedule || '';
           if (App.els.eventVisitTypeInput) App.els.eventVisitTypeInput.value = event?.visitType || '';
+          App.ui.syncEventVisitFieldsVisibility();
           if (App.els.eventContactNameInput) App.els.eventContactNameInput.value = event?.contactName || '';
           if (App.els.eventContactPhoneInput) App.els.eventContactPhoneInput.value = event?.contactPhone || '';
           if (App.els.eventContactEmailInput) App.els.eventContactEmailInput.value = event?.contactEmail || '';
@@ -3125,6 +3130,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       }));
       App.els.senderNameInput?.addEventListener('input', (e) => { App.state.app.settings.senderName = e.target.value; App.store.save(); });
       App.els.geocodeEventBtn?.addEventListener('click', () => App.ui.geocodeCurrentEvent());
+      App.els.eventVisitTypeInput?.addEventListener('change', () => App.ui.syncEventVisitFieldsVisibility());
       App.els.geocodeHomeBtn?.addEventListener('click', () => App.ui.geocodeHome());
       App.els.homeAddressInput?.addEventListener('input', (e) => { App.state.app.settings.homeAddress = e.target.value; App.store.save(); });
       App.els.senderAddressInput?.addEventListener('input', (e) => { App.state.app.settings.senderAddress = e.target.value; App.store.save(); });
