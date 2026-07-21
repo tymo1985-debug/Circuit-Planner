@@ -383,6 +383,14 @@ body::before{display:none !important}
               <button class="btn primary" id="previewLetterPdfBtn" type="button">👁 Предпросмотр PDF (на примере)</button>
             </div>
           </div>
+
+          <div class="card" style="margin-top:16px">
+            <h3>Текст email-сообщения по умолчанию</h3>
+            <div class="small" style="margin-bottom:8px">Используется только для новых визитов, для которых ты ещё ничего не писал в окне отправки — свой текст для каждого визита сохраняется отдельно и не перезаписывается этим. Общие плейсхолдеры тоже работают: {congregation}, {start_date}, {end_date}.</div>
+            <div class="small" style="margin-bottom:8px">Тип визита выбирается теми же вкладками выше (Собрание / Группа / Предгруппа).</div>
+            <textarea id="emailBodyDefaultInput" rows="4" style="font-family:inherit"></textarea>
+            <div style="margin-top:8px"><button class="btn" id="emailBodyDefaultResetBtn" type="button">Сбросить к стандартному</button></div>
+          </div>
         </div>
 
         <div class="settings-panel" id="settingsPanelData" hidden>
