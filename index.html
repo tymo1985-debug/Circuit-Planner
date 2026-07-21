@@ -355,8 +355,6 @@ body::before{display:none !important}
               <button class="chip letter-type-tab" data-letter-type="Group" type="button">Группа</button>
               <button class="chip letter-type-tab" data-letter-type="Pregroup" type="button">Предгруппа</button>
             </div>
-            <div id="letterEditorHome"></div>
-            <div id="letterEditorBlock">
             <div class="rte-toolbar">
               <button class="btn rte-btn" type="button" data-rte-cmd="bold" title="Жирный (выдели текст)"><strong>B</strong></button>
               <button class="btn rte-btn" type="button" data-rte-cmd="italic" title="Курсив (выдели текст — см. примечание ниже)"><em>I</em></button>
@@ -380,7 +378,6 @@ body::before{display:none !important}
             <div class="small" style="font-weight:700;margin:20px 0 8px">Дополнительные страницы (2, 3...)</div>
             <div id="letterPagesList" class="grid" style="gap:16px"></div>
             <button class="btn" id="addLetterPageBtn" type="button" style="margin-top:10px">+ Добавить страницу</button>
-            </div>
 
             <div class="editor-actions" style="margin-top:20px;justify-content:flex-start">
               <button class="btn primary" id="previewLetterPdfBtn" type="button">👁 Предпросмотр PDF (на примере)</button>
@@ -518,15 +515,34 @@ body::before{display:none !important}
   <div class="modal" id="letterModal" hidden>
     <div class="modal-card">
       <div class="modal-head"><div><h3>✉ Письмо перед визитом</h3><div class="modal-sub" id="letterModalSub">—</div></div><button class="icon-btn" id="letterModalCloseBtn" type="button" aria-label="Закрыть">✕</button></div>
-      <div class="small" style="margin-bottom:8px">Это тот же редактор, что и в Настройках → Письмо — правки здесь сохраняются в шаблон этого типа визита и сразу видны там тоже.</div>
-      <div id="letterEditorMount"></div>
+      <div class="small" style="margin-bottom:10px">Просмотр и небольшая правка текста перед отправкой (правки здесь одноразовые — шаблон не меняют). Чтобы изменить сам шаблон навсегда, открой Настройки → Письмо.</div>
+      <div class="form-grid">
+        <div><label class="small">Кому (To)</label><input id="letterToInput" type="text" placeholder="email@example.org" /></div>
+        <div><label class="small">Копия (CC, необязательно)</label><input id="letterCcInput" type="text" placeholder="email@example.org" /></div>
+      </div>
+      <div class="rte-toolbar" style="margin-top:12px">
+        <button class="btn rte-btn" type="button" data-rte-cmd="bold" title="Жирный (выдели текст)"><strong>B</strong></button>
+        <button class="btn rte-btn" type="button" data-rte-cmd="italic" title="Курсив"><em>I</em></button>
+        <button class="btn rte-btn" type="button" data-rte-cmd="underline" title="Подчеркнуть"><u>U</u></button>
+        <span class="small" style="margin-left:6px">Размер:</span>
+        <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="9">9</button>
+        <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="10">10</button>
+        <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="11">11</button>
+        <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="12">12</button>
+        <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="14">14</button>
+        <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="16">16</button>
+        <button class="btn rte-btn rte-size-btn" type="button" data-rte-size="18">18</button>
+      </div>
+      <div class="small" style="font-weight:700;margin:8px 0 4px">Страница 1</div>
+      <div id="sendLetterBodyEditor" class="rte-editor" data-rte-page="send-body" contenteditable="true"></div>
+      <div id="sendLetterPagesPreview" class="grid" style="gap:14px;margin-top:14px"></div>
       <details style="margin-top:14px">
         <summary class="small" style="cursor:pointer;color:var(--muted)">✉ Текст самого email-сообщения (для mailto/OWA — отдельно от текста письма выше)</summary>
         <div class="small" style="margin-top:8px;color:var(--muted)">Обычно достаточно короткой фразы — само письмо уходит вложением PDF. Это поле — только тело email, не сам документ.</div>
         <textarea id="letterEmailBodyInput" rows="4" style="font-family:inherit;margin-top:6px"></textarea>
       </details>
       <div class="small" id="letterAttachStatus" style="margin-top:8px"></div>
-      <div class="editor-actions"><button class="btn" id="letterPreviewPdfBtn" type="button">📄 Письмо PDF</button><button class="btn" id="letterAttachPdfBtn" type="button">📎 + график визита</button><button class="btn primary" id="letterSendBtn" type="button">📤 Отправить</button></div>
+      <div class="editor-actions"><button class="btn" id="letterPreviewPdfBtn" type="button">📄 Прикрепить PDF-документ</button><button class="btn" id="letterAttachPdfBtn" type="button">📎 Прикрепить график визитов</button><button class="btn primary" id="letterSendBtn" type="button">📤 Отправить электронное письмо</button></div>
     </div>
   </div>
   <div class="modal" id="remindersModal" hidden>

@@ -318,7 +318,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.32.0',
+      version: '9.33.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -1078,7 +1078,7 @@
           'eventCongNumberInput','eventFormLanguageSelect','eventVisitOnlyFields','geocodeEventBtn','eventDistanceStatus','homeAddressInput','geocodeHomeBtn','homeGeocodeStatus','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow',
           'vfLanguageSelect','vfLanguageReminder',
           'visitFormModal','visitFormSub','visitFormCloseBtn','vfVisitType','vfMeetingsList','vfAddMeetingBtn','vfServiceDaysList','vfAddDayBtn','vfPastoralHeading','vfPastoralList','vfAddPastoralBtn','vfMealsList','vfAddMealBtn','vfNotesInput','vfCloseBtn2','vfGeneratePdfBtn',
-          'letterModal','letterModalSub','letterModalCloseBtn','letterEditorMount','letterEditorHome','letterEditorBlock','letterEmailBodyInput','letterAttachStatus','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn',
+          'letterModal','letterModalSub','letterModalCloseBtn','letterToInput','letterCcInput','sendLetterBodyEditor','sendLetterPagesPreview','letterEmailBodyInput','letterAttachStatus','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn',
           'languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
           'pdfCancelBtn','pdfExportConfirmBtn','pdfRangeCard','pdfRangeStartInput','pdfRangeEndInput','pdfRangeHelp','pdfHint',
@@ -2102,6 +2102,16 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       },
       onRteEditorInput(editor) {
         const pageRef = editor.dataset.rtePage;
+        if (pageRef === 'send-body') {
+          if (App.state.sendLetterDraft) App.state.sendLetterDraft.bodyHtml = editor.innerHTML;
+          return;
+        }
+        if (pageRef && pageRef.startsWith('send-page-')) {
+          const pageId = pageRef.slice('send-page-'.length);
+          const page = App.state.sendLetterDraft?.pages.find((p) => p.id === pageId);
+          if (page) page.html = editor.innerHTML;
+          return;
+        }
         const type = App.state.letterEditingType || 'Congregation';
         if (pageRef === 'body') {
           App.ui.setLetterTemplateFor(type, editor.innerHTML);
@@ -2148,6 +2158,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           });
         });
         App.ui.bindRteEditor(App.els.letterTemplateEditor);
+        App.ui.bindRteEditor(App.els.sendLetterBodyEditor);
       },
       renderLetterPagesList() {
         const type = App.state.letterEditingType || 'Congregation';
@@ -2355,7 +2366,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         this.openModal(App.els.visitFormModal);
       },
       closeLetterModal() {
-        if (App.els.letterEditorHome && App.els.letterEditorBlock) App.els.letterEditorHome.after(App.els.letterEditorBlock);
+        App.state.sendLetterDraft = null;
         this.closeModal(App.els.letterModal);
       },
       renderVisitFormLanguageReminder() {
@@ -2498,7 +2509,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         return window.PdfGenerator.generate(state, buildVpI18n(state.language));
       },
       // ===================== Letter PDF (preserves the original document's layout) =====================
-      buildLetterPdfDoc(entry, event) {
+      buildLetterPdfDoc(entry, event, draftOverride) {
         if (!window.jspdf) { App.utils.toast('Модуль PDF ещё не загрузился, попробуйте ещё раз через секунду.'); return null; }
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'a4' });
@@ -2608,7 +2619,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         y = addRichParagraph(y, singleRun(`До старійшин збору ${entry?.title || event?.name || ''}${congNumberSuffix}`, { bold: true, size: 11.5 }), { size: 11.5, gap: 20 });
         doc.setFont(FONT, 'normal'); doc.setFontSize(11); doc.text(ukDate(new Date()), pageW - margin, y - 8, { align: 'right' });
         y = addRichParagraph(y, singleRun('Дорогі брати!', { bold: true }), { gap: 14 });
-        const bodyHtml = App.ui.substitutePlaceholders(App.ui.getLetterTemplateFor(event?.visitType), entry, event);
+        const bodyHtml = draftOverride ? draftOverride.bodyHtml : App.ui.substitutePlaceholders(App.ui.getLetterTemplateFor(event?.visitType), entry, event);
         App.ui.parseRichLetterBlocks(bodyHtml).forEach((block) => { y = addRichParagraph(y, block.runs, { size: 11, gap: 14 }); });
         y += 6;
         y = addRichParagraph(y, singleRun('Я вже з нетерпінням чекаю на цю зустріч і надсилаю вам теплі вітання братньої любові,'), { gap: 22 });
@@ -2616,12 +2627,12 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
 
         // ---- Additional pages (configurable per visit type: add/remove in settings) ----
         const suffix = App.ui.letterTypeSuffix(event?.visitType);
-        const extraPages = App.state.app.settings.letterPages?.[suffix] || [];
+        const extraPages = draftOverride ? draftOverride.pages : (App.state.app.settings.letterPages?.[suffix] || []);
         extraPages.forEach((page) => {
           doc.addPage();
           y = drawHeader();
           if (page.title && page.title.trim()) y = addRichParagraph(y, singleRun(page.title.trim(), { bold: true, size: 12.5 }), { size: 12.5, align: 'center', gap: 18 });
-          const pageHtml = App.ui.substitutePlaceholders(page.html || '', entry, event);
+          const pageHtml = draftOverride ? page.html : App.ui.substitutePlaceholders(page.html || '', entry, event);
           App.ui.parseRichLetterBlocks(pageHtml).forEach((block) => { y = addRichParagraph(y, block.runs, { size: 10, gap: 10 }); });
         });
 
@@ -2655,27 +2666,42 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const event = App.data.getEventById(entry.eventId);
         App.state.letterEntryId = entry.id;
         const suffix = this.letterTypeSuffix(event?.visitType);
-        App.state.letterEditingType = suffix;
         const visitLabel = { Congregation: 'собрание', Group: 'группа', Pregroup: 'предгруппа' }[suffix];
         if (App.els.letterModalSub) App.els.letterModalSub.textContent = `${entry.title || event?.name || ''} (${visitLabel}) · ${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}`;
-        // Physically move the SAME rich editor used in Settings → Письмо into this modal, so editing
-        // here is the exact same functionality (and the exact same saved data), not a separate copy.
-        if (App.els.letterEditorMount && App.els.letterEditorBlock) App.els.letterEditorMount.appendChild(App.els.letterEditorBlock);
-        if (App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = this.getLetterTemplateFor(event?.visitType) || DEFAULT_LETTER_TEMPLATE_HTML;
-        this.renderLetterPagesList();
-        if (App.els.letterEmailBodyInput) App.els.letterEmailBodyInput.value = `Здравствуйте! Направляю письмо перед визитом (${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}), см. вложение.`;
+        // Build an independent, one-off draft with real values already substituted in — edits made
+        // here are just for THIS send and never touch the saved template (that only happens in Settings).
+        const bodyHtml = this.substitutePlaceholders(this.getLetterTemplateFor(event?.visitType) || DEFAULT_LETTER_TEMPLATE_HTML, entry, event);
         const extraPages = App.state.app.settings.letterPages?.[suffix] || [];
+        const draftPages = extraPages.map((page) => ({ id: page.id, title: page.title || '', html: this.substitutePlaceholders(page.html || '', entry, event) }));
+        App.state.sendLetterDraft = { bodyHtml, pages: draftPages };
+        if (App.els.sendLetterBodyEditor) App.els.sendLetterBodyEditor.innerHTML = bodyHtml;
+        this.renderSendLetterPages();
+        if (App.els.letterToInput) App.els.letterToInput.value = event?.contactEmail || '';
+        if (App.els.letterCcInput) App.els.letterCcInput.value = '';
+        if (App.els.letterEmailBodyInput) App.els.letterEmailBodyInput.value = `Здравствуйте! Направляю письмо перед визитом (${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}), см. вложение.`;
         const totalPages = 1 + extraPages.length;
         if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = entry.visitForm ? `📎 Письмо (${totalPages} стр.) и график визита будут отправлены как PDF-вложения.` : `📎 Письмо будет отправлено как PDF-вложение (${totalPages} стр.). График визита ещё не заполнен — если нужен, сначала открой «Формуляр визита».`;
         this.openModal(App.els.letterModal);
+      },
+      renderSendLetterPages() {
+        const draft = App.state.sendLetterDraft;
+        if (!App.els.sendLetterPagesPreview || !draft) return;
+        App.els.sendLetterPagesPreview.innerHTML = draft.pages.map((page, i) => `
+          <div class="card" style="padding:10px;box-shadow:none">
+            <div class="small" style="font-weight:700;margin-bottom:6px">Стр. ${i + 2}${page.title ? `: ${App.utils.escapeHtml(page.title)}` : ''}</div>
+            <div class="rte-editor" data-rte-page="send-page-${App.utils.escapeAttr(page.id)}" contenteditable="true">${page.html || ''}</div>
+          </div>`).join('');
+        App.els.sendLetterPagesPreview.querySelectorAll('.rte-editor').forEach((el) => App.ui.bindRteEditor(el));
       },
       async sendLetterNow() {
         const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);
         const event = entry ? App.data.getEventById(entry.eventId) : null;
         const text = App.els.letterEmailBodyInput?.value || '';
+        const to = App.els.letterToInput?.value.trim() || event?.contactEmail || '';
+        const cc = App.els.letterCcInput?.value.trim() || '';
         const files = [];
         try {
-          const letterDoc = this.buildLetterPdfDoc(entry, event);
+          const letterDoc = this.buildLetterPdfDoc(entry, event, App.state.sendLetterDraft);
           if (letterDoc) files.push(new File([letterDoc.output('blob')], `${App.utils.slug(entry?.title || 'letter')}-letter.pdf`, { type: 'application/pdf' }));
         } catch (err) { console.error('Letter PDF build failed', err); }
         if (entry?.visitForm) {
@@ -2686,14 +2712,13 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           } catch (err) { console.error('Schedule PDF build for sharing failed', err); }
         }
         const mailto = () => {
-          const to = event?.contactEmail || '';
           const subject = App.utils.t('letter_subject');
           if (App.state.app.settings.emailMethod === 'owa') {
             const base = App.state.app.settings.owaUrl || 'https://outlook.office.com/mail/deeplink/compose';
-            const url = `${base}?to=${encodeURIComponent(to)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+            const url = `${base}?to=${encodeURIComponent(to)}${cc ? `&cc=${encodeURIComponent(cc)}` : ''}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
           } else {
-            window.location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+            window.location.href = `mailto:${encodeURIComponent(to)}?${cc ? `cc=${encodeURIComponent(cc)}&` : ''}subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
           }
         };
         if (navigator.share && files.length && navigator.canShare && navigator.canShare({ files })) {
@@ -2835,7 +2860,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         }));
       },
 
-      renderSettings() { if (App.els.letterModal?.hidden && App.els.letterEditorHome && App.els.letterEditorBlock && App.els.letterEditorBlock.previousElementSibling !== App.els.letterEditorHome) App.els.letterEditorHome.after(App.els.letterEditorBlock); if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.letterTemplateEditor && document.activeElement !== App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = App.state.app.settings['letterTemplate' + (App.state.letterEditingType || 'Congregation')] || DEFAULT_LETTER_TEMPLATE_HTML; this.renderLetterPagesList(); if (App.els.senderNameInput && document.activeElement !== App.els.senderNameInput) App.els.senderNameInput.value = App.state.app.settings.senderName || ''; if (App.els.senderAddressInput && document.activeElement !== App.els.senderAddressInput) App.els.senderAddressInput.value = App.state.app.settings.senderAddress || ''; if (App.els.senderPhoneInput && document.activeElement !== App.els.senderPhoneInput) App.els.senderPhoneInput.value = App.state.app.settings.senderPhone || ''; if (App.els.senderEmailInput && document.activeElement !== App.els.senderEmailInput) App.els.senderEmailInput.value = App.state.app.settings.senderEmail || ''; if (App.els.emailMethodSelect) App.els.emailMethodSelect.value = App.state.app.settings.emailMethod || 'mailto'; if (App.els.owaUrlInput && document.activeElement !== App.els.owaUrlInput) App.els.owaUrlInput.value = App.state.app.settings.owaUrl || 'https://outlook.office.com/mail/deeplink/compose'; if (App.els.owaUrlRow) App.els.owaUrlRow.style.display = (App.state.app.settings.emailMethod === 'owa') ? '' : 'none'; if (App.els.homeAddressInput && document.activeElement !== App.els.homeAddressInput) App.els.homeAddressInput.value = App.state.app.settings.homeAddress || ''; if (App.els.homeGeocodeStatus && typeof App.state.app.settings.homeLat === 'number') App.els.homeGeocodeStatus.textContent = `📍 Координаты сохранены (${App.state.app.settings.homeLat.toFixed(3)}, ${App.state.app.settings.homeLng.toFixed(3)})`; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
+      renderSettings() { if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.letterTemplateEditor && document.activeElement !== App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = App.state.app.settings['letterTemplate' + (App.state.letterEditingType || 'Congregation')] || DEFAULT_LETTER_TEMPLATE_HTML; this.renderLetterPagesList(); if (App.els.senderNameInput && document.activeElement !== App.els.senderNameInput) App.els.senderNameInput.value = App.state.app.settings.senderName || ''; if (App.els.senderAddressInput && document.activeElement !== App.els.senderAddressInput) App.els.senderAddressInput.value = App.state.app.settings.senderAddress || ''; if (App.els.senderPhoneInput && document.activeElement !== App.els.senderPhoneInput) App.els.senderPhoneInput.value = App.state.app.settings.senderPhone || ''; if (App.els.senderEmailInput && document.activeElement !== App.els.senderEmailInput) App.els.senderEmailInput.value = App.state.app.settings.senderEmail || ''; if (App.els.emailMethodSelect) App.els.emailMethodSelect.value = App.state.app.settings.emailMethod || 'mailto'; if (App.els.owaUrlInput && document.activeElement !== App.els.owaUrlInput) App.els.owaUrlInput.value = App.state.app.settings.owaUrl || 'https://outlook.office.com/mail/deeplink/compose'; if (App.els.owaUrlRow) App.els.owaUrlRow.style.display = (App.state.app.settings.emailMethod === 'owa') ? '' : 'none'; if (App.els.homeAddressInput && document.activeElement !== App.els.homeAddressInput) App.els.homeAddressInput.value = App.state.app.settings.homeAddress || ''; if (App.els.homeGeocodeStatus && typeof App.state.app.settings.homeLat === 'number') App.els.homeGeocodeStatus.textContent = `📍 Координаты сохранены (${App.state.app.settings.homeLat.toFixed(3)}, ${App.state.app.settings.homeLng.toFixed(3)})`; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
       closeMobileMenu() {
         if (App.els.appRoot) App.els.appRoot.classList.remove('menu-open');
         if (App.els.mobileOverlay) {
@@ -2987,7 +3012,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);
         if (!entry) return;
         const event = App.data.getEventById(entry.eventId);
-        const doc = App.ui.buildLetterPdfDoc(entry, event);
+        const doc = App.ui.buildLetterPdfDoc(entry, event, App.state.sendLetterDraft);
         if (!doc) return;
         doc.save(`${App.utils.slug(entry.title || 'letter')}-letter.pdf`);
       });
