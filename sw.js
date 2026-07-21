@@ -11,8 +11,6 @@ const APP_SHELL_URLS = [
   './index.html',
   './app.js',
   './visit-pdf.js',
-  './fonts/fonts-dejavu-sans-normal.js',
-  './fonts/fonts-dejavu-sans-bold.js',
   './fonts/fonts-aptos-regular.js',
   './fonts/fonts-aptos-bold.js',
   './fonts/fonts-aptos-italic.js',

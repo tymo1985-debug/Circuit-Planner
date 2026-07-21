@@ -12,7 +12,7 @@
  * Выбирается самый просторный уровень, при котором всё ещё помещается
  * на одну страницу — и только затем формируется финальный документ.
  *
- * Используется встроенный TTF-шрифт DejaVu Sans (поддерживает кириллицу
+ * Используется встроенный TTF-шрифт Aptos (поддерживает кириллицу
  * и немецкие умляуты), чтобы русский, украинский и немецкий текст
  * корректно отображался в PDF без "квадратиков" вместо букв.
  *
@@ -32,7 +32,7 @@
   const WHITE = [255, 255, 255];
   const TEXT_DARK = [30, 34, 44];
 
-  const FONT_NAME = 'DejaVuSans';
+  const FONT_NAME = 'Aptos';
 
   /** Полчасовые интервалы 08:00–20:00 — те же подсказки, что и в интерфейсе. */
   const SERVICE_TIME_OPTIONS = (() => {
@@ -105,14 +105,14 @@
 
   /** Регистрирует встроенный кириллический шрифт в jsPDF (нужно на каждый экземпляр документа). */
   function registerFonts(doc) {
-    if (!window.DEJAVU_SANS_NORMAL_B64 || !window.DEJAVU_SANS_BOLD_B64) {
-      console.warn('Шрифт DejaVu Sans не найден — кириллица может отображаться некорректно.');
+    if (!window.APTOS_REGULAR_B64 || !window.APTOS_BOLD_B64) {
+      console.warn('Шрифт Aptos не найден — кириллица может отображаться некорректно.');
       return;
     }
-    doc.addFileToVFS('DejaVuSans.ttf', window.DEJAVU_SANS_NORMAL_B64);
-    doc.addFont('DejaVuSans.ttf', FONT_NAME, 'normal');
-    doc.addFileToVFS('DejaVuSans-Bold.ttf', window.DEJAVU_SANS_BOLD_B64);
-    doc.addFont('DejaVuSans-Bold.ttf', FONT_NAME, 'bold');
+    doc.addFileToVFS('Aptos.ttf', window.APTOS_REGULAR_B64);
+    doc.addFont('Aptos.ttf', FONT_NAME, 'normal');
+    doc.addFileToVFS('Aptos-Bold.ttf', window.APTOS_BOLD_B64);
+    doc.addFont('Aptos-Bold.ttf', FONT_NAME, 'bold');
     doc.setFont(FONT_NAME, 'normal');
   }
 

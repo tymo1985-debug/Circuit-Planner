@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.35.1',
+      version: '9.36.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -2524,19 +2524,11 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'a4' });
         const FONT = 'Aptos';
-        if (window.APTOS_REGULAR_B64) {
-          doc.addFileToVFS('Aptos.ttf', window.APTOS_REGULAR_B64);
-          doc.addFont('Aptos.ttf', FONT, 'normal');
-        } else if (window.DEJAVU_SANS_NORMAL_B64) {
-          // Fallback if the Aptos font file is ever missing from the build.
-          doc.addFileToVFS('DejaVuSans.ttf', window.DEJAVU_SANS_NORMAL_B64);
-          doc.addFont('DejaVuSans.ttf', FONT, 'normal');
-        }
+        if (window.APTOS_REGULAR_B64) { doc.addFileToVFS('Aptos.ttf', window.APTOS_REGULAR_B64); doc.addFont('Aptos.ttf', FONT, 'normal'); }
         if (window.APTOS_BOLD_B64) { doc.addFileToVFS('Aptos-Bold.ttf', window.APTOS_BOLD_B64); doc.addFont('Aptos-Bold.ttf', FONT, 'bold'); }
-        else if (window.DEJAVU_SANS_BOLD_B64) { doc.addFileToVFS('DejaVuSans-Bold.ttf', window.DEJAVU_SANS_BOLD_B64); doc.addFont('DejaVuSans-Bold.ttf', FONT, 'bold'); }
         if (window.APTOS_ITALIC_B64) { doc.addFileToVFS('Aptos-Italic.ttf', window.APTOS_ITALIC_B64); doc.addFont('Aptos-Italic.ttf', FONT, 'italic'); }
         if (window.APTOS_BOLDITALIC_B64) { doc.addFileToVFS('Aptos-BoldItalic.ttf', window.APTOS_BOLDITALIC_B64); doc.addFont('Aptos-BoldItalic.ttf', FONT, 'bolditalic'); }
-        const hasRealBold = !!(window.APTOS_BOLD_B64 || window.DEJAVU_SANS_BOLD_B64);
+        const hasRealBold = !!window.APTOS_BOLD_B64;
         const hasRealItalic = !!window.APTOS_ITALIC_B64;
         const hasRealBoldItalic = !!window.APTOS_BOLDITALIC_B64;
         doc.setFont(FONT, 'normal');
