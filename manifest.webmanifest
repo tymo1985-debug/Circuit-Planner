@@ -50,9 +50,9 @@
       ]
     },
     {
-      "name": "Недели",
-      "short_name": "Недели",
-      "url": "./#weeks",
+      "name": "Собрания и события",
+      "short_name": "События",
+      "url": "./#events",
       "icons": [
         {
           "src": "./icons/icon-192.png",

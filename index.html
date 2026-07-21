@@ -34,9 +34,10 @@
   .week-item,.event-row,.note-row{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.week-item{display:grid;cursor:pointer;text-align:left}.week-item.active{border-color:var(--accent);outline:2px solid rgba(20,83,45,.20)}.week-item-top{display:flex;justify-content:space-between;align-items:center}.pill-row{display:flex;gap:8px;flex-wrap:wrap}.pill,.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);font-size:12px}.dot{width:10px;height:10px;border-radius:999px;display:inline-block}
   .calendar-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px}.calendar-layout.team-hidden{grid-template-columns:minmax(0,1fr)}.calendar-layout.team-hidden .calendar-side{display:none}
   .calendar-shell{background:var(--surface);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);overflow:visible;position:relative}
-  .calendar-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 24px 16px;border-bottom:1px solid rgba(216,226,219,.85)}
+  .calendar-toolbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;padding:22px 24px 16px;border-bottom:1px solid rgba(216,226,219,.85)}
+  .calendar-toolbar-title{min-width:0;flex:1 1 240px}
   .calendar-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.calendar-nav{display:flex;align-items:center;gap:8px;padding:4px;background:var(--surface2);border:1px solid var(--line);border-radius:999px}.icon-btn{appearance:none;border:1px solid var(--line);background:var(--surface2);color:var(--text);width:32px;height:32px;border-radius:999px;cursor:pointer}
-  .calendar-title{margin:0;font-size:22px}.calendar-sub{color:var(--muted);font-size:13px;margin-top:6px}.legend{display:flex;gap:10px;flex-wrap:wrap;padding:0 24px 14px;color:var(--muted);font-size:12px;border-bottom:1px solid rgba(216,226,219,.70)}.legend-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:var(--surface2);border:1px solid var(--line)}
+  .calendar-title{margin:0;font-size:22px;overflow-wrap:break-word}.calendar-sub{color:var(--muted);font-size:13px;margin-top:6px;overflow-wrap:break-word}.legend{display:flex;gap:10px;flex-wrap:wrap;padding:0 24px 14px;color:var(--muted);font-size:12px;border-bottom:1px solid rgba(216,226,219,.70)}.legend-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:var(--surface2);border:1px solid var(--line)}
   .grid-cal{display:grid}
   .dow-row,.week-row{display:grid;grid-template-columns:46px 1fr;}
   .dow-row{background:var(--cal-header-bg);border-bottom:1px solid var(--cal-grid-line)}.dow-corner,.week-num{border-right:1px solid var(--cal-grid-line)}.dow-corner{min-height:34px}.dow-days,.week-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));position:relative;}.dow{min-height:34px;display:flex;align-items:center;justify-content:flex-end;padding:0 10px 0 6px;color:var(--muted);font-size:12px}.week-row{min-height:112px;border-bottom:1px solid var(--cal-grid-line)}.week-row:last-child{border-bottom:0}.week-num{display:flex;align-items:flex-start;justify-content:center;padding-top:10px;color:var(--muted);font-size:12px;background:var(--cal-weeknum-bg);min-height:112px}
@@ -246,7 +247,7 @@ body::before{display:none !important}
         <div class="calendar-layout" id="calendarLayout">
           <div class="calendar-shell">
             <div class="calendar-toolbar">
-              <div><div class="small" id="calendarServiceYearLabel"></div><h3 class="calendar-title" id="monthLabel"></h3><div class="calendar-sub" id="calendarRangeLabel"></div></div>
+              <div class="calendar-toolbar-title"><div class="small" id="calendarServiceYearLabel"></div><h3 class="calendar-title" id="monthLabel"></h3><div class="calendar-sub" id="calendarRangeLabel"></div></div>
               <div class="calendar-controls">
                 <button class="chip" id="checkRemindersBtnMain" type="button">🔔 S302/письма</button>
                 <button class="chip" id="statsBtn" type="button">📊 Статистика</button>
