@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.36.1',
+      version: '9.36.2',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -1412,14 +1412,14 @@
           body::before{display:none !important}
           .app{grid-template-columns:1fr !important}
           .main{padding:18px 22px 30px !important;width:100%;max-width:none !important}
-          .topbar{display:grid !important;grid-template-columns:minmax(0,1fr) auto !important;align-items:start !important;gap:12px !important;margin-bottom:10px !important;padding:8px 0 8px !important;position:sticky;top:0;z-index:1200;background:var(--bg)}
+          .topbar{display:grid !important;grid-template-columns:minmax(160px,1fr) auto !important;align-items:start !important;gap:12px !important;margin-bottom:10px !important;padding:8px 0 8px !important;position:sticky;top:0;z-index:1200;background:var(--bg)}
           .topbar h2{font-size:1.55rem !important;line-height:1.12 !important;margin-top:4px !important}
           .topbar p{display:none !important}
           .version-badge{font-size:.78rem !important;padding:5px 9px !important}
           .mobile-menu-btn{display:inline-flex !important;padding:10px 14px !important;border-radius:18px !important;white-space:nowrap !important}
           .sidebar{position:fixed !important;left:calc(-1 * var(--sidebar-width) - 20px) !important;top:0 !important;bottom:0 !important;width:var(--sidebar-width) !important;z-index:2500 !important;transition:left .22s ease !important;box-shadow:0 20px 60px rgba(0,0,0,.24);display:flex !important;pointer-events:auto !important}
           .app.menu-open .sidebar{left:0 !important}
-          .calendar-toolbar{display:grid !important;grid-template-columns:minmax(0,1fr) auto !important;align-items:center !important;gap:12px !important;padding:16px 18px 12px !important}
+          .calendar-toolbar{display:grid !important;grid-template-columns:minmax(220px,1fr) auto !important;align-items:center !important;gap:12px !important;padding:16px 18px 12px !important}
           .calendar-controls{justify-content:flex-end !important;gap:8px !important}
           .calendar-controls .chip,.calendar-controls select{min-height:42px}
           .calendar-title{font-size:1.35rem !important;line-height:1.15 !important}
