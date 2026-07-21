@@ -349,7 +349,15 @@ body::before{display:none !important}
 
           <div class="card" style="margin-top:16px">
             <h3>Текст письма</h3>
-            <div class="small" style="margin-bottom:8px">Отдельный текст для каждого типа визита. Плейсхолдеры: {congregation}, {cong_number}, {start_date}, {end_date}, {today}, {sender}. Выдели нужное слово или фразу мышью в любом из редакторов ниже, затем нажми «B» или размер — форматируется только выделенный фрагмент.</div>
+            <div class="small" style="margin-bottom:8px">Отдельный текст для каждого типа визита. Выдели нужное слово или фразу мышью в любом из редакторов ниже, затем нажми «B» или размер — форматируется только выделенный фрагмент.</div>
+            <details style="margin-bottom:12px">
+              <summary class="small" style="cursor:pointer;color:var(--muted)">🔤 Какие плейсхолдеры доступны и как их использовать</summary>
+              <div class="small" style="margin:8px 0">Плейсхолдер — это слово в фигурных скобках, которое при отправке письма автоматически заменяется на реальное значение для этого конкретного визита. Работают в тексте письма, в дополнительных страницах и в тексте email-сообщения по умолчанию.</div>
+              <table id="placeholderRefTable" style="width:100%;border-collapse:collapse">
+                <thead><tr><th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)">Плейсхолдер</th><th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)">Что это</th><th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)">Пример</th></tr></thead>
+                <tbody id="placeholderRefBody"></tbody>
+              </table>
+            </details>
             <div class="settings-tabs" style="margin-bottom:12px">
               <button class="chip letter-type-tab active" data-letter-type="Congregation" type="button">Собрание</button>
               <button class="chip letter-type-tab" data-letter-type="Group" type="button">Группа</button>
