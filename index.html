@@ -25,11 +25,11 @@
   button,.btn,.chip,.icon-btn,.nav-btn,.bottom-nav-btn,.week-item,.side-item,.event-bar,.pdf-option,a.btn,label.btn,input,select,textarea{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .btn.primary{background:var(--accent);color:#fff;border-color:transparent}.btn.danger{background:var(--danger);color:#fff;border-color:transparent}.btn.full{width:100%}
   .screen{display:none}.screen.active{display:block}.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px}.grid{display:grid;gap:18px}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-  input[type="text"],input[type="date"],input[type="color"],input[type="number"],input[type="tel"],input[type="email"],textarea,select{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:14px;padding:12px 14px}
+  input[type="text"],input[type="date"],input[type="color"],input[type="number"],input[type="tel"],input[type="email"],textarea,select{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:14px;padding:12px 14px;font-size:16px}
   textarea{min-height:120px;resize:vertical}
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}.small{font-size:12px;color:var(--muted)}.empty{padding:24px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);text-align:center}
   .weeks-toolbar{display:grid;grid-template-columns:1fr 220px 220px;gap:10px}
-  @media (max-width:767px){.weeks-toolbar{grid-template-columns:1fr !important}}
+  @media (max-width:767px){.weeks-toolbar{grid-template-columns:1fr !important}.icon-btn{width:44px !important;height:44px !important;font-size:16px}}
   .event-tools{display:grid;grid-template-columns:minmax(180px,1fr) minmax(170px,230px) auto;gap:10px;align-items:center;margin-bottom:14px}.event-tools .small{justify-self:start}.event-tools .btn.danger{white-space:nowrap}@media (max-width:760px){.event-tools{grid-template-columns:1fr}.event-tools .small{justify-self:start}}
   .week-item,.event-row,.note-row{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.week-item{display:grid;cursor:pointer;text-align:left}.week-item.active{border-color:var(--accent);outline:2px solid rgba(20,83,45,.20)}.week-item-top{display:flex;justify-content:space-between;align-items:center}.pill-row{display:flex;gap:8px;flex-wrap:wrap}.pill,.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);font-size:12px}.dot{width:10px;height:10px;border-radius:999px;display:inline-block}
   .calendar-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px}.calendar-layout.team-hidden{grid-template-columns:minmax(0,1fr)}.calendar-layout.team-hidden .calendar-side{display:none}
@@ -53,7 +53,7 @@
   .offline-banner.show{display:block}
   .app.menu-open .bottom-nav{display:none !important}
   .app.menu-open .sidebar{z-index:1501 !important}
-  .bottom-nav-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.bottom-nav-btn{appearance:none;border:1px solid transparent;background:transparent;color:var(--muted);border-radius:16px;padding:10px 6px;display:grid;gap:4px;place-items:center;font:inherit;cursor:pointer;min-width:0}.bottom-nav-btn .icon{font-size:18px;line-height:1}.bottom-nav-btn .label{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.bottom-nav-btn.active{background:var(--surface2);color:var(--text);border-color:var(--line)}
+  .bottom-nav-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px}.bottom-nav-btn{appearance:none;border:1px solid transparent;background:transparent;color:var(--muted);border-radius:16px;padding:10px 6px;display:grid;gap:4px;place-items:center;font:inherit;cursor:pointer;min-width:0}.bottom-nav-btn .icon{font-size:18px;line-height:1}.bottom-nav-btn .label{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.bottom-nav-btn.active{background:var(--surface2);color:var(--text);border-color:var(--line)}
   .mobile-overlay{position:fixed;inset:0;background:rgba(15,23,18,.42);backdrop-filter:none;z-index:1500;display:none;pointer-events:none}.mobile-overlay.show{display:block;pointer-events:auto}.mobile-overlay[hidden]{display:none !important;pointer-events:none !important}.mobile-menu-btn{display:none !important}
   :root[data-layout="classic"]{}
   :root[data-layout="compact"] .week-row,:root[data-layout="compact"] .week-days{min-height:72px}:root[data-layout="compact"] .day-cell{min-height:72px;padding:6px 6px 6px 8px}:root[data-layout="compact"] .event-bar{font-size:11px;padding:2px 8px}:root[data-layout="compact"] .calendar-shell{border-radius:20px}
@@ -500,7 +500,7 @@ body::before{display:none !important}
   <div class="modal" id="visitFormModal" hidden>
     <div class="modal-card" style="max-width:920px">
       <div class="modal-head"><div><h3>📋 Формуляр визита</h3><div class="modal-sub" id="visitFormSub">—</div></div><button class="icon-btn" id="visitFormCloseBtn" type="button" aria-label="Закрыть">✕</button></div>
-      <div style="max-height:64vh;overflow:auto;padding-right:4px">
+      <div>
         <div class="form-grid"><label><span class="small">Тип визита</span><select id="vfVisitType"><option value="meeting">Собрание</option><option value="group">Группа</option><option value="pregroup">Предгруппа</option></select></label><label><span class="small">🌐 Язык формуляра (может отличаться от языка интерфейса!)</span><select id="vfLanguageSelect"><option value="ru">Русский</option><option value="uk">Українська</option><option value="en">English</option><option value="pl">Polski</option></select></label></div>
         <div class="small" id="vfLanguageReminder" style="margin-top:6px;padding:8px 12px;border-radius:12px;background:var(--surface2);border:1px dashed var(--line)"></div>
 
