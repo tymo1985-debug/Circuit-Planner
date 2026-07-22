@@ -223,7 +223,7 @@
       meetingTypeMidweek: 'Встреча середины недели', meetingTypeWeekend: 'Встреча выходного дня', meetingTypeElders: 'Встреча старейшин', meetingTypeWithElders: 'Встреча со старейшинами', meetingTypePioneers: 'Встреча с пионерами', meetingTypeOther: 'Другое',
       meetingTypeLabel: 'Тип встречи', dayLabel: 'День недели', timeLabel: 'Время', placeLabel: 'Место проведения',
       weekdayMon: 'Понедельник', weekdayTue: 'Вторник', weekdayWed: 'Среда', weekdayThu: 'Четверг', weekdayFri: 'Пятница', weekdaySat: 'Суббота', weekdaySun: 'Воскресенье',
-      serviceTableTime: 'Время', serviceTablePlace: 'Место проведения встречи', serviceTablePartner: 'С кем сотрудничаю', serviceTableKind: 'Вид служения',
+      serviceTableTime: 'Время', serviceTablePlace: 'Место проведения встречи', serviceTablePartner: 'С кем (имя/тел.)', serviceTableKind: 'Вид служения',
       pastoralName: 'Имя', pastoralDay: 'День', pastoralTime: 'Время', pastoralReason: 'Причина пастырского посещения',
       mealDay: 'День', mealTime: 'Время', mealPlace: 'Место', mealHost: 'Кто принимает', mealPhone: 'Телефон', mealNote: 'Примечание',
       pdfPageForAlex: 'Формуляр для Алексея', pdfPageForLydia: 'Формуляр для Лидии', pdfVisitTypeLabel: 'Тип посещения:',
@@ -235,7 +235,7 @@
       meetingTypeMidweek: 'Зустріч серед тижня', meetingTypeWeekend: 'Зустріч на вихідних', meetingTypeElders: 'Зустріч старійшин', meetingTypeWithElders: 'Зустріч зі старійшинами', meetingTypePioneers: 'Зустріч з піонерами', meetingTypeOther: 'Інше',
       meetingTypeLabel: 'Тип зустрічі', dayLabel: 'День тижня', timeLabel: 'Час', placeLabel: 'Місце проведення',
       weekdayMon: 'Понеділок', weekdayTue: 'Вівторок', weekdayWed: 'Середа', weekdayThu: 'Четвер', weekdayFri: "П'ятниця", weekdaySat: 'Субота', weekdaySun: 'Неділя',
-      serviceTableTime: 'Час', serviceTablePlace: 'Місце проведення зустрічі', serviceTablePartner: 'З ким співпрацюю', serviceTableKind: 'Вид служіння',
+      serviceTableTime: 'Час', serviceTablePlace: 'Місце проведення зустрічі', serviceTablePartner: 'З ким (ім\u2019я/тел.)', serviceTableKind: 'Вид служіння',
       pastoralName: "Ім'я", pastoralDay: 'День', pastoralTime: 'Час', pastoralReason: 'Причина пастирського відвідування',
       mealDay: 'День', mealTime: 'Час', mealPlace: 'Місце', mealHost: 'Хто приймає', mealPhone: 'Телефон', mealNote: 'Примітка',
       pdfPageForAlex: 'Формуляр для Олексія', pdfPageForLydia: 'Формуляр для Лідії', pdfVisitTypeLabel: 'Тип відвідування:',
@@ -247,7 +247,7 @@
       meetingTypeMidweek: 'Midweek meeting', meetingTypeWeekend: 'Weekend meeting', meetingTypeElders: "Elders' meeting", meetingTypeWithElders: 'Meeting with elders', meetingTypePioneers: 'Meeting with pioneers', meetingTypeOther: 'Other',
       meetingTypeLabel: 'Meeting type', dayLabel: 'Day of week', timeLabel: 'Time', placeLabel: 'Place',
       weekdayMon: 'Monday', weekdayTue: 'Tuesday', weekdayWed: 'Wednesday', weekdayThu: 'Thursday', weekdayFri: 'Friday', weekdaySat: 'Saturday', weekdaySun: 'Sunday',
-      serviceTableTime: 'Time', serviceTablePlace: 'Meeting place', serviceTablePartner: 'Working with', serviceTableKind: 'Type of ministry',
+      serviceTableTime: 'Time', serviceTablePlace: 'Meeting place', serviceTablePartner: 'With whom (name/phone)', serviceTableKind: 'Type of ministry',
       pastoralName: 'Name', pastoralDay: 'Day', pastoralTime: 'Time', pastoralReason: 'Reason for shepherding call',
       mealDay: 'Day', mealTime: 'Time', mealPlace: 'Place', mealHost: 'Host', mealPhone: 'Phone', mealNote: 'Note',
       pdfPageForAlex: "Alexei's form", pdfPageForLydia: "Lydia's form", pdfVisitTypeLabel: 'Visit type:',
@@ -259,7 +259,7 @@
       meetingTypeMidweek: 'Zebranie w tygodniu', meetingTypeWeekend: 'Zebranie weekendowe', meetingTypeElders: 'Zebranie starszych', meetingTypeWithElders: 'Spotkanie ze starszymi', meetingTypePioneers: 'Spotkanie z pionierami', meetingTypeOther: 'Inne',
       meetingTypeLabel: 'Rodzaj spotkania', dayLabel: 'Dzień tygodnia', timeLabel: 'Godzina', placeLabel: 'Miejsce',
       weekdayMon: 'Poniedziałek', weekdayTue: 'Wtorek', weekdayWed: 'Środa', weekdayThu: 'Czwartek', weekdayFri: 'Piątek', weekdaySat: 'Sobota', weekdaySun: 'Niedziela',
-      serviceTableTime: 'Godzina', serviceTablePlace: 'Miejsce spotkania', serviceTablePartner: 'Współpracuję z', serviceTableKind: 'Rodzaj służby',
+      serviceTableTime: 'Godzina', serviceTablePlace: 'Miejsce spotkania', serviceTablePartner: 'Z kim (imi\u0119/tel.)', serviceTableKind: 'Rodzaj słu\u017cby',
       pastoralName: 'Imię', pastoralDay: 'Dzień', pastoralTime: 'Godzina', pastoralReason: 'Powód odwiedzin pasterskich',
       mealDay: 'Dzień', mealTime: 'Godzina', mealPlace: 'Miejsce', mealHost: 'Kto przyjmuje', mealPhone: 'Telefon', mealNote: 'Uwaga',
       pdfPageForAlex: 'Formularz dla Aleksieja', pdfPageForLydia: 'Formularz dla Lidii', pdfVisitTypeLabel: 'Rodzaj odwiedzin:',
@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.37.2',
+      version: '9.37.3',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
