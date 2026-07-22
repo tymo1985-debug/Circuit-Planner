@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.37.1',
+      version: '9.37.2',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -2429,7 +2429,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
                   <input data-field="time" type="text" list="${listId}" value="${escA(r.time)}" placeholder="чч:мм" />
                 </label>
                 <label><span class="small">Место</span><input data-field="place" type="text" value="${escA(r.place)}" /></label>
-                <label><span class="small">С кем</span><input data-field="partner" type="text" value="${escA(r.partner)}" /></label>
+                <label><span class="small">С кем (имя / телефон)</span><input data-field="partner" type="text" placeholder="Имя / телефон" value="${escA(r.partner)}" /></label>
                 <label><span class="small">Вид служения</span><input data-field="kind" type="text" value="${escA(r.kind)}" /></label>
                 <button class="btn danger" type="button" data-remove-row style="grid-column:1 / -1">Удалить строку</button>
               </div>`;
@@ -2448,7 +2448,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
                 <label><span class="small">Имя</span><input data-field="name" type="text" value="${escA(p.name)}" /></label>
                 <label><span class="small">День</span><input data-field="day" type="text" value="${escA(p.day)}" /></label>
                 <label><span class="small">Время</span><input data-field="time" type="text" value="${escA(p.time)}" /></label>
-                <label><span class="small">С кем</span><input data-field="partner" type="text" value="${escA(p.partner)}" /></label>
+                <label><span class="small">С кем (имя / телефон)</span><input data-field="partner" type="text" placeholder="Имя / телефон" value="${escA(p.partner)}" /></label>
                 <label style="grid-column:1 / -1"><span class="small">Причина</span><input data-field="reason" type="text" value="${escA(p.reason)}" /></label>
               </div>
               <button class="btn danger" type="button" data-remove-row style="margin-top:8px">Удалить</button>
