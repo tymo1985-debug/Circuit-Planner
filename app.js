@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.38.0',
+      version: '9.38.1',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -619,7 +619,8 @@
         const app = appData && typeof appData === 'object' ? appData : this.createDefaultData();
         app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version: App.config.version };
         app.events = App.utils.uniqueBy(app.events.filter((item) => item && typeof item === 'object').map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '', visitType: item.visitType || '', contactName: item.contactName || '', contactPhone: item.contactPhone || '', contactEmail: item.contactEmail || '', contactNote: item.contactNote || '', congNumber: item.congNumber || '', lat: typeof item.lat === 'number' ? item.lat : null, lng: typeof item.lng === 'number' ? item.lng : null, formLanguage: item.formLanguage || '' })), (item) => item.id);
-        app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end && App.utils.iso(item.start) && App.utils.iso(item.end)).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: item.title || '', note: item.note || '', resultNote: item.resultNote || '', emailBody: item.emailBody || '', visitForm: item.visitForm || null, flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => item.id);
+        const eventNameById = {}; app.events.forEach((ev) => { eventNameById[ev.id] = ev.name; });
+        app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end && App.utils.iso(item.start) && App.utils.iso(item.end)).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: eventNameById[item.eventId] || item.title || '', note: item.note || '', resultNote: item.resultNote || '', emailBody: item.emailBody || '', visitForm: item.visitForm || null, flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => item.id);
         Object.keys(app.serviceYears).forEach((year) => {
           const sy = app.serviceYears[year] || {}; if (!sy.weeks || typeof sy.weeks !== 'object') sy.weeks = {};
           Object.keys(sy.weeks).forEach((weekId) => { const w = sy.weeks[weekId]; if (!w) return; const start = App.utils.iso(w.start || weekId); const end = App.utils.iso(w.end || App.utils.addDays(App.utils.parseLocalDate(start), 6)); sy.weeks[weekId] = { id: w.id || weekId, weekId, start, end, eventId: w.eventId || '', priority: w.priority || 'normal', flagLetter: !!w.flagLetter, flagS302: !!w.flagS302, note: w.note || '' }; });
@@ -784,10 +785,20 @@
         try {
           const name = App.els.eventNameInput?.value.trim(); if (!name) return App.utils.toast(App.utils.t('enter_event_name'));
           const payload = { id: App.state.editingEventId || App.utils.uid('evt'), name, color: App.utils.clampColor(App.els.eventColorInput?.value), address: App.els.eventAddressInput?.value.trim() || '', schedule: App.els.eventScheduleInput?.value.trim() || '', visitType: App.els.eventVisitTypeInput?.value || '', contactName: App.els.eventContactNameInput?.value.trim() || '', contactPhone: App.els.eventContactPhoneInput?.value.trim() || '', contactEmail: App.els.eventContactEmailInput?.value.trim() || '', contactNote: App.els.eventContactNoteInput?.value.trim() || '', congNumber: App.els.eventCongNumberInput?.value.trim() || '', lat: App.state.editingEventCoords?.lat ?? null, lng: App.state.editingEventCoords?.lng ?? null, formLanguage: App.els.eventFormLanguageSelect?.value || '' };
-          const index = App.state.app.events.findIndex((event) => event.id === payload.id); if (index >= 0) App.state.app.events[index] = payload; else App.state.app.events.push(payload);
+          const index = App.state.app.events.findIndex((event) => event.id === payload.id);
+          const oldName = index >= 0 ? App.state.app.events[index].name : null;
+          if (index >= 0) App.state.app.events[index] = payload; else App.state.app.events.push(payload);
           // Dedup by id only — a content-based key here previously risked collapsing two
           // distinct events that happened to share name/color/address/schedule.
           App.state.app.events = App.utils.uniqueBy(App.state.app.events, (item) => item.id);
+          // Renaming an event otherwise left every already-created visit entry showing the OLD name
+          // forever (entry.title is only ever snapshotted from the event at save time, never
+          // re-synced) — letters, S-302 forms, and the calendar itself would all keep showing it.
+          // Only touch entries whose title still matches the old name, to avoid clobbering anything
+          // that was somehow customized separately.
+          if (oldName !== null && oldName !== name) {
+            App.state.app.entries.forEach((entry) => { if (entry.eventId === payload.id && entry.title === oldName) entry.title = name; });
+          }
           App.store.save(); this.resetEventForm(); App.ui.renderAll(); App.utils.toast(App.utils.t('event_template_saved'));
           App.ui.closeModal(App.els.eventEditorModal);
         } catch (err) {
