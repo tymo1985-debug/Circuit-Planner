@@ -15,6 +15,7 @@ const APP_SHELL_URLS = [
   './fonts/fonts-aptos-bold.js',
   './fonts/fonts-aptos-italic.js',
   './fonts/fonts-aptos-bolditalic.js',
+  './forms/s302-form.js',
   './favicon.ico',
   './manifest.webmanifest',
   './icons/icon-192.png',

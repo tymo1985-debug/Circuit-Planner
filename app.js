@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.37.3',
+      version: '9.38.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -1756,12 +1756,13 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const pastResultRow = pastResult ? `<div class="side-row"><div class="side-label">${App.utils.t('last_visit_result')} (${App.utils.prettyDate(pastResult.end)})</div><div class="side-value">${App.utils.escapeHtml(pastResult.resultNote)}</div></div>` : '';
         const hasContact = event && (event.contactName || event.contactPhone || event.contactEmail || event.contactNote);
         const contactBlock = hasContact ? `<div class="send-control" style="margin-top:10px"><div class="send-control-title" style="margin-bottom:8px">${App.utils.t('contact_info')}</div>${event.contactName ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_name')}</div><div class="side-value">${App.utils.escapeHtml(event.contactName)}</div></div>` : ''}${event.contactPhone ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_phone')}</div><div class="side-value" style="display:flex;align-items:center;gap:6px"><a href="tel:${App.utils.escapeAttr(event.contactPhone.replace(/[^+\d]/g, ''))}">${App.utils.escapeHtml(event.contactPhone)}</a><button class="icon-btn copy-btn" type="button" data-copy-text="${App.utils.escapeAttr(event.contactPhone)}" title="${App.utils.escapeAttr(App.utils.t('copy'))}" aria-label="${App.utils.escapeAttr(App.utils.t('copy'))}">📋</button></div></div>` : ''}${event.contactEmail ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_email')}</div><div class="side-value" style="display:flex;align-items:center;gap:6px"><a href="mailto:${App.utils.escapeAttr(event.contactEmail)}">${App.utils.escapeHtml(event.contactEmail)}</a><button class="icon-btn copy-btn" type="button" data-copy-text="${App.utils.escapeAttr(event.contactEmail)}" title="${App.utils.escapeAttr(App.utils.t('copy'))}" aria-label="${App.utils.escapeAttr(App.utils.t('copy'))}">📋</button></div></div>` : ''}${event.contactNote ? `<div class="side-row"><div class="side-label">${App.utils.t('contact_note')}</div><div class="side-value">${App.utils.escapeHtml(event.contactNote)}</div></div>` : ''}</div>` : '';
-        App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div>${visitTypeRow}<div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div>${resultRow}${pastResultRow}${sendControls}${contactBlock}<div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button>${itemData.source === 'entry' && event?.visitType ? `<button class="btn" type="button" id="detailVisitFormBtn">📋 Формуляр визита</button><button class="btn" type="button" id="detailLetterBtn">✉ ${App.utils.t('compose_letter')}</button>` : ''}<button class="btn" type="button" id="detailShareBtn">📤 ${App.utils.t('share')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
+        App.els.calendarSideDetails.innerHTML = `<div class="side-row"><div class="side-label">${App.utils.t('type')}</div><div class="side-value">${itemData.source === 'week' ? App.utils.t('type_week') : App.utils.t('type_entry')}</div></div><div class="side-row"><div class="side-label">${App.utils.t('template')}</div><div class="side-value">${App.utils.escapeHtml(event?.name || App.utils.t('no_template'))}</div></div>${visitTypeRow}<div class="side-row"><div class="side-label">${App.utils.t('address')}</div><div class="side-value">${addressHtml}</div></div><div class="side-row"><div class="side-label">${App.utils.t('schedule')}</div><div class="side-value">${App.utils.escapeHtml(event?.schedule || App.utils.t('no_schedule'))}</div></div><div class="side-row"><div class="side-label">${App.utils.t('note')}</div><div class="side-value">${App.utils.escapeHtml(itemData.note || App.utils.t('no_note'))}</div></div>${resultRow}${pastResultRow}${sendControls}${contactBlock}<div style="display:grid;gap:8px;margin-top:12px"><button class="btn" type="button" id="detailEditBtn">${App.utils.t('edit')}</button>${itemData.source === 'entry' && event?.visitType ? `<button class="btn" type="button" id="detailVisitFormBtn">📋 Формуляр визита</button><button class="btn" type="button" id="detailLetterBtn">✉ ${App.utils.t('compose_letter')}</button><button class="btn" type="button" id="detailS302Btn">📋 Сформировать S-302</button>` : ''}<button class="btn" type="button" id="detailShareBtn">📤 ${App.utils.t('share')}</button><a class="btn" href="${App.utils.googleCalendarUrl(itemData, event)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_calendar')}</a><button class="btn" type="button" id="detailIcsBtn">${App.utils.t('apple_calendar')}</button>${event?.address ? `<a class="btn" href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">${App.utils.t('google_maps')}</a>` : ''}</div>`;
         const editBtn = document.getElementById('detailEditBtn'); if (editBtn) editBtn.addEventListener('click', () => App.actions.openCalendarEditorForItem(itemData.id));
         const icsBtn = document.getElementById('detailIcsBtn'); if (icsBtn) icsBtn.addEventListener('click', () => App.actions.exportSingleEventIcs(itemData.id));
         document.getElementById('detailShareBtn')?.addEventListener('click', () => App.ui.shareWeekText(itemData, event));
         document.getElementById('detailVisitFormBtn')?.addEventListener('click', () => App.ui.openVisitForm(itemData.id));
         document.getElementById('detailLetterBtn')?.addEventListener('click', () => App.ui.openLetterModal(itemData.id));
+        document.getElementById('detailS302Btn')?.addEventListener('click', () => App.ui.sendS302(itemData.refId));
         document.querySelectorAll('.copy-btn[data-copy-text]').forEach((btn) => btn.addEventListener('click', (e) => {
           e.preventDefault(); e.stopPropagation();
           const text = btn.dataset.copyText;
@@ -2040,10 +2041,11 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           ${event.contactName || event.contactPhone ? `<div class="small">👤 ${App.utils.escapeHtml([event.contactName, event.contactPhone].filter(Boolean).join(' · '))}</div>` : ''}
           <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
             <button class="btn" type="button" data-detail-calendar-item="entry:${App.utils.escapeAttr(entry.id)}" id="nextVisitOpenBtn">${App.utils.t('open')}</button>
-            ${event.visitType ? `<button class="btn" type="button" id="nextVisitLetterBtn">✉ ${App.utils.t('compose_letter')}</button>` : ''}
+            ${event.visitType ? `<button class="btn" type="button" id="nextVisitLetterBtn">✉ ${App.utils.t('compose_letter')}</button><button class="btn" type="button" id="nextVisitS302Btn">📋 Сформировать S-302</button>` : ''}
           </div>`;
         document.getElementById('nextVisitOpenBtn')?.addEventListener('click', () => { App.state.calendarDetailId = `entry:${entry.id}`; App.ui.renderCalendarDetails({ id: `entry:${entry.id}` }); });
         document.getElementById('nextVisitLetterBtn')?.addEventListener('click', () => App.ui.openLetterModal(`entry:${entry.id}`));
+        document.getElementById('nextVisitS302Btn')?.addEventListener('click', () => App.ui.sendS302(entry.id));
       },
       checkAutoBackupReminder() {
         try {
@@ -2683,6 +2685,71 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = entry.visitForm ? `📎 Письмо (${totalPages} стр.) и график визита будут отправлены как PDF-вложения.` : `📎 Письмо будет отправлено как PDF-вложение (${totalPages} стр.). График визита ещё не заполнен — если нужен, сначала открой «Формуляр визита».`;
         this.openModal(App.els.letterModal);
       },
+      // Fills the ORIGINAL Watchtower S-302-K form (embedded byte-for-byte, never redrawn) using its
+      // real AcroForm fields — this guarantees the sent document is visually identical to the source
+      // PDF, only the four blanks are filled in. Field names below are the exact (if oddly-encoded)
+      // internal names confirmed by inspecting the source PDF's AcroForm — do not "clean them up".
+      async buildS302Pdf(entry, event) {
+        if (!window.S302_FORM_B64) { App.utils.toast('Форма S-302 не найдена (файл формы не загружен).'); return null; }
+        if (!window.PDFLib) { App.utils.toast('Не удалось загрузить библиотеку для заполнения PDF (проверь подключение к интернету).'); return null; }
+        try {
+          const bytes = Uint8Array.from(atob(window.S302_FORM_B64), (c) => c.charCodeAt(0));
+          const pdfDoc = await window.PDFLib.PDFDocument.load(bytes);
+          // The form's own built-in field font has no Cyrillic glyphs — text typed into its fields
+          // would render as blank boxes. Embed the same Aptos font used elsewhere in the app so the
+          // filled-in text (Ukrainian/Russian names, dates) actually displays correctly.
+          let customFont = null;
+          if (window.fontkit && window.APTOS_REGULAR_B64) {
+            try {
+              pdfDoc.registerFontkit(window.fontkit);
+              const fontBytes = Uint8Array.from(atob(window.APTOS_REGULAR_B64), (c) => c.charCodeAt(0));
+              customFont = await pdfDoc.embedFont(fontBytes, { subset: true });
+            } catch (err) { console.warn('S-302: не удалось встроить шрифт Aptos, кириллица может не отобразиться', err); }
+          }
+          const form = pdfDoc.getForm();
+          const setIfExists = (fieldName, value) => {
+            try {
+              const field = form.getTextField(fieldName);
+              field.setText(value || '');
+              if (customFont) field.updateAppearances(customFont);
+            } catch (err) { console.warn('S-302: поле не найдено —', fieldName, err); }
+          };
+          const senderName = App.state.app.settings.senderName || '';
+          const congregationName = entry.title || event?.name || '';
+          const ukDate = (d) => { const dt = new Date(d); return Number.isNaN(dt.getTime()) ? '' : dt.toLocaleDateString('uk-UA', { day: '2-digit', month: 'long', year: 'numeric' }); };
+          const dateRange = `${ukDate(entry.start)} — ${ukDate(entry.end)}`;
+          setIfExists('fill_1', congregationName);
+          setIfExists('yZZSy ZWqhB.0', senderName);
+          setIfExists('yZZSy ZWqhB.1.0', dateRange);
+          setIfExists('yZZSy ZWqhB.1.1', senderName);
+          try { form.flatten(); } catch (err) { console.warn('S-302: не удалось сделать поля нередактируемыми', err); }
+          return await pdfDoc.save();
+        } catch (err) {
+          console.error('S-302 fill failed', err);
+          App.utils.toast('Не удалось заполнить форму S-302.');
+          return null;
+        }
+      },
+      async sendS302(entryId) {
+        const entry = App.state.app.entries.find((e) => e.id === entryId);
+        if (!entry) return;
+        const event = App.data.getEventById(entry.eventId);
+        App.utils.toast('Формирую S-302…');
+        const bytes = await this.buildS302Pdf(entry, event);
+        if (!bytes) return;
+        const file = new File([bytes], `S-302-${App.utils.slug(entry.title || 'congregation')}.pdf`, { type: 'application/pdf' });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          try { await navigator.share({ files: [file] }); } catch (err) { App.utils.downloadBlob(file, file.name); }
+        } else {
+          App.utils.downloadBlob(file, file.name);
+        }
+        if (!entry.flags) entry.flags = { f302: false, letter: false };
+        entry.flags.f302 = true;
+        App.store.save();
+        App.ui.renderAll();
+        App.ui.renderRemindersModal();
+        App.utils.toast('S-302 сформирован и отмечен как отправленный.');
+      },
       async sendLetterNow() {
         const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);
         const event = entry ? App.data.getEventById(entry.eventId) : null;
@@ -2739,7 +2806,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         }
         App.els.remindersModalList.innerHTML = items.map((item) => {
           const dayLabel = item.daysUntil < 0 ? `<span class="flag-badge" style="background:#b91c1c">${App.utils.t('reminders_overdue')}</span>` : `<span class="small">${App.utils.t('reminders_days_left', { days: item.daysUntil })}</span>`;
-          const s302Btn = item.needsS302 ? `<button class="btn danger" type="button" data-mark-reminder="s302" data-entry-id="${App.utils.escapeAttr(item.id)}">${App.utils.t('reminders_mark_s302')}</button>` : '';
+          const s302Btn = item.needsS302 ? `<button class="btn danger" type="button" data-mark-reminder="s302" data-entry-id="${App.utils.escapeAttr(item.id)}">${App.utils.t('reminders_mark_s302')}</button><button class="btn primary" type="button" data-send-s302="${App.utils.escapeAttr(item.id)}">📋 Сформировать и отправить S-302</button>` : '';
           const letterBtn = item.needsLetter ? `<button class="btn" type="button" data-mark-reminder="letter" data-entry-id="${App.utils.escapeAttr(item.id)}">${App.utils.t('reminders_mark_letter')}</button>` : '';
           return `<div class="card" style="padding:14px">
             <div style="display:flex;justify-content:space-between;align-items:start;gap:10px;flex-wrap:wrap">
@@ -2764,6 +2831,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           App.ui.renderRemindersModal();
           App.ui.renderAll();
         }));
+        document.querySelectorAll('[data-send-s302]').forEach((btn) => btn.addEventListener('click', () => App.ui.sendS302(btn.dataset.sendS302)));
         document.querySelectorAll('[data-open-reminder-entry]').forEach((btn) => btn.addEventListener('click', () => {
           App.ui.closeRemindersModal();
           App.state.selectedScreen = 'calendar';
