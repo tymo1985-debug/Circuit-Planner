@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.37.0',
+      version: '9.37.1',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -584,7 +584,7 @@
             if (!Array.isArray(out.letterPages[suffix])) out.letterPages[suffix] = [JSON.parse(JSON.stringify(defaultPage))];
           });
         }
-        if (typeof out.memoTemplate !== 'string' || !out.memoTemplate) out.memoTemplate = DEFAULT_MEMO_TEMPLATE; if (typeof out.senderName !== 'string') out.senderName = ''; if (typeof out.senderAddress !== 'string') out.senderAddress = ''; if (typeof out.senderPhone !== 'string') out.senderPhone = ''; if (typeof out.senderEmail !== 'string') out.senderEmail = ''; if (!out.emailMethod || !['mailto','owa'].includes(out.emailMethod)) out.emailMethod = 'mailto'; if (typeof out.owaUrl !== 'string' || !out.owaUrl) out.owaUrl = 'https://outlook.office.com/mail/deeplink/compose'; if (typeof out.homeAddress !== 'string') out.homeAddress = 'Praha, Česká republika'; if (typeof out.homeLat !== 'number') out.homeLat = null; if (typeof out.homeLng !== 'number') out.homeLng = null;
+        if (typeof out.memoTemplate !== 'string' || !out.memoTemplate) out.memoTemplate = DEFAULT_MEMO_TEMPLATE; if (typeof out.senderName !== 'string') out.senderName = ''; if (typeof out.senderAddress !== 'string') out.senderAddress = ''; if (typeof out.senderPhone !== 'string') out.senderPhone = ''; if (typeof out.senderEmail !== 'string') out.senderEmail = ''; if (!out.emailMethod || !['mailto','owa'].includes(out.emailMethod)) out.emailMethod = 'mailto'; if (typeof out.owaUrl !== 'string' || !out.owaUrl) out.owaUrl = 'https://outlook.office.com/mail/deeplink/compose'; if (typeof out.homeAddress !== 'string') out.homeAddress = 'Praha, Česká republika'; if (typeof out.homeLat !== 'number') out.homeLat = null; if (typeof out.homeLng !== 'number') out.homeLng = null; if (typeof out.autoShowReminders !== 'boolean') out.autoShowReminders = true;
         ['Congregation','Group','Pregroup'].forEach((suffix) => { const key = 'emailBody' + suffix; if (typeof out[key] !== 'string' || !out[key]) out[key] = DEFAULT_EMAIL_BODY_TEMPLATES[suffix]; });
         return out;
       },
@@ -1082,7 +1082,7 @@
           'remindersModal','remindersModalList','remindersModalCloseBtn','remindersModalOkBtn','remindersModalTitle','remindersModalSub','checkRemindersBtnMain',
           'statsModal','statsModalTitle','statsModalSub','statsModalBody','statsModalCloseBtn','statsModalOkBtn','statsBtn','plannerBtn',
           'plannerModal','plannerModalCloseBtn','plannerStartInput','plannerEndInput','plannerEventsList','plannerPreview','plannerCancelBtn','plannerApplyBtn',
-          'pinOverlay','pinInput','pinError','pinSubmitBtn','pinSetupBtn','holidaysToggle','editorResultInput','editorResultLabel',
+          'pinOverlay','pinInput','pinError','pinSubmitBtn','pinSetupBtn','holidaysToggle','autoShowRemindersToggle','editorResultInput','editorResultLabel',
           'eventCongNumberInput','eventFormLanguageSelect','eventVisitOnlyFields','geocodeEventBtn','eventDistanceStatus','homeAddressInput','geocodeHomeBtn','homeGeocodeStatus','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow','emailBodyDefaultInput','emailBodyDefaultResetBtn','placeholderRefBody',
           'vfLanguageSelect','vfLanguageReminder',
           'visitFormModal','visitFormSub','visitFormCloseBtn','vfVisitType','vfMeetingsList','vfAddMeetingBtn','vfServiceDaysList','vfAddDayBtn','vfPastoralHeading','vfPastoralList','vfAddPastoralBtn','vfMealsList','vfAddMealBtn','vfNotesInput','vfCloseBtn2','vfGeneratePdfBtn',
@@ -1249,6 +1249,7 @@
         this.updateReminderButtonBadge();
         this.renderNextVisitCard();
         if (App.els.holidaysToggle) App.els.holidaysToggle.checked = !!App.state.app.settings.showHolidays;
+        if (App.els.autoShowRemindersToggle) App.els.autoShowRemindersToggle.checked = !!App.state.app.settings.autoShowReminders;
         this.updatePinButton();
       },
       updateReminderButtonBadge() {
@@ -2778,7 +2779,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.remindersModal) App.els.remindersModal.hidden = true;
       },
       showRemindersModalIfNeeded() {
-        if (App.data.getUpcomingReminders().length) this.openRemindersModal();
+        if (App.state.app.settings.autoShowReminders && App.data.getUpcomingReminders().length) this.openRemindersModal();
       },
       renderEvents() {
         const query = (App.state.eventSearch || '').trim().toLowerCase();
@@ -2946,6 +2947,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.plannerApplyBtn?.addEventListener('click', () => App.ui.applyAutoPlan());
       App.els.pinSetupBtn?.addEventListener('click', () => App.ui.setupPin());
       App.els.holidaysToggle?.addEventListener('change', (e) => { App.state.app.settings.showHolidays = !!e.target.checked; App.store.save(); App.ui.renderAll(); });
+      App.els.autoShowRemindersToggle?.addEventListener('change', (e) => { App.state.app.settings.autoShowReminders = !!e.target.checked; App.store.save(); });
       // Visit Form modal
       App.els.visitFormCloseBtn?.addEventListener('click', () => { App.ui.saveVisitFormState(); App.ui.closeModal(App.els.visitFormModal); });
       App.els.vfCloseBtn2?.addEventListener('click', () => { App.ui.saveVisitFormState(); App.ui.closeModal(App.els.visitFormModal); });
