@@ -86,6 +86,7 @@
   .sy-day.holiday:not(.today) span{color:#b91c1c;font-weight:800}
   .holiday-mark{font-size:10px;margin-left:3px}
   .day-cell.drag-over{outline:2px dashed var(--accent);outline-offset:-3px;background:rgba(20,83,45,.08)}
+  .sy-day.drag-over{outline:2px dashed var(--accent);outline-offset:-2px;background:rgba(20,83,45,.12)}
   @media (min-width:1201px){.app{grid-template-columns:280px 1fr !important}.sidebar{display:flex !important;position:relative !important;left:auto !important;top:auto !important;width:auto !important;z-index:1 !important}.bottom-nav{display:none !important}.mobile-menu-btn{display:none !important}.mobile-overlay{display:none !important}}
   @media (min-width:768px) and (max-width:1200px){body::before{display:none!important}.app{grid-template-columns:1fr!important}.sidebar{position:fixed;left:-296px;top:0;bottom:0;width:280px;transition:left .24s ease;z-index:1501}.mobile-menu-btn{display:inline-flex!important}.app.menu-open .sidebar{left:0}.main{padding:18px}.dow-row,.week-row{grid-template-columns:38px 1fr}.topbar h2{font-size:24px}}
   @media (max-width:767px){body::before{display:none !important}.app{grid-template-columns:1fr !important}.sidebar{display:flex !important;position:fixed !important;top:0 !important;left:-296px !important;bottom:0 !important;width:280px !important;z-index:1501 !important;transition:left .24s ease !important;filter:none !important;opacity:1 !important;pointer-events:auto !important}.app.menu-open .sidebar{left:0 !important}.mobile-menu-btn{display:inline-flex !important}.mobile-overlay.show{display:block !important}.bottom-nav{display:block !important}.main{padding:16px 16px 96px !important}.topbar{position:sticky;top:0;z-index:1200;background:var(--bg);padding-top:4px}.actions{gap:8px}.actions .btn,.actions label.btn,.mobile-menu-btn{padding:10px 12px}.form-grid,.pdf-grid{grid-template-columns:1fr !important}.dow-row,.week-row{display:grid;grid-template-columns:46px 1fr;}.topbar h2{font-size:24px}}
@@ -450,6 +451,11 @@ body::before{display:none !important}
             </div>
             <div style="display:flex;justify-content:flex-start;gap:12px;flex-wrap:wrap;margin-top:14px"><button class="btn primary" id="backupBtn" type="button">Создать backup</button><button class="btn" id="pinSetupBtn" type="button">🔒 PIN-код: выкл</button><label class="btn" style="display:flex;align-items:center;gap:8px"><input id="holidaysToggle" type="checkbox" style="width:auto" /> Праздники CZ/AT/DE</label><label class="btn" style="display:flex;align-items:center;gap:8px"><input id="autoShowRemindersToggle" type="checkbox" style="width:auto" /> Всплывающее окно напоминаний при открытии</label></div>
           </div>
+          <div class="card" style="margin-top:14px">
+            <h3>История изменений</h3>
+            <div class="small" style="margin-bottom:10px">Программа автоматически сохраняет контрольные точки (не чаще одной раз в несколько минут) — если что-то пошло не так, можно откатиться к одной из последних версий данных.</div>
+            <button class="btn" id="openHistoryBtn" type="button">🕒 Показать историю изменений</button>
+          </div>
           <div class="card" style="margin-top:14px;box-shadow:none;border:1px dashed var(--danger);border-radius:18px;padding:14px;background:rgba(185,28,28,.06)">
             <div class="small" style="color:var(--danger);font-weight:700;margin-bottom:8px">Опасная зона</div>
             <div class="small" style="margin-bottom:10px">Необратимое действие: все локальные данные приложения будут удалены безвозвратно. Перед этим рекомендуем создать backup.</div>
@@ -537,6 +543,13 @@ body::before{display:none !important}
       <textarea id="letterEmailBodyInput" rows="10" style="font-family:inherit;margin-top:6px"></textarea>
       <div class="small" id="letterAttachStatus" style="margin-top:8px"></div>
       <div class="editor-actions"><button class="btn" id="letterPreviewPdfBtn" type="button">📄 Прикрепить PDF-документ</button><button class="btn" id="letterAttachPdfBtn" type="button">📎 Прикрепить график визитов</button><button class="btn primary" id="letterSendBtn" type="button">📤 Отправить электронное письмо</button></div>
+    </div>
+  </div>
+  <div class="modal" id="historyModal" hidden>
+    <div class="modal-card">
+      <div class="modal-head"><div><h3>🕒 История изменений</h3><div class="modal-sub">Контрольные точки сохраняются автоматически, не чаще одной раз в 5 минут.</div></div><button class="icon-btn" id="historyModalCloseBtn" type="button" aria-label="Закрыть">✕</button></div>
+      <div id="historyList" class="grid"></div>
+      <div class="editor-actions"><button class="btn primary" id="historyModalCloseBtn2" type="button">Закрыть</button></div>
     </div>
   </div>
   <div class="modal" id="remindersModal" hidden>

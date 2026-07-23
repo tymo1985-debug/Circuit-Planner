@@ -324,10 +324,13 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.38.1',
+      version: '9.39.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
+      historyKey: 'service-year-planner-v9-4-2-history',
+      snapshotIntervalMs: 5 * 60 * 1000, // at most one checkpoint every 5 minutes
+      maxSnapshots: 15,
       serviceYearStartMonth: 8,
       navItems: [
         { id: 'calendar', icon: '📆', tKey: 'nav_calendar' },
@@ -620,7 +623,7 @@
         app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version: App.config.version };
         app.events = App.utils.uniqueBy(app.events.filter((item) => item && typeof item === 'object').map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '', visitType: item.visitType || '', contactName: item.contactName || '', contactPhone: item.contactPhone || '', contactEmail: item.contactEmail || '', contactNote: item.contactNote || '', congNumber: item.congNumber || '', lat: typeof item.lat === 'number' ? item.lat : null, lng: typeof item.lng === 'number' ? item.lng : null, formLanguage: item.formLanguage || '' })), (item) => item.id);
         const eventNameById = {}; app.events.forEach((ev) => { eventNameById[ev.id] = ev.name; });
-        app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end && App.utils.iso(item.start) && App.utils.iso(item.end)).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: eventNameById[item.eventId] || item.title || '', note: item.note || '', resultNote: item.resultNote || '', emailBody: item.emailBody || '', visitForm: item.visitForm || null, flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => item.id);
+        app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end && App.utils.iso(item.start) && App.utils.iso(item.end)).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: eventNameById[item.eventId] || item.title || '', note: item.note || '', resultNote: item.resultNote || '', emailBody: item.emailBody || '', visitForm: item.visitForm || null, notified60: !!item.notified60, flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => item.id);
         Object.keys(app.serviceYears).forEach((year) => {
           const sy = app.serviceYears[year] || {}; if (!sy.weeks || typeof sy.weeks !== 'object') sy.weeks = {};
           Object.keys(sy.weeks).forEach((weekId) => { const w = sy.weeks[weekId]; if (!w) return; const start = App.utils.iso(w.start || weekId); const end = App.utils.iso(w.end || App.utils.addDays(App.utils.parseLocalDate(start), 6)); sy.weeks[weekId] = { id: w.id || weekId, weekId, start, end, eventId: w.eventId || '', priority: w.priority || 'normal', flagLetter: !!w.flagLetter, flagS302: !!w.flagS302, note: w.note || '' }; });
@@ -633,12 +636,57 @@
       load() { try { const saved = localStorage.getItem(App.config.storageKey); App.state.app = saved ? this.migrate(JSON.parse(saved)) : this.createDefaultData(); } catch (error) { console.error('Storage load failed', error); App.state.app = this.createDefaultData(); App.utils.toast('Storage reset.'); } },
       save() {
         try {
+          this.snapshotIfDue();
           localStorage.setItem(App.config.storageKey, JSON.stringify(App.state.app));
         } catch (error) {
           console.error('Storage save failed', error);
           App.utils.toast('Ошибка сохранения! Возможно, хранилище переполнено. Сделайте backup.');
         }
-      }
+      },
+      // Rolling checkpoint history so mistakes can be undone. Deliberately NOT a snapshot-per-edit
+      // system (typing in any field would create dozens of snapshots per minute) — instead, at most
+      // one checkpoint every few minutes, capturing the state as it was just BEFORE the next change,
+      // capped to a small number of recent checkpoints to keep localStorage usage bounded.
+      snapshotIfDue() {
+        try {
+          const raw = localStorage.getItem(App.config.historyKey);
+          const history = raw ? JSON.parse(raw) : [];
+          const last = history[history.length - 1];
+          const now = Date.now();
+          if (last && now - last.at < App.config.snapshotIntervalMs) return;
+          const current = localStorage.getItem(App.config.storageKey);
+          if (!current) return; // nothing to checkpoint yet (very first save of a fresh install)
+          history.push({ at: now, data: current });
+          while (history.length > App.config.maxSnapshots) history.shift();
+          localStorage.setItem(App.config.historyKey, JSON.stringify(history));
+        } catch (error) {
+          // History is a convenience safety net, not core data — never let it block a real save.
+          console.error('Snapshot failed (non-fatal)', error);
+        }
+      },
+      getHistory() {
+        try {
+          const raw = localStorage.getItem(App.config.historyKey);
+          return raw ? JSON.parse(raw) : [];
+        } catch (error) {
+          console.error('Reading history failed', error);
+          return [];
+        }
+      },
+      restoreSnapshot(index) {
+        const history = this.getHistory();
+        const snap = history[index];
+        if (!snap) return false;
+        // The restore itself must be undoable too — checkpoint the CURRENT (about-to-be-replaced)
+        // state first, unconditionally, regardless of the normal time throttle.
+        try {
+          const current = localStorage.getItem(App.config.storageKey);
+          if (current) { history.push({ at: Date.now(), data: current }); while (history.length > App.config.maxSnapshots) history.shift(); localStorage.setItem(App.config.historyKey, JSON.stringify(history)); }
+        } catch (error) { console.error('Pre-restore checkpoint failed', error); }
+        App.state.app = this.migrate(JSON.parse(snap.data));
+        this.save();
+        return true;
+      },
     },
 
     data: {
@@ -870,7 +918,7 @@
           }
         }
         if (target.mode === 'edit' && target.source === 'entry') {
-          const entry = App.state.app.entries.find((item) => item.id === target.refId); if (entry) { entry.eventId = eventId; entry.start = start; entry.end = end; entry.title = event?.name || App.utils.t('event'); entry.note = note; entry.flags = flagsInput; entry.resultNote = resultNote; }
+          const entry = App.state.app.entries.find((item) => item.id === target.refId); if (entry) { const dateChanged = entry.start !== start; entry.eventId = eventId; entry.start = start; entry.end = end; entry.title = event?.name || App.utils.t('event'); entry.note = note; entry.flags = flagsInput; entry.resultNote = resultNote; if (dateChanged) entry.notified60 = false; }
         } else if (target.mode === 'edit' && target.source === 'week') {
           let week = null; Object.values(App.state.app.serviceYears).forEach((sy) => { if (sy.weeks && sy.weeks[target.refId]) week = sy.weeks[target.refId]; }); if (week) { week.eventId = eventId; week.start = start; week.end = end; week.note = note; }
         } else {
@@ -974,6 +1022,7 @@
         const span = App.utils.daysDiff(oldEnd, oldStart);
         entry.start = App.utils.iso(target);
         entry.end = App.utils.iso(App.utils.addDays(target, span));
+        entry.notified60 = false;
         App.store.save();
         App.ui.renderAll();
         App.utils.toast(`${entry.title || App.utils.t('event')}: ${App.utils.prettyDate(entry.start)} — ${App.utils.prettyDate(entry.end)}`);
@@ -1091,6 +1140,7 @@
           'toggleTeamPanelBtn','calendarLayout','eventsList','eventSearchInput','eventColorFilter','eventVisitFilter','deleteAllEventsBtn','eventsListCount','eventNameInput','eventColorInput','eventAddressInput',
           'eventScheduleInput','resetEventBtn','saveEventBtn','deleteEventBtn','newEventBtn','eventVisitTypeInput','eventContactNameInput','eventContactPhoneInput','eventContactEmailInput','eventContactNoteInput','editorFlagsRow','editorFlagS302','editorFlagLetter',
           'remindersModal','remindersModalList','remindersModalCloseBtn','remindersModalOkBtn','remindersModalTitle','remindersModalSub','checkRemindersBtnMain',
+          'historyModal','historyList','historyModalCloseBtn','historyModalCloseBtn2','openHistoryBtn',
           'statsModal','statsModalTitle','statsModalSub','statsModalBody','statsModalCloseBtn','statsModalOkBtn','statsBtn','plannerBtn',
           'plannerModal','plannerModalCloseBtn','plannerStartInput','plannerEndInput','plannerEventsList','plannerPreview','plannerCancelBtn','plannerApplyBtn',
           'pinOverlay','pinInput','pinError','pinSubmitBtn','pinSetupBtn','holidaysToggle','autoShowRemindersToggle','editorResultInput','editorResultLabel',
@@ -1333,7 +1383,7 @@
         const allowed = ['80','85','90','95','100','105','110','115','120','125'];
         const raw = String(App.state.app?.settings?.fontSize || '100');
         const value = legacyMap[raw] || (allowed.includes(raw) ? raw : '100');
-        App.state.app.settings.fontSize = value;
+        if (App.state.app.settings.fontSize !== value) { App.state.app.settings.fontSize = value; App.store.save(); }
         document.documentElement.setAttribute('data-font-size', value);
         document.documentElement.style.setProperty('--ui-font-scale', String(Number(value) / 100));
         if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = value;
@@ -1647,7 +1697,7 @@ showServiceYearDayPopover(anchor, dateIso, pinned = false) {
               const span = Math.max(1, right - left + 1);
               const color = App.utils.clampColor(item.color);
               const label = App.utils.escapeHtml(item.title || App.utils.t('event'));
-              return `<button class="sy-period-bar" type="button" data-detail-calendar-item="${App.utils.escapeAttr(item.id)}" data-add-date="${App.utils.escapeAttr(App.utils.iso(App.utils.addDays(weekStart, left)))}" style="--bar-left:${left};--bar-span:${span};--bar-lane:${lane};--bar-color:${color};" title="${App.utils.escapeAttr(item.title)}"><span>${label}</span></button>`;
+              return `<button class="sy-period-bar" type="button" draggable="${item.id.startsWith('entry:') ? 'true' : 'false'}" data-drag-entry="${item.id.startsWith('entry:') ? App.utils.escapeAttr(item.id) : ''}" data-detail-calendar-item="${App.utils.escapeAttr(item.id)}" data-add-date="${App.utils.escapeAttr(App.utils.iso(App.utils.addDays(weekStart, left)))}" style="--bar-left:${left};--bar-span:${span};--bar-lane:${lane};--bar-color:${color};" title="${App.utils.escapeAttr(item.title)}"><span>${label}</span></button>`;
             }).join('');
             const more = overlapping.length > visibleBars.length ? `<button class="sy-bar-more" type="button" data-add-date="${App.utils.escapeAttr(App.utils.iso(weekStart))}">+${overlapping.length - visibleBars.length}</button>` : '';
             rows.push(`<div class="sy-week-row">${dayCells.join('')}${bars}${more}</div>`);
@@ -1684,6 +1734,22 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
 });
         document.querySelectorAll('.sy-bar-more[data-add-date]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.state.calendarSelectedDateIso = btn.dataset.addDate; App.ui.renderServiceYearDayDetails(btn.dataset.addDate); }));
         document.querySelectorAll('[data-detail-calendar-item]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); const item = quickItems.find((entry) => entry.id === btn.dataset.detailCalendarItem); App.state.calendarDetailId = item?.id || null; App.ui.renderCalendarDetails(item || null); }));
+        // Drag-and-drop: move a visit entry to another day (shifts start+end by the same offset),
+        // mirroring the same behaviour already available in month view.
+        document.querySelectorAll('.sy-period-bar[data-drag-entry]').forEach((bar) => {
+          if (!bar.dataset.dragEntry) return;
+          bar.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', bar.dataset.dragEntry); e.dataTransfer.effectAllowed = 'move'; });
+        });
+        document.querySelectorAll('.sy-day[data-add-date]').forEach((cell) => {
+          cell.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; cell.classList.add('drag-over'); });
+          cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+          cell.addEventListener('drop', (e) => {
+            e.preventDefault(); cell.classList.remove('drag-over');
+            const itemId = e.dataTransfer.getData('text/plain');
+            if (!itemId || !itemId.startsWith('entry:')) return;
+            App.actions.moveEntryToDate(itemId.slice(6), cell.dataset.addDate);
+          });
+        });
       },
       renderCalendar() {
         const viewMonthStart = new Date(App.state.calendarYear, App.state.calendarMonth, 1);
@@ -2850,6 +2916,42 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           App.ui.openCalendarEditorForItem(`entry:${btn.dataset.openReminderEntry}`);
         }));
       },
+      openHistoryModal() {
+        this.renderHistoryModal();
+        this.openModal(App.els.historyModal);
+      },
+      renderHistoryModal() {
+        if (!App.els.historyList) return;
+        const history = App.store.getHistory();
+        if (!history.length) {
+          App.els.historyList.innerHTML = `<div class="empty">Пока нет сохранённых контрольных точек — они появляются автоматически по мере использования программы (не чаще раза в 5 минут).</div>`;
+          return;
+        }
+        const sorted = history.map((snap, realIndex) => ({ snap, realIndex })).reverse(); // newest first, keep original index for restore
+        App.els.historyList.innerHTML = sorted.map(({ snap, realIndex }) => {
+          const date = new Date(snap.at);
+          const label = date.toLocaleString(App.utils.lang(), { dateStyle: 'medium', timeStyle: 'short' });
+          let summary = '';
+          try { const data = JSON.parse(snap.data); summary = `${(data.events || []).length} собраний, ${(data.entries || []).length} визитов`; } catch (err) { summary = ''; }
+          return `<div class="card" style="padding:12px;box-shadow:none;border:1px solid var(--line)">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <div><strong>${App.utils.escapeHtml(label)}</strong><div class="small" style="color:var(--muted)">${App.utils.escapeHtml(summary)}</div></div>
+              <button class="btn danger" type="button" data-restore-snapshot="${realIndex}">Восстановить</button>
+            </div>
+          </div>`;
+        }).join('');
+        document.querySelectorAll('[data-restore-snapshot]').forEach((btn) => btn.addEventListener('click', () => {
+          const index = Number(btn.dataset.restoreSnapshot);
+          if (!window.confirm('Восстановить данные на этот момент? Текущее состояние тоже будет сохранено как контрольная точка, так что этот откат тоже можно будет отменить.')) return;
+          if (App.store.restoreSnapshot(index)) {
+            App.ui.closeModal(App.els.historyModal);
+            App.ui.renderAll();
+            App.utils.toast('Данные восстановлены.');
+          } else {
+            App.utils.toast('Не удалось восстановить эту точку.');
+          }
+        }));
+      },
       openRemindersModal() {
         this.renderRemindersModal();
         if (App.els.remindersModal) App.els.remindersModal.hidden = false;
@@ -2859,6 +2961,27 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       },
       showRemindersModalIfNeeded() {
         if (App.state.app.settings.autoShowReminders && App.data.getUpcomingReminders().length) this.openRemindersModal();
+      },
+      checkSixtyDayNotifications() {
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const due = (App.state.app.entries || []).filter((entry) => {
+          if (entry.notified60 || entry?.flags?.letter) return false;
+          const event = App.data.getEventById(entry.eventId);
+          if (!event?.visitType) return false;
+          const start = App.utils.parseLocalDate(entry.start);
+          if (!start) return false;
+          const daysUntil = Math.round((start - today) / 86400000);
+          return daysUntil >= 0 && daysUntil <= 60;
+        });
+        if (!due.length) return;
+        if (due.length === 1) {
+          const entry = due[0]; const event = App.data.getEventById(entry.eventId);
+          App.utils.toast(`⏰ До визита «${entry.title || event?.name || ''}» осталось ≤60 дней — пора отправить письмо.`);
+        } else {
+          App.utils.toast(`⏰ ${due.length} визита(ов) уже в пределах 60 дней без отправленного письма — см. «🔔 S302/письма».`);
+        }
+        due.forEach((entry) => { entry.notified60 = true; });
+        App.store.save();
       },
       renderEvents() {
         const query = (App.state.eventSearch || '').trim().toLowerCase();
@@ -3162,6 +3285,9 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       });
       App.els.countdownUnitSelect?.addEventListener('change', (e) => { App.state.countdownUnit = e.target.value; App.ui.renderAll(); });
       App.els.checkRemindersBtnMain?.addEventListener('click', () => App.ui.openRemindersModal());
+      App.els.openHistoryBtn?.addEventListener('click', () => App.ui.openHistoryModal());
+      App.els.historyModalCloseBtn?.addEventListener('click', () => App.ui.closeModal(App.els.historyModal));
+      App.els.historyModalCloseBtn2?.addEventListener('click', () => App.ui.closeModal(App.els.historyModal));
       App.els.exportCancelBtn?.addEventListener('click', () => { if (App.els.exportModal) App.els.exportModal.hidden = true; });
       App.els.exportConfirmBtn?.addEventListener('click', () => { if (App.state.exportType === 'ics') App.actions.exportIcs(); else App.actions.exportJson(); if (App.els.exportModal) App.els.exportModal.hidden = true; });
       App.els.syncExportBtn?.addEventListener('click', () => App.actions.exportSyncFile());
@@ -3202,7 +3328,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (modal === App.els.letterModal) App.ui.closeLetterModal();
         else modal.hidden = true;
       }));
-      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { App.ui.hideDayPopover(true); App.ui.closeCalendarEditor(); App.ui.closeModal(App.els.eventEditorModal); App.ui.closeModal(App.els.visitFormModal); App.ui.closeLetterModal(); App.actions.closePdf(); if (App.els.exportModal) App.els.exportModal.hidden = true; App.ui.closeMobileMenu(); } });
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { App.ui.hideDayPopover(true); App.ui.closeCalendarEditor(); App.ui.closeModal(App.els.eventEditorModal); App.ui.closeModal(App.els.visitFormModal); App.ui.closeLetterModal(); App.ui.closeModal(App.els.historyModal); App.actions.closePdf(); if (App.els.exportModal) App.els.exportModal.hidden = true; App.ui.closeMobileMenu(); } });
     },
 
     init() {
@@ -3227,7 +3353,15 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       this.ui.closeMobileMenu();
       this.ui.showPinGateIfNeeded();
       this.ui.showRemindersModalIfNeeded();
+      this.ui.checkSixtyDayNotifications();
       this.ui.checkAutoBackupReminder();
+      // Safety net: persist immediately whenever the app is about to be hidden/closed/reloaded,
+      // regardless of whether every single mutation already called store.save() itself. On mobile,
+      // 'visibilitychange' -> 'hidden' fires more reliably than 'beforeunload' when the OS simply
+      // backgrounds the tab/PWA without a real page unload.
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') App.store.save(); });
+      window.addEventListener('pagehide', () => App.store.save());
+      window.addEventListener('beforeunload', () => App.store.save());
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', async () => {
           try {
