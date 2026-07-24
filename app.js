@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.42.0',
+      version: '9.42.1',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -2097,17 +2097,23 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (navigator.share) { navigator.share({ text }).catch(() => {}); }
         else if (navigator.clipboard?.writeText) { navigator.clipboard.writeText(text).then(() => App.utils.toast(App.utils.t('copied'))).catch(() => {}); }
       },
+      measureTopbarHeight() {
+        const topbar = document.querySelector('.topbar');
+        if (!topbar || !topbar.offsetHeight) return;
+        document.documentElement.style.setProperty('--topbar-h', `${topbar.offsetHeight}px`);
+      },
       renderNextVisitCard() {
         const pill = App.els.nextVisitPill || document.getElementById('nextVisitPill');
         if (!pill) return;
+        const finish = () => window.requestAnimationFrame(() => App.ui.measureTopbarHeight());
         // Only meaningful on the calendar screen — keep other screens' headers clean.
-        if (App.state.selectedScreen !== 'calendar') { pill.style.display = 'none'; return; }
+        if (App.state.selectedScreen !== 'calendar') { pill.style.display = 'none'; finish(); return; }
         const today = new Date(); today.setHours(0, 0, 0, 0);
         const upcoming = (App.state.app.entries || [])
           .map((entry) => ({ entry, event: App.data.getEventById(entry.eventId), start: App.utils.parseLocalDate(entry.start) }))
           .filter(({ event, start, entry }) => event?.visitType && start && App.utils.parseLocalDate(entry.end) >= today)
           .sort((a, b) => a.start - b.start)[0];
-        if (!upcoming) { pill.style.display = 'none'; return; }
+        if (!upcoming) { pill.style.display = 'none'; finish(); return; }
         const { entry } = upcoming;
         pill.style.display = 'inline-block';
         pill.textContent = `🎯 ${entry.title || upcoming.event.name} — ${App.utils.prettyDate(entry.start)}`;
@@ -2117,6 +2123,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           App.ui.renderCalendarDetails({ id: `entry:${entry.id}` });
           App.els.calendarSideTitle?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
+        finish();
       },
       checkAutoBackupReminder() {
         try {
@@ -3321,6 +3328,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         window.visualViewport.addEventListener('scroll', () => App.ui.fixBottomNavViewport());
       }
       window.addEventListener('resize', () => App.ui.fixBottomNavViewport());
+      window.addEventListener('resize', () => App.ui.measureTopbarHeight());
       // Universal: clicking the dimmed backdrop (outside .modal-card) closes any modal.
       document.querySelectorAll('.modal').forEach((modal) => modal.addEventListener('click', (e) => {
         if (e.target !== modal) return;
