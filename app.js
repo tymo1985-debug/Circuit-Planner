@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.41.0',
+      version: '9.42.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -1130,7 +1130,7 @@
     ui: {
       cacheElements() {
         [
-          'appRoot','desktopNav','toastWrap','offlineBanner','sideStatus','screenTitle','screenSubtitle',
+          'appRoot','desktopNav','toastWrap','offlineBanner','sideStatus','screenTitle','screenSubtitle','nextVisitPill',
           'eventEditorModal','eventEditorCloseBtn',
           'monthLabel','calendarRangeLabel','calendarGrid','prevMonthBtn','todayMonthBtn','nextMonthBtn',
           'calendarYearSelect','calendarLayoutPresetSelect','layoutPresetSelect','calendarEditor','editorTitle',
@@ -2098,33 +2098,25 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         else if (navigator.clipboard?.writeText) { navigator.clipboard.writeText(text).then(() => App.utils.toast(App.utils.t('copied'))).catch(() => {}); }
       },
       renderNextVisitCard() {
-        let host = document.getElementById('nextVisitCard');
-        const side = document.querySelector('.calendar-side');
-        if (!side) return;
-        if (!host) { host = document.createElement('div'); host.id = 'nextVisitCard'; host.className = 'side-card'; host.style.marginBottom = '14px'; side.insertBefore(host, side.firstChild); }
-        const today = new Date(); today.setHours(0,0,0,0);
+        const pill = App.els.nextVisitPill || document.getElementById('nextVisitPill');
+        if (!pill) return;
+        // Only meaningful on the calendar screen — keep other screens' headers clean.
+        if (App.state.selectedScreen !== 'calendar') { pill.style.display = 'none'; return; }
+        const today = new Date(); today.setHours(0, 0, 0, 0);
         const upcoming = (App.state.app.entries || [])
           .map((entry) => ({ entry, event: App.data.getEventById(entry.eventId), start: App.utils.parseLocalDate(entry.start) }))
           .filter(({ event, start, entry }) => event?.visitType && start && App.utils.parseLocalDate(entry.end) >= today)
           .sort((a, b) => a.start - b.start)[0];
-        if (!upcoming) { host.innerHTML = `<h4 style="margin:0 0 6px">🎯 ${App.utils.t('next_visit')}</h4><div class="empty" style="padding:12px">${App.utils.t('next_visit_none')}</div>`; return; }
-        const { entry, event } = upcoming;
-        const flags = entry.flags || {};
-        const pill = (ok, label) => `<span class="pill" style="${ok ? '' : 'background:#fee2e2;border-color:#fecaca;color:#991b1b'}">${ok ? '✓' : '✗'} ${label}</span>`;
-        host.innerHTML = `<h4 style="margin:0 0 6px">🎯 ${App.utils.t('next_visit')}</h4>
-          <strong>${App.utils.escapeHtml(entry.title || event.name)}</strong>
-          <div class="small">${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}</div>
-          <div class="small" style="font-weight:700;margin:4px 0">${App.utils.countdownText(entry.start, App.state.countdownUnit || 'days')}</div>
-          <div class="pill-row" style="margin:6px 0">${pill(flags.f302, 'S-302')}${pill(flags.letter, App.utils.t('letter_short'))}</div>
-          ${event.address ? `<div class="small"><a href="${App.utils.mapUrl(event.address)}" target="_blank" rel="noopener noreferrer">📍 ${App.utils.escapeHtml(event.address)}</a></div>` : ''}
-          ${event.contactName || event.contactPhone ? `<div class="small">👤 ${App.utils.escapeHtml([event.contactName, event.contactPhone].filter(Boolean).join(' · '))}</div>` : ''}
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
-            <button class="btn" type="button" data-detail-calendar-item="entry:${App.utils.escapeAttr(entry.id)}" id="nextVisitOpenBtn">${App.utils.t('open')}</button>
-            ${event.visitType ? `<button class="btn" type="button" id="nextVisitLetterBtn">✉ ${App.utils.t('compose_letter')}</button><button class="btn" type="button" id="nextVisitS302Btn">📋 Сформировать S-302</button>` : ''}
-          </div>`;
-        document.getElementById('nextVisitOpenBtn')?.addEventListener('click', () => { App.state.calendarDetailId = `entry:${entry.id}`; App.ui.renderCalendarDetails({ id: `entry:${entry.id}` }); });
-        document.getElementById('nextVisitLetterBtn')?.addEventListener('click', () => App.ui.openLetterModal(`entry:${entry.id}`));
-        document.getElementById('nextVisitS302Btn')?.addEventListener('click', () => App.ui.sendS302(entry.id));
+        if (!upcoming) { pill.style.display = 'none'; return; }
+        const { entry } = upcoming;
+        pill.style.display = 'inline-block';
+        pill.textContent = `🎯 ${entry.title || upcoming.event.name} — ${App.utils.prettyDate(entry.start)}`;
+        pill.title = `${entry.title || upcoming.event.name}: ${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}`;
+        pill.onclick = () => {
+          App.state.calendarDetailId = `entry:${entry.id}`;
+          App.ui.renderCalendarDetails({ id: `entry:${entry.id}` });
+          App.els.calendarSideTitle?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
       },
       checkAutoBackupReminder() {
         try {
