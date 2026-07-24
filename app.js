@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.40.0',
+      version: '9.41.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -1415,6 +1415,8 @@
           .sy-event-dots{display:flex;gap:2px;justify-content:center;min-height:4px}
           .sy-event-dot{width:4px;height:4px;border-radius:999px;display:block}
           .sy-empty{min-height:30px}
+          .sy-day.sy-outside{color:var(--muted);opacity:.55}
+          .sy-day.sy-outside:hover{opacity:.85;background:var(--surface2)}
           .sy-day.selected{outline:2px solid var(--accent);outline-offset:1px;background:rgba(var(--accent-rgb,20,83,45),.10)}
           .sy-day .sy-count{position:absolute;right:3px;top:2px;font-size:9px;color:var(--muted)}
           .sy-month-summary{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;min-height:16px}
@@ -1665,7 +1667,7 @@ showServiceYearDayPopover(anchor, dateIso, pinned = false) {
               const date = App.utils.addDays(weekStart, i);
               const iso = App.utils.iso(date);
               if (date.getMonth() !== month) {
-                dayCells.push('<div class="sy-empty"></div>');
+                dayCells.push(`<button class="sy-day sy-outside" type="button" data-add-date="${App.utils.escapeAttr(iso)}" title="${App.utils.escapeAttr(App.utils.t('add_on_date'))}"><span>${date.getDate()}</span></button>`);
               } else {
                 const dayItems = items.filter((item) => App.utils.overlaps(item.start, item.end, date, date));
                 const hol = App.utils.getHolidayNames(iso);
@@ -3286,6 +3288,11 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       App.els.countdownUnitSelect?.addEventListener('change', (e) => { App.state.countdownUnit = e.target.value; App.ui.renderAll(); });
       App.els.checkRemindersBtnMain?.addEventListener('click', () => App.ui.openRemindersModal());
       App.els.openHistoryBtn?.addEventListener('click', () => App.ui.openHistoryModal());
+      document.addEventListener('click', (e) => {
+        const openDetails = document.querySelector('.toolbar-more[open]');
+        if (!openDetails) return;
+        if (!openDetails.contains(e.target) || e.target.closest('.toolbar-more-panel')) openDetails.removeAttribute('open');
+      });
       App.els.historyModalCloseBtn?.addEventListener('click', () => App.ui.closeModal(App.els.historyModal));
       App.els.historyModalCloseBtn2?.addEventListener('click', () => App.ui.closeModal(App.els.historyModal));
       App.els.exportCancelBtn?.addEventListener('click', () => { if (App.els.exportModal) App.els.exportModal.hidden = true; });

@@ -45,6 +45,12 @@
   .event-bar{position:absolute;min-height:18px;border-radius:999px;color:#fff;padding:2px 10px;display:flex;align-items:center;gap:8px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 5px rgba(0,0,0,.08);cursor:pointer;border:0}.event-bar::before{content:'';width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.92);flex:0 0 auto}
   .calendar-side{display:grid;gap:18px}.side-card{background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px}.side-card h4{margin:0 0 10px;font-size:18px}.side-list{display:grid;gap:8px}.side-item{padding:10px 12px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);text-align:left;cursor:pointer}.side-item strong{display:block;margin-bottom:4px}.side-row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(216,226,219,.72)}.side-row:last-child{border-bottom:0}.side-label{color:var(--muted);font-size:12px}.side-value{font-weight:600}
   #nextVisitCard{position:sticky;top:12px;z-index:6}
+  .toolbar-more{position:relative}
+  .toolbar-more summary{list-style:none;cursor:pointer}
+  .toolbar-more summary::-webkit-details-marker{display:none}
+  .toolbar-more-panel{position:absolute;top:calc(100% + 6px);right:0;z-index:60;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:10px;display:grid;gap:8px;min-width:220px}
+  .toolbar-more-panel .chip.full{width:100%;text-align:left}
+  @media (max-width:767px){.toolbar-more-panel{right:auto;left:0}}
   .calendar-details-card{scroll-margin-top:210px}
   .more-actions{margin-top:2px}.more-actions summary{cursor:pointer;list-style:none;padding:10px 14px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);font-size:14px;text-align:center}.more-actions summary::-webkit-details-marker{display:none}.more-actions[open] summary{margin-bottom:2px}
   .editor-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}.editor-title{margin:0;font-size:16px}.editor-sub{color:var(--muted);font-size:12px;margin-top:4px}.editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.editor-grid label{display:grid;gap:6px;font-size:12px;color:var(--muted)}.editor-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}.editor-meta{margin-top:10px;padding:10px 12px;background:var(--surface2);border:1px solid var(--line);border-radius:14px;font-size:12px;color:var(--muted)}
@@ -253,11 +259,16 @@ body::before{display:none !important}
             <div class="calendar-toolbar">
               <div class="calendar-toolbar-title"><div class="small" id="calendarServiceYearLabel"></div><h3 class="calendar-title" id="monthLabel"></h3><div class="calendar-sub" id="calendarRangeLabel"></div></div>
               <div class="calendar-controls">
-                <button class="chip" id="checkRemindersBtnMain" type="button">🔔 S302/письма</button>
-                <button class="chip" id="statsBtn" type="button">📊 Статистика</button>
-                <button class="chip" id="plannerBtn" type="button">🗓 Авто-план</button>
-                <button class="chip" id="toggleTeamPanelBtn" type="button">Вид: служебный год</button>
                 <div class="calendar-nav"><button class="icon-btn" id="prevMonthBtn" type="button" aria-label="Предыдущий месяц">‹</button><button class="chip" id="todayMonthBtn" type="button">Сегодня</button><button class="icon-btn" id="nextMonthBtn" type="button" aria-label="Следующий месяц">›</button></div>
+                <details class="toolbar-more">
+                  <summary class="chip">⚙ Ещё</summary>
+                  <div class="toolbar-more-panel">
+                    <button class="chip full" id="checkRemindersBtnMain" type="button">🔔 S302/письма</button>
+                    <button class="chip full" id="statsBtn" type="button">📊 Статистика</button>
+                    <button class="chip full" id="plannerBtn" type="button">🗓 Авто-план</button>
+                    <button class="chip full" id="toggleTeamPanelBtn" type="button">Вид: служебный год</button>
+                  </div>
+                </details>
                 <select id="calendarLayoutPresetSelect" class="calendar-layout-select"></select>
                 <select id="calendarYearSelect"></select>
               </div>
