@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.44.3',
+      version: '9.45.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -338,8 +338,7 @@
         { id: 'settings', icon: '⚙️', tKey: 'nav_settings' }
       ],
       layoutPresets: [
-        { value: 'classic', label: '1. Classic' }, { value: 'compact', label: '2. Compact' }, { value: 'spacious', label: '3. Spacious' },
-        { value: 'cards', label: '4. Cards' }, { value: 'minimal', label: '5. Minimal' }
+        { value: 'classic', label: 'Классический' }, { value: 'compact', label: 'Компактный' }, { value: 'spacious', label: 'Просторный' }
       ],
       monthNames: {
         ru: ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
@@ -574,7 +573,7 @@
 
     store: {
       ensureSettingsDefaults(settings = {}) {
-        const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (typeof out.showHolidays !== 'boolean') out.showHolidays = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset || !['classic','compact','spacious','cards','minimal'].includes(out.layoutPreset)) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; if (typeof out.letterTemplate !== 'string' || !out.letterTemplate) out.letterTemplate = DEFAULT_LETTER_TEMPLATE_HTML;
+        const out = { ...settings }; if (typeof out.showTeamPanel !== 'boolean') out.showTeamPanel = true; if (typeof out.showHolidays !== 'boolean') out.showHolidays = true; if (!out.language) out.language = 'ru'; if (!out.theme) out.theme = 'light'; if (!out.layoutPreset || !['classic','compact','spacious'].includes(out.layoutPreset)) out.layoutPreset = 'classic'; if (!out.calendarView) out.calendarView = 'month'; if (!out.accentColor) out.accentColor = 'green'; if (!out.fontSize) out.fontSize = '100'; if (typeof out.letterTemplate !== 'string' || !out.letterTemplate) out.letterTemplate = DEFAULT_LETTER_TEMPLATE_HTML;
         ['Congregation','Group','Pregroup'].forEach((suffix) => {
           const key = 'letterTemplate' + suffix;
           if (typeof out[key] !== 'string' || !out[key]) out[key] = out.letterTemplate || DEFAULT_LETTER_TEMPLATE_HTML;
@@ -1499,6 +1498,22 @@
           .sy-dow span{font-size:.72rem !important}
           .sy-month-title{font-size:1.02rem !important}
           .day-cell{min-height:108px}
+          /* Layout presets — placed here (not in the main stylesheet) because this whole block
+             is injected after it and uses !important, so a preset rule here is the only way to
+             reliably win. Higher specificity (the [data-layout] attribute selector) lets these
+             override the unconditional !important rules above them for the same properties. */
+          :root[data-layout="compact"] .sy-month-card{padding:8px !important}
+          :root[data-layout="compact"] .sy-day{min-height:24px !important;font-size:.68rem !important}
+          :root[data-layout="compact"] .sy-period-bar{font-size:8px !important;height:13px !important;line-height:13px !important;top:calc(16px + (var(--bar-lane) * 14px)) !important}
+          :root[data-layout="compact"] .day-cell{min-height:72px !important;padding:6px 6px 6px 8px !important}
+          :root[data-layout="compact"] .week-row,:root[data-layout="compact"] .week-days,:root[data-layout="compact"] .week-num{min-height:72px !important}
+          :root[data-layout="compact"] .event-bar{font-size:11px !important;padding:2px 8px !important}
+          :root[data-layout="spacious"] .sy-month-card{padding:20px !important}
+          :root[data-layout="spacious"] .sy-day{min-height:44px !important;font-size:.88rem !important}
+          :root[data-layout="spacious"] .sy-period-bar{height:19px !important;line-height:19px !important;font-size:10px !important;top:calc(28px + (var(--bar-lane) * 21px)) !important}
+          :root[data-layout="spacious"] .day-cell{min-height:140px !important;padding:14px !important}
+          :root[data-layout="spacious"] .week-row,:root[data-layout="spacious"] .week-days,:root[data-layout="spacious"] .week-num{min-height:140px !important}
+          :root[data-layout="spacious"] .event-bar{font-size:14px !important;padding:5px 14px !important}
           @media (min-width:1600px){:root{--calendar-side-width:390px}.service-year-grid{grid-template-columns:repeat(4,minmax(190px,1fr)) !important}}
           @media (max-width:1180px){.calendar-layout{grid-template-columns:1fr !important;gap:14px !important}.calendar-side{position:static !important;top:auto !important;max-height:none !important;overflow:visible !important;width:100% !important;display:block !important}.calendar-details-card{width:100% !important;max-width:none !important;margin-top:0 !important}.calendar-toolbar{grid-template-columns:1fr !important;align-items:start !important}.calendar-controls{justify-content:flex-start !important}}
           @media (max-width:900px){.main{padding:14px 12px 86px !important}.calendar-shell{border-radius:22px !important}.calendar-toolbar{padding:14px !important}.calendar-controls{display:grid !important;grid-template-columns:1fr 1fr !important;width:100% !important;gap:8px !important}.calendar-nav{width:100%;justify-content:space-between}.calendar-controls select,.calendar-controls .chip{width:100% !important}#calendarServiceYearLabel{display:none !important}.calendar-sub{font-size:.8rem !important}.service-year-grid{grid-template-columns:repeat(2,minmax(150px,1fr)) !important;padding:12px !important;gap:12px !important}.sy-month-card{padding:10px !important}.sy-day{min-height:30px !important}.calendar-side{margin-top:12px !important}}

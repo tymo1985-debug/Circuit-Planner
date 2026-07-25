@@ -65,15 +65,7 @@
   .app.menu-open .sidebar{z-index:1501 !important}
   .bottom-nav-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px}.bottom-nav-btn{appearance:none;border:1px solid transparent;background:transparent;color:var(--muted);border-radius:16px;padding:10px 6px;display:grid;gap:4px;place-items:center;font:inherit;cursor:pointer;min-width:0}.bottom-nav-btn .icon{font-size:18px;line-height:1}.bottom-nav-btn .label{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.bottom-nav-btn.active{background:var(--surface2);color:var(--text);border-color:var(--line)}
   .mobile-overlay{position:fixed;inset:0;background:rgba(15,23,18,.42);backdrop-filter:none;z-index:1500;display:none;pointer-events:none}.mobile-overlay.show{display:block;pointer-events:auto}.mobile-overlay[hidden]{display:none !important;pointer-events:none !important}.mobile-menu-btn{display:none !important}
-  :root[data-layout="classic"]{}
-  :root[data-layout="compact"] .week-row,:root[data-layout="compact"] .week-days{min-height:72px}:root[data-layout="compact"] .day-cell{min-height:72px;padding:6px 6px 6px 8px}:root[data-layout="compact"] .event-bar{font-size:11px;padding:2px 8px}:root[data-layout="compact"] .calendar-shell{border-radius:20px}
-  :root[data-layout="compact"] .sy-day{min-height:24px !important}:root[data-layout="compact"] .sy-month-card{padding:8px !important}:root[data-layout="compact"] .sy-week-row{min-height:44px}:root[data-layout="compact"] .sy-period-bar{font-size:8px;height:13px;line-height:13px;top:calc(18px + (var(--bar-lane) * 14px))}
-  :root[data-layout="spacious"] .week-row,:root[data-layout="spacious"] .week-days{min-height:128px}:root[data-layout="spacious"] .day-cell{min-height:128px;padding:12px}:root[data-layout="spacious"] .event-bar{font-size:13px;padding:4px 12px}:root[data-layout="spacious"] .calendar-shell{border-radius:32px}
-  :root[data-layout="spacious"] .sy-day{min-height:42px !important;font-size:.85rem !important}:root[data-layout="spacious"] .sy-month-card{padding:18px !important}:root[data-layout="spacious"] .sy-week-row{min-height:68px}:root[data-layout="spacious"] .sy-period-bar{height:18px;line-height:18px;font-size:10px;top:calc(26px + (var(--bar-lane) * 20px))}
-  :root[data-layout="cards"] .week-days{background:none;gap:8px;padding:8px}:root[data-layout="cards"] .day-cell{border:1px solid var(--line);border-radius:18px;min-height:94px;background:var(--surface);box-shadow:var(--shadow)}:root[data-layout="cards"] .day-cell.inactive{opacity:.72}:root[data-layout="cards"] .week-row{grid-template-columns:64px 1fr;background:transparent;border-bottom:0}:root[data-layout="cards"] .week-num{background:transparent;border-right:0;align-items:center}:root[data-layout="cards"] .event-bar{border-radius:14px}
-  :root[data-layout="cards"] .sy-month-card{box-shadow:0 10px 24px rgba(0,0,0,.12) !important;border-radius:20px !important}:root[data-layout="cards"] .sy-day{border:1px solid var(--line) !important;border-radius:10px !important}:root[data-layout="cards"] .sy-day.today{border-color:var(--accent) !important}
-  :root[data-layout="minimal"] .calendar-shell,:root[data-layout="minimal"] .side-card{box-shadow:none}:root[data-layout="minimal"] .day-cell{background:transparent}:root[data-layout="minimal"] .week-days{background-image:linear-gradient(to right, transparent calc((100% / 7) - 1px), rgba(216,226,219,.60) calc((100% / 7) - 1px))}:root[data-layout="minimal"] .event-bar{box-shadow:none;border:1px solid rgba(255,255,255,.35)}:root[data-layout="minimal"] .legend{padding-bottom:8px}
-  :root[data-layout="minimal"] .sy-month-card{box-shadow:none !important;border:1px solid var(--line) !important}:root[data-layout="minimal"] .sy-period-bar{box-shadow:none}
+  
   @media (max-width:1280px){.calendar-layout{grid-template-columns:1fr}}
   .day-cell.holiday .day-num{color:#b91c1c;font-weight:800}
   .settings-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
@@ -350,7 +342,7 @@ body::before{display:none !important}
  <option value="125">125% — Огромный</option>
 </select>
 <div class="layout-help">Меняет размер текста, кнопок и календаря.</div>
-</div><div><label class="small">Макет календаря</label><select id="layoutPresetSelect"></select><div class="layout-help">Доступно 5 вариантов отображения календаря.</div></div></div></div>
+</div><div><label class="small">Макет календаря</label><select id="layoutPresetSelect"></select><div class="layout-help">Доступно 3 варианта отображения: Классический, Компактный (больше помещается на экране), Просторный (крупнее и виднее).</div></div></div></div>
         </div>
 
         <div class="settings-panel" id="settingsPanelLetter" hidden>
