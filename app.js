@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.43.1',
+      version: '9.43.2',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -1438,7 +1438,7 @@
           .app.menu-open .sidebar{z-index:2000 !important}
           .app.menu-open .sidebar{left:0 !important;z-index:2500 !important;pointer-events:auto !important}
           .calendar-layout{grid-template-columns:minmax(0,1fr) minmax(320px,380px) !important;align-items:start}
-          .calendar-side{display:block !important;position:sticky;top:calc(var(--topbar-h, 88px) + 10px);align-self:start;max-height:calc(100dvh - var(--topbar-h, 88px) - 24px);overflow:auto;-webkit-overflow-scrolling:touch}
+          .calendar-side{display:block !important;position:sticky;top:var(--calendar-side-top, calc(var(--topbar-h, 88px) + 10px));align-self:start;max-height:calc(100dvh - var(--topbar-h, 88px) - 24px);overflow:auto;-webkit-overflow-scrolling:touch}
           .calendar-side .team-panel-card{display:none !important}
           .calendar-layout.team-hidden{grid-template-columns:minmax(0,1fr) minmax(320px,380px) !important}
           .calendar-layout.team-hidden .calendar-side{display:block !important}
@@ -1489,7 +1489,7 @@
           .calendar-title{font-size:1.35rem !important;line-height:1.15 !important}
           .calendar-sub{font-size:.82rem !important;margin-top:4px !important}
           .calendar-layout{grid-template-columns:minmax(0,1fr) minmax(310px,360px) !important;gap:18px !important;align-items:start}
-          .calendar-side{min-width:0 !important;position:sticky !important;top:calc(var(--topbar-h, 88px) + 10px) !important;max-height:calc(100dvh - var(--topbar-h, 88px) - 20px) !important;overflow:auto !important;-webkit-overflow-scrolling:touch !important;display:block !important}
+          .calendar-side{min-width:0 !important;position:sticky !important;top:var(--calendar-side-top, calc(var(--topbar-h, 88px) + 10px)) !important;max-height:calc(100dvh - var(--topbar-h, 88px) - 20px) !important;overflow:auto !important;-webkit-overflow-scrolling:touch !important;display:block !important}
           .calendar-details-card{max-width:100% !important;display:block !important}
           .legend,.sy-legend,.sy-compact-hint{display:none !important}
           .calendar-side .team-panel-card{display:none !important}
@@ -2099,13 +2099,35 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       },
       measureTopbarHeight() {
         const topbar = document.querySelector('.topbar');
-        if (!topbar || !topbar.offsetHeight) return;
-        document.documentElement.style.setProperty('--topbar-h', `${topbar.offsetHeight}px`);
+        if (topbar && topbar.offsetHeight) document.documentElement.style.setProperty('--topbar-h', `${topbar.offsetHeight}px`);
+        // Only trust this at (near) the top of the page — calendar-shell isn't sticky, so its
+        // on-screen position only reflects the true natural gap when we haven't scrolled away from it.
+        if (window.scrollY <= 4) {
+          const shell = document.querySelector('.calendar-shell');
+          if (shell) {
+            const top = Math.round(shell.getBoundingClientRect().top);
+            if (top > 0) document.documentElement.style.setProperty('--calendar-side-top', `${top}px`);
+          }
+        }
       },
       renderNextVisitCard() {
         const pill = App.els.nextVisitPill || document.getElementById('nextVisitPill');
         if (!pill) return;
-        const finish = () => window.requestAnimationFrame(() => App.ui.measureTopbarHeight());
+        const finish = () => window.requestAnimationFrame(() => window.requestAnimationFrame(() => App.ui.measureTopbarHeight()));
+        if (!pill.dataset.clickBound) {
+          pill.dataset.clickBound = '1';
+          pill.addEventListener('click', () => {
+            const targetId = pill.dataset.entryId;
+            if (!targetId) return;
+            App.state.calendarDetailId = `entry:${targetId}`;
+            App.ui.renderCalendarDetails({ id: `entry:${targetId}` });
+            // Deferred to the next frame so it doesn't race the browser settling this tap
+            // (this button may have only just become visible/tappable this same instant).
+            window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+              App.els.calendarSideTitle?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }));
+          });
+        }
         // Only meaningful on the calendar screen — keep other screens' headers clean.
         if (App.state.selectedScreen !== 'calendar') { pill.style.display = 'none'; finish(); return; }
         const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -2113,16 +2135,12 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           .map((entry) => ({ entry, event: App.data.getEventById(entry.eventId), start: App.utils.parseLocalDate(entry.start) }))
           .filter(({ event, start, entry }) => event?.visitType && start && App.utils.parseLocalDate(entry.end) >= today)
           .sort((a, b) => a.start - b.start)[0];
-        if (!upcoming) { pill.style.display = 'none'; finish(); return; }
+        if (!upcoming) { pill.style.display = 'none'; pill.dataset.entryId = ''; finish(); return; }
         const { entry } = upcoming;
         pill.style.display = 'inline-block';
+        pill.dataset.entryId = entry.id;
         pill.textContent = `🎯 ${entry.title || upcoming.event.name} — ${App.utils.prettyDate(entry.start)}`;
         pill.title = `${entry.title || upcoming.event.name}: ${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}`;
-        pill.onclick = () => {
-          App.state.calendarDetailId = `entry:${entry.id}`;
-          App.ui.renderCalendarDetails({ id: `entry:${entry.id}` });
-          App.els.calendarSideTitle?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        };
         finish();
       },
       checkAutoBackupReminder() {
