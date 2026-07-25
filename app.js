@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.44.1',
+      version: '9.44.2',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -2097,6 +2097,21 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (navigator.share) { navigator.share({ text }).catch(() => {}); }
         else if (navigator.clipboard?.writeText) { navigator.clipboard.writeText(text).then(() => App.utils.toast(App.utils.t('copied'))).catch(() => {}); }
       },
+      smoothScrollTo(target, top) {
+        const before = target === window ? window.scrollY : target.scrollTop;
+        const supportsSmooth = typeof document !== 'undefined' && document.documentElement && 'scrollBehavior' in document.documentElement.style;
+        if (supportsSmooth) {
+          try { target.scrollTo({ top, behavior: 'smooth' }); } catch (err) { if (target === window) window.scrollTo(0, top); else target.scrollTop = top; }
+        } else if (target === window) { window.scrollTo(0, top); } else { target.scrollTop = top; }
+        // Belt-and-suspenders: some mobile browsers silently no-op the smooth-scroll call above
+        // instead of scrolling or throwing. If nothing actually moved shortly after, force it.
+        window.setTimeout(() => {
+          const after = target === window ? window.scrollY : target.scrollTop;
+          if (Math.abs(after - before) < 2 && Math.abs(top - before) >= 2) {
+            if (target === window) window.scrollTo(0, top); else target.scrollTop = top;
+          }
+        }, 400);
+      },
       scrollToDetailPanel() {
         const target = App.els.calendarSideTitle;
         if (!target) return;
@@ -2110,14 +2125,14 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           const sideRect = side.getBoundingClientRect();
           const targetRect = target.getBoundingClientRect();
           const delta = targetRect.top - sideRect.top;
-          side.scrollTo({ top: Math.max(0, side.scrollTop + delta - 8), behavior: 'smooth' });
+          this.smoothScrollTo(side, Math.max(0, side.scrollTop + delta - 8));
           return;
         }
         const topbar = document.querySelector('.topbar');
         const clearance = (topbar?.offsetHeight || 88) + 16;
         const rect = target.getBoundingClientRect();
         const targetY = window.scrollY + rect.top - clearance;
-        window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+        this.smoothScrollTo(window, Math.max(0, targetY));
       },
       measureTopbarHeight() {
         const topbar = document.querySelector('.topbar');
