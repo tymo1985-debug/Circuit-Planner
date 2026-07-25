@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.44.2',
+      version: '9.44.3',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -2115,24 +2115,35 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       scrollToDetailPanel() {
         const target = App.els.calendarSideTitle;
         if (!target) return;
-        // Computed manually (rather than target.scrollIntoView()) because mobile browsers can
-        // miscalculate scrollIntoView's target position when sticky-positioned ancestors (the
-        // header, the sidebar itself) are involved — this sidesteps that entirely. The sidebar
-        // scrolls within its own container on wide screens, but the whole page scrolls once the
-        // layout collapses to one column (matches the same 1180px breakpoint used elsewhere).
-        const side = document.querySelector('.calendar-side');
-        if (side && window.innerWidth > 1180) {
-          const sideRect = side.getBoundingClientRect();
-          const targetRect = target.getBoundingClientRect();
-          const delta = targetRect.top - sideRect.top;
-          this.smoothScrollTo(side, Math.max(0, side.scrollTop + delta - 8));
-          return;
+        // Belt-and-suspenders: try a precisely-computed scroll first (accounts for the sticky
+        // header/sidebar so the target doesn't land hidden behind them), but no matter what,
+        // ALWAYS fall through to the most basic possible scrollIntoView() call with zero options —
+        // the one API guaranteed to work in every browser — so a bug in the fancy calculation can
+        // never leave the user with no scroll at all.
+        try {
+          const side = document.querySelector('.calendar-side');
+          if (side && window.innerWidth > 1180) {
+            const sideRect = side.getBoundingClientRect();
+            const targetRect = target.getBoundingClientRect();
+            const delta = targetRect.top - sideRect.top;
+            this.smoothScrollTo(side, Math.max(0, side.scrollTop + delta - 8));
+          } else {
+            const topbar = document.querySelector('.topbar');
+            const clearance = (topbar?.offsetHeight || 88) + 16;
+            const rect = target.getBoundingClientRect();
+            const targetY = window.scrollY + rect.top - clearance;
+            this.smoothScrollTo(window, Math.max(0, targetY));
+          }
+        } catch (err) {
+          console.error('scrollToDetailPanel: precise calculation failed, falling back', err);
         }
-        const topbar = document.querySelector('.topbar');
-        const clearance = (topbar?.offsetHeight || 88) + 16;
-        const rect = target.getBoundingClientRect();
-        const targetY = window.scrollY + rect.top - clearance;
-        this.smoothScrollTo(window, Math.max(0, targetY));
+        window.setTimeout(() => {
+          try {
+            const rect = target.getBoundingClientRect();
+            const stillHidden = rect.bottom < 0 || rect.top > (window.innerHeight || 800);
+            if (stillHidden) target.scrollIntoView();
+          } catch (err) { console.error('scrollToDetailPanel: fallback check failed', err); }
+        }, 500);
       },
       measureTopbarHeight() {
         const topbar = document.querySelector('.topbar');
