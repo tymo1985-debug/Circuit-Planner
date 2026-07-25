@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.43.3',
+      version: '9.44.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -1624,7 +1624,7 @@ showServiceYearDayPopover(anchor, dateIso, pinned = false) {
  left = Math.max(margin, Math.min(left, window.innerWidth - box.width - margin));
  if (top + box.height + margin > window.innerHeight) top = Math.max(margin, rect.top - box.height - 8);
  popover.style.left = `${left}px`; popover.style.top = `${top}px`;
- popover.querySelector('[data-popover-details]')?.addEventListener('click', (e) => { e.stopPropagation(); App.state.calendarSelectedDateIso = dateIso; App.ui.renderServiceYearDayDetails(dateIso); App.ui.hideDayPopover(true); App.els.calendarSideTitle?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
+ popover.querySelector('[data-popover-details]')?.addEventListener('click', (e) => { e.stopPropagation(); App.state.calendarSelectedDateIso = dateIso; App.ui.renderServiceYearDayDetails(dateIso); App.ui.hideDayPopover(true); App.ui.scrollToDetailPanel(); });
  popover.querySelector('[data-popover-add]')?.addEventListener('click', (e) => { e.stopPropagation(); App.ui.hideDayPopover(true); App.actions.openCalendarEditorForCreate(dateIso); });
  popover.querySelector('[data-popover-edit-week]')?.addEventListener('click', (e) => { e.stopPropagation(); App.ui.hideDayPopover(true); App.actions.openCalendarEditorForItem(e.currentTarget.dataset.popoverEditWeek); });
 },
@@ -1735,7 +1735,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
  });
 });
         document.querySelectorAll('.sy-bar-more[data-add-date]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.state.calendarSelectedDateIso = btn.dataset.addDate; App.ui.renderServiceYearDayDetails(btn.dataset.addDate); }));
-        document.querySelectorAll('[data-detail-calendar-item]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); const item = quickItems.find((entry) => entry.id === btn.dataset.detailCalendarItem); App.state.calendarDetailId = item?.id || null; App.ui.renderCalendarDetails(item || null); App.els.calendarSideTitle?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
+        document.querySelectorAll('[data-detail-calendar-item]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); const item = quickItems.find((entry) => entry.id === btn.dataset.detailCalendarItem); App.state.calendarDetailId = item?.id || null; App.ui.renderCalendarDetails(item || null); App.ui.scrollToDetailPanel(); }));
         // Drag-and-drop: move a visit entry to another day (shifts start+end by the same offset),
         // mirroring the same behaviour already available in month view.
         document.querySelectorAll('.sy-period-bar[data-drag-entry]').forEach((bar) => {
@@ -1774,7 +1774,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.calendarGrid) App.els.calendarGrid.innerHTML = `<div class="grid-cal"><div class="dow-row"><div class="dow-corner"></div><div class="dow-days">${App.utils.dayNames().map((name) => `<div class="dow">${name}</div>`).join('')}</div></div>${weeks.map((week) => { const bars = (itemsByWeek.get(week.id) || []).slice(0, 4); const extraCount = Math.max(0, (itemsByWeek.get(week.id) || []).length - 4); return `<div class="week-row"><span class="week-num">W${week.number}</span><div class="week-days">${week.days.map((day) => { const hol = App.utils.getHolidayNames(day.iso); return `<div class="day-cell ${day.inMonth ? '' : 'inactive'} ${day.isWeekend ? 'weekend' : ''} ${day.isToday ? 'today today-col' : ''} ${App.state.calendarSelectedDateIso === day.iso ? 'selected-day' : ''} ${hol ? 'holiday' : ''}" data-day="${App.utils.escapeAttr(day.iso)}" role="button" tabindex="0" ${hol ? `title="${App.utils.escapeAttr(hol.join(', '))}"` : ''}><div><span class="day-num">${day.day}</span>${day.day === 1 ? `<span class="day-month">${App.utils.monthName(day.month).slice(0, 3)}</span>` : ''}${hol ? '<span class="holiday-mark" aria-hidden="true">🎌</span>' : ''}</div><button class="day-add-btn" data-add-date="${App.utils.escapeAttr(day.iso)}" type="button" title="${App.utils.t('add_on_date')}" aria-label="${App.utils.escapeAttr(App.utils.t('add_on_date'))}">+</button></div>`; }).join('')}${bars.map((bar) => `<button class="event-bar" draggable="${bar.id.startsWith('entry:') ? 'true' : 'false'}" data-drag-entry="${bar.id.startsWith('entry:') ? App.utils.escapeAttr(bar.id) : ''}" data-detail-calendar-item="${App.utils.escapeAttr(bar.id)}" type="button" style="left:calc(${(bar.leftIndex / 7) * 100}% + 6px);width:calc(${(bar.span / 7) * 100}% - 12px);top:${34 + (bar.lane || 0) * 20}px;background:${App.utils.clampColor(bar.color)};">${App.utils.escapeHtml(bar.title)}</button>`).join('')}${extraCount ? `<div class="small" style="position:absolute;left:12px;bottom:6px">+ ${extraCount}</div>` : ''}</div></div>`; }).join('')}</div>`;
         if (App.els.calendarYearSelect) { App.els.calendarYearSelect.innerHTML = Array.from({ length: 9 }, (_, i) => year - 4 + i).map((y) => `<option value="${y}">${y}</option>`).join(''); App.els.calendarYearSelect.value = String(year); }
         const detail = items.find((item) => item.id === App.state.calendarDetailId) || items[0] || null; this.renderCalendarDetails(detail); if (App.state.calendarSelectedDateIso) this.renderServiceYearDayDetails(App.state.calendarSelectedDateIso);
-        document.querySelectorAll('[data-detail-calendar-item]').forEach((btn) => btn.addEventListener('click', () => { const item = items.find((entry) => entry.id === btn.dataset.detailCalendarItem); App.state.calendarDetailId = item?.id || null; App.ui.renderCalendarDetails(item || null); App.els.calendarSideTitle?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }));
+        document.querySelectorAll('[data-detail-calendar-item]').forEach((btn) => btn.addEventListener('click', () => { const item = items.find((entry) => entry.id === btn.dataset.detailCalendarItem); App.state.calendarDetailId = item?.id || null; App.ui.renderCalendarDetails(item || null); App.ui.scrollToDetailPanel(); }));
         document.querySelectorAll('.day-cell[data-day]').forEach((cell) => cell.addEventListener('click', () => { App.state.calendarSelectedDateIso = cell.dataset.day; App.ui.renderCalendar(); App.ui.renderServiceYearDayDetails(cell.dataset.day); }));
         document.querySelectorAll('.day-cell[data-day]').forEach((cell) => cell.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); App.state.calendarSelectedDateIso = cell.dataset.day; App.ui.renderCalendar(); App.ui.renderServiceYearDayDetails(cell.dataset.day); } }));
         document.querySelectorAll('[data-add-date]').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); App.actions.openCalendarEditorForCreate(btn.dataset.addDate); }));
@@ -2097,6 +2097,28 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (navigator.share) { navigator.share({ text }).catch(() => {}); }
         else if (navigator.clipboard?.writeText) { navigator.clipboard.writeText(text).then(() => App.utils.toast(App.utils.t('copied'))).catch(() => {}); }
       },
+      scrollToDetailPanel() {
+        const target = App.els.calendarSideTitle;
+        if (!target) return;
+        // Computed manually (rather than target.scrollIntoView()) because mobile browsers can
+        // miscalculate scrollIntoView's target position when sticky-positioned ancestors (the
+        // header, the sidebar itself) are involved — this sidesteps that entirely. The sidebar
+        // scrolls within its own container on wide screens, but the whole page scrolls once the
+        // layout collapses to one column (matches the same 1180px breakpoint used elsewhere).
+        const side = document.querySelector('.calendar-side');
+        if (side && window.innerWidth > 1180) {
+          const sideRect = side.getBoundingClientRect();
+          const targetRect = target.getBoundingClientRect();
+          const delta = targetRect.top - sideRect.top;
+          side.scrollTo({ top: Math.max(0, side.scrollTop + delta - 8), behavior: 'smooth' });
+          return;
+        }
+        const topbar = document.querySelector('.topbar');
+        const clearance = (topbar?.offsetHeight || 88) + 16;
+        const rect = target.getBoundingClientRect();
+        const targetY = window.scrollY + rect.top - clearance;
+        window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+      },
       measureTopbarHeight() {
         const topbar = document.querySelector('.topbar');
         if (topbar && topbar.offsetHeight) document.documentElement.style.setProperty('--topbar-h', `${topbar.offsetHeight}px`);
@@ -2124,7 +2146,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
             // Deferred to the next frame so it doesn't race the browser settling this tap
             // (this button may have only just become visible/tappable this same instant).
             window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
-              App.els.calendarSideTitle?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              App.ui.scrollToDetailPanel();
             }));
           });
         }
