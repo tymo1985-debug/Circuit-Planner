@@ -324,7 +324,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.43.0',
+      version: '9.43.1',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -1438,7 +1438,7 @@
           .app.menu-open .sidebar{z-index:2000 !important}
           .app.menu-open .sidebar{left:0 !important;z-index:2500 !important;pointer-events:auto !important}
           .calendar-layout{grid-template-columns:minmax(0,1fr) minmax(320px,380px) !important;align-items:start}
-          .calendar-side{display:block !important;position:sticky;top:86px;align-self:start;max-height:calc(100dvh - 110px);overflow:auto;-webkit-overflow-scrolling:touch}
+          .calendar-side{display:block !important;position:sticky;top:calc(var(--topbar-h, 88px) + 10px);align-self:start;max-height:calc(100dvh - var(--topbar-h, 88px) - 24px);overflow:auto;-webkit-overflow-scrolling:touch}
           .calendar-side .team-panel-card{display:none !important}
           .calendar-layout.team-hidden{grid-template-columns:minmax(0,1fr) minmax(320px,380px) !important}
           .calendar-layout.team-hidden .calendar-side{display:block !important}
@@ -1489,7 +1489,7 @@
           .calendar-title{font-size:1.35rem !important;line-height:1.15 !important}
           .calendar-sub{font-size:.82rem !important;margin-top:4px !important}
           .calendar-layout{grid-template-columns:minmax(0,1fr) minmax(310px,360px) !important;gap:18px !important;align-items:start}
-          .calendar-side{min-width:0 !important;position:sticky !important;top:88px !important;max-height:calc(100dvh - 106px) !important;overflow:auto !important;-webkit-overflow-scrolling:touch !important;display:block !important}
+          .calendar-side{min-width:0 !important;position:sticky !important;top:calc(var(--topbar-h, 88px) + 10px) !important;max-height:calc(100dvh - var(--topbar-h, 88px) - 20px) !important;overflow:auto !important;-webkit-overflow-scrolling:touch !important;display:block !important}
           .calendar-details-card{max-width:100% !important;display:block !important}
           .legend,.sy-legend,.sy-compact-hint{display:none !important}
           .calendar-side .team-panel-card{display:none !important}
