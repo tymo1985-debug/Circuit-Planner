@@ -12,7 +12,7 @@
   <style>
   :root{--bg:#f4f7f5;--surface:#fff;--surface2:#f0f5f2;--text:#163024;--muted:#5f776a;--line:#d8e2db;--accent:#14532d;--accent2:#0d3d22;--accent-rgb:20,83,45;--danger:#b91c1c;--shadow:0 10px 28px rgba(22,48,36,.08);--cal-header-bg:rgba(20,83,45,.05);--cal-weeknum-bg:rgba(20,83,45,.04);--cal-weekend-bg:rgba(20,83,45,.06);--cal-inactive-bg:transparent;--cal-grid-line:rgba(216,226,219,.85)}
   [data-theme="dark"]{--bg:#0f1712;--surface:#152019;--surface2:#1b2a21;--text:#e8f0eb;--muted:#a7baaf;--line:#2b3b31;--accent:#4ade80;--danger:#f87171;--shadow:0 10px 28px rgba(0,0,0,.28);--cal-header-bg:rgba(74,222,128,.10);--cal-weeknum-bg:rgba(74,222,128,.10);--cal-weekend-bg:rgba(74,222,128,.12);--cal-inactive-bg:rgba(27,42,33,.30);--cal-grid-line:rgba(216,226,219,.85)}
-  *{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif} body{display:flex}
+  *{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif;overflow-x:hidden} body{display:flex}
   body::before{content:'';position:fixed;left:0;top:0;bottom:0;width:280px;background:linear-gradient(180deg,var(--accent),var(--accent2));z-index:0}
   h1,h2,h3,h4,p{margin:0} .brand h1{font-size:20px;margin-bottom:6px}
   .app{display:grid;grid-template-columns:280px 1fr;width:100%;min-height:100vh;min-height:100dvh;position:relative;z-index:1}
@@ -21,6 +21,8 @@
   .nav-btn{appearance:none;border:0;background:transparent;color:#eef7f1;padding:12px 14px;border-radius:14px;text-align:left;font-size:15px;cursor:pointer;display:flex;gap:10px;align-items:center}.nav-btn.active,.nav-btn:hover{background:rgba(255,255,255,.12)}
   .summary{margin-top:auto;padding:14px;border-radius:16px;background:rgba(255,255,255,.1);font-size:14px}.summary strong{display:block;margin-bottom:8px}
   .main{padding:28px;min-width:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.topbar h2{margin:0;font-size:28px}.topbar p{margin:6px 0 0;color:var(--muted)}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .topbar-title-row{display:flex;align-items:center;gap:14px;min-width:0;flex:1 1 auto}
+  .topbar-title-block{min-width:0;flex:1 1 auto}
   .btn,.chip,select,input,textarea{font:inherit}.btn,.chip{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:12px 14px;border-radius:14px;cursor:pointer;box-shadow:var(--shadow)}
   button,.btn,.chip,.icon-btn,.nav-btn,.bottom-nav-btn,.week-item,.side-item,.event-bar,.pdf-option,a.btn,label.btn,input,select,textarea{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   .btn.primary{background:var(--accent);color:#fff;border-color:transparent}.btn.danger{background:var(--danger);color:#fff;border-color:transparent}.btn.full{width:100%}
@@ -51,7 +53,7 @@
   .toolbar-more-panel{position:absolute;top:calc(100% + 6px);right:0;z-index:60;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:10px;display:grid;gap:8px;min-width:220px}
   .toolbar-more-panel .chip.full{width:100%;text-align:left}
   @media (max-width:767px){.toolbar-more-panel{right:auto;left:0}}
-  .calendar-details-card{scroll-margin-top:calc(var(--topbar-h, 88px) + 16px)}
+  #calendarSideTitle{scroll-margin-top:16px}
   .more-actions{margin-top:2px}.more-actions summary{cursor:pointer;list-style:none;padding:10px 14px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);color:var(--muted);font-size:14px;text-align:center}.more-actions summary::-webkit-details-marker{display:none}.more-actions[open] summary{margin-bottom:2px}
   .editor-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}.editor-title{margin:0;font-size:16px}.editor-sub{color:var(--muted);font-size:12px;margin-top:4px}.editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.editor-grid label{display:grid;gap:6px;font-size:12px;color:var(--muted)}.editor-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}.editor-meta{margin-top:10px;padding:10px 12px;background:var(--surface2);border:1px solid var(--line);border-radius:14px;font-size:12px;color:var(--muted)}
   .modal{position:fixed;inset:0;background:rgba(15,23,18,.42);backdrop-filter:blur(8px);display:grid;place-items:center;padding:18px;z-index:1400}.modal[hidden]{display:none}.modal-card{width:min(860px,100%);background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:0 24px 60px rgba(0,0,0,.22);padding:20px}.modal-head{display:flex;justify-content:space-between;gap:16px;margin-bottom:14px}.modal-sub{color:var(--muted);font-size:13px;margin-top:6px}.pdf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.pdf-section{margin-top:14px}.pdf-section h4{margin:0 0 12px;font-size:16px}.pdf-option{border:1px solid var(--line);border-radius:18px;padding:14px;background:var(--surface2);cursor:pointer;text-align:left}.pdf-option.active{border-color:var(--accent);box-shadow:inset 0 0 0 1px rgba(20,83,45,.50)}.pdf-option strong{display:block;margin-bottom:6px}.pdf-hint{margin-top:14px;padding:12px 14px;border-radius:16px;border:1px dashed var(--line);color:var(--muted);font-size:13px}
@@ -156,7 +158,7 @@ body::before{display:none !important}
 .calendar-side .calendar-details-card{display:block !important}
 .day-cell{min-height:108px}
 @media (min-width:1600px){:root{--calendar-side-width:390px}.service-year-grid{grid-template-columns:repeat(4,minmax(190px,1fr)) !important}}
-@media (max-width:1180px){.calendar-layout{grid-template-columns:1fr !important}.calendar-side{position:static !important;max-height:none !important;overflow:visible !important}.service-year-grid{grid-template-columns:repeat(2,minmax(180px,1fr)) !important}}
+@media (max-width:1180px){.calendar-layout{grid-template-columns:1fr !important}.calendar-side{position:static !important;max-height:none !important;overflow:visible !important}.service-year-grid{grid-template-columns:repeat(2,minmax(180px,1fr)) !important}#calendarSideTitle{scroll-margin-top:calc(var(--topbar-h, 88px) + 16px)}}
 @media (max-width:680px){.main{padding:14px 12px 92px !important}.service-year-grid{grid-template-columns:1fr !important;padding:10px !important;gap:12px !important}.calendar-toolbar{padding:14px !important}.calendar-title{font-size:1.2rem}.sidebar{width:86vw !important;left:-90vw !important}.app.menu-open .sidebar{left:0 !important}}
  [data-font-size="80"]{--ui-font-scale:.80}
  [data-font-size="85"]{--ui-font-scale:.85}
@@ -244,9 +246,9 @@ body::before{display:none !important}
     <main class="main">
       <div class="offline-banner" id="offlineBanner">Вы офлайн. Изменения сохраняются локально.</div>
       <header class="topbar">
-        <div style="display:flex;align-items:center;gap:14px">
+        <div class="topbar-title-row">
           <button class="btn mobile-menu-btn" id="mobileMenuToggleBtn" type="button" aria-label="Открыть меню" aria-expanded="false">☰ Меню</button>
-          <div>
+          <div class="topbar-title-block">
             <div class="version-badge">Версия: …</div>
             <h2 id="screenTitle">Календарь</h2>
             <button id="nextVisitPill" class="chip" type="button" style="display:none;margin:6px 0;font-size:14px;padding:7px 14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></button>
