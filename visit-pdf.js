@@ -130,7 +130,7 @@
    * отступы ячейки. Используется вместо ненадёжного cellWidth:'wrap' —
    * даёт по-настоящему плотную, предсказуемую колонку.
    */
-  function fitWidth(doc, style, headerText, bodyTexts, extraPad) {
+  function fitWidth(doc, style, headerText, bodyTexts, extraPad, maxWidth) {
     doc.setFont(FONT_NAME, 'bold');
     doc.setFontSize(style.headFontSize);
     let maxW = headerText ? doc.getTextWidth(String(headerText)) : 0;
@@ -141,7 +141,8 @@
       const w = doc.getTextWidth(String(s));
       if (w > maxW) maxW = w;
     });
-    return maxW + style.cellPadding * 2 + (extraPad || 8);
+    const result = maxW + style.cellPadding * 2 + (extraPad || 8);
+    return maxWidth ? Math.min(result, maxWidth) : result;
   }
 
   /**
@@ -362,21 +363,25 @@
     const serviceHead = [t('serviceTableTime'), t('serviceTablePlace'), t('serviceTablePartner'), t('serviceTableKind')];
     // Ширины считаем один раз по ВСЕМ дням сразу, чтобы все таблицы на
     // странице были одинаково выровнены. "Время", "Место проведення" и
-    // "Вид служения" сжимаются по своему содержимому, а всё освободившееся
-    // место целиком уходит в "С кем сотрудничаю" (единственный столбец без
-    // явной ширины).
+    // "С кем" (имя/телефон) сжимаются по своему содержимому, а всё
+    // освободившееся место целиком уходит в "Вид служения" (единственный
+    // столбец без явной ширины) — раньше было наоборот, но с тех пор как в
+    // "С кем" стали писать ещё и телефон, эта колонка стала непропорционально
+    // широкой по сравнению с реальной шириной, нужной для типа служения.
     const allServiceTimes = [];
     const allServiceKinds = [];
     const allServicePlaces = [];
+    const allServicePartners = [];
     state.servicePlan.forEach((d) => d.rows.forEach((r) => {
       allServiceTimes.push(r.time);
       allServiceKinds.push(r.kind);
       allServicePlaces.push(r.place);
+      allServicePartners.push(r.partner);
     }));
     const serviceColumnStyles = {
       0: { cellWidth: fitWidth(doc, style, t('serviceTableTime'), allServiceTimes.concat(SERVICE_TIME_OPTIONS.slice(0, 1)), 16) },
       1: { cellWidth: fitWidth(doc, style, t('serviceTablePlace'), allServicePlaces) },
-      3: { cellWidth: fitWidth(doc, style, t('serviceTableKind'), allServiceKinds) },
+      2: { cellWidth: fitWidth(doc, style, t('serviceTablePartner'), allServicePartners, 8, 130) },
     };
     if (state.servicePlan.length === 0) {
       y = drawTable(doc, y, serviceHead, [], style, serviceColumnStyles, 'shared_svc_empty', interactive, { 0: SERVICE_TIME_OPTIONS });

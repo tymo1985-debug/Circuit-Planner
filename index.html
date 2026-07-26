@@ -242,7 +242,7 @@ body::before{display:none !important}
           <div class="topbar-title-block">
             <div class="version-badge">Версия: …</div>
             <h2 id="screenTitle">Календарь</h2>
-            <button id="nextVisitPill" class="chip" type="button" style="display:none;margin:6px 0;font-size:14px;padding:7px 14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></button>
+            <button id="nextVisitPill" class="chip" type="button" style="display:none;margin:6px 0;font-size:14px;padding:7px 14px;max-width:100%;align-items:center;gap:6px"><span id="nextVisitPillName" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0"></span><span id="nextVisitPillDate" style="white-space:nowrap;flex-shrink:0"></span></button>
             <p id="screenSubtitle"></p>
           </div>
         </div>
@@ -388,9 +388,13 @@ body::before{display:none !important}
               <span class="small rte-font-note">Выдели текст в редакторе, затем нажми нужную кнопку. Шрифт: Aptos</span>
             </div>
             <div class="small" style="color:var(--muted);margin-bottom:6px">Обычный текст (без выделения) отображается 11pt, не жирным.</div>
+            <div class="small" style="font-weight:700;margin:4px 0">Кому адресовано (первая строка письма)</div>
+            <input id="letterSalutationInput" type="text" placeholder="Например: Відповідальному брату групи {congregation}" />
+            <div class="small" style="margin:4px 0 12px;color:var(--muted)">Для группы/предгруппы можно вписать конкретное имя ответственного вместо общего обращения — доступен плейсхолдер {contact_name} (имя контакта из карточки собрания/группы).</div>
             <div class="small" style="font-weight:700;margin:4px 0">Страница 1 — само письмо</div>
             <div id="letterTemplateEditor" class="rte-editor" data-rte-page="body" contenteditable="true"></div>
             <div class="small" style="margin-top:8px;color:var(--muted)">Шрифт в PDF — Aptos (с полной поддержкой кириллицы). Жирный и подчёркивание работают в PDF по-настоящему (встроены реальные файлы Aptos Bold). ⚠️ Курсив пока отображается только на экране — файла Aptos Italic ещё нет в PDF-сборке.</div>
+            <div style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="letterSalutationResetBtn" type="button">Сбросить обращение к стандартному</button></div>
             <div style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="letterTemplateResetBtn" type="button">Сбросить страницу 1 к стандартной</button></div>
 
             <div class="small" style="font-weight:700;margin:20px 0 8px">Дополнительные страницы (2, 3...)</div>

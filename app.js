@@ -320,11 +320,17 @@
     Pregroup: 'Здравствуйте! Направляю письмо перед визитом к предгруппе {congregation} ({start_date} — {end_date}), см. вложение.',
   };
 
+  const DEFAULT_LETTER_SALUTATIONS = {
+    Congregation: 'До старійшин збору {congregation}{cong_number_suffix}',
+    Group: 'Відповідальному брату групи {congregation}',
+    Pregroup: 'Відповідальному брату передгрупи {congregation}',
+  };
+
   const App = {
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.45.0',
+      version: '9.46.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -588,6 +594,7 @@
         }
         if (typeof out.memoTemplate !== 'string' || !out.memoTemplate) out.memoTemplate = DEFAULT_MEMO_TEMPLATE; if (typeof out.senderName !== 'string') out.senderName = ''; if (typeof out.senderAddress !== 'string') out.senderAddress = ''; if (typeof out.senderPhone !== 'string') out.senderPhone = ''; if (typeof out.senderEmail !== 'string') out.senderEmail = ''; if (!out.emailMethod || !['mailto','owa'].includes(out.emailMethod)) out.emailMethod = 'mailto'; if (typeof out.owaUrl !== 'string' || !out.owaUrl) out.owaUrl = 'https://outlook.office.com/mail/deeplink/compose'; if (typeof out.homeAddress !== 'string') out.homeAddress = 'Praha, Česká republika'; if (typeof out.homeLat !== 'number') out.homeLat = null; if (typeof out.homeLng !== 'number') out.homeLng = null; if (typeof out.autoShowReminders !== 'boolean') out.autoShowReminders = true;
         ['Congregation','Group','Pregroup'].forEach((suffix) => { const key = 'emailBody' + suffix; if (typeof out[key] !== 'string' || !out[key]) out[key] = DEFAULT_EMAIL_BODY_TEMPLATES[suffix]; });
+        ['Congregation','Group','Pregroup'].forEach((suffix) => { const key = 'letterSalutation' + suffix; if (typeof out[key] !== 'string' || !out[key]) out[key] = DEFAULT_LETTER_SALUTATIONS[suffix]; });
         return out;
       },
       createDefaultData() {
@@ -1129,7 +1136,7 @@
     ui: {
       cacheElements() {
         [
-          'appRoot','desktopNav','toastWrap','offlineBanner','sideStatus','screenTitle','screenSubtitle','nextVisitPill',
+          'appRoot','desktopNav','toastWrap','offlineBanner','sideStatus','screenTitle','screenSubtitle','nextVisitPill','nextVisitPillName','nextVisitPillDate',
           'eventEditorModal','eventEditorCloseBtn',
           'monthLabel','calendarRangeLabel','calendarGrid','prevMonthBtn','todayMonthBtn','nextMonthBtn',
           'calendarYearSelect','calendarLayoutPresetSelect','layoutPresetSelect','calendarEditor','editorTitle',
@@ -1143,7 +1150,7 @@
           'statsModal','statsModalTitle','statsModalSub','statsModalBody','statsModalCloseBtn','statsModalOkBtn','statsBtn','plannerBtn',
           'plannerModal','plannerModalCloseBtn','plannerStartInput','plannerEndInput','plannerEventsList','plannerPreview','plannerCancelBtn','plannerApplyBtn',
           'pinOverlay','pinInput','pinError','pinSubmitBtn','pinSetupBtn','holidaysToggle','autoShowRemindersToggle','editorResultInput','editorResultLabel',
-          'eventCongNumberInput','eventFormLanguageSelect','eventVisitOnlyFields','geocodeEventBtn','eventDistanceStatus','homeAddressInput','geocodeHomeBtn','homeGeocodeStatus','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow','emailBodyDefaultInput','emailBodyDefaultResetBtn','placeholderRefBody',
+          'eventCongNumberInput','eventFormLanguageSelect','eventVisitOnlyFields','geocodeEventBtn','eventDistanceStatus','homeAddressInput','geocodeHomeBtn','homeGeocodeStatus','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow','emailBodyDefaultInput','emailBodyDefaultResetBtn','placeholderRefBody','letterSalutationInput','letterSalutationResetBtn',
           'vfLanguageSelect','vfLanguageReminder',
           'visitFormModal','visitFormSub','visitFormCloseBtn','vfVisitType','vfMeetingsList','vfAddMeetingBtn','vfServiceDaysList','vfAddDayBtn','vfPastoralHeading','vfPastoralList','vfAddPastoralBtn','vfMealsList','vfAddMealBtn','vfNotesInput','vfCloseBtn2','vfGeneratePdfBtn',
           'letterModal','letterModalSub','letterModalCloseBtn','letterEmailBodyInput','letterAttachStatus','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn',
@@ -2200,9 +2207,12 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           .sort((a, b) => a.start - b.start)[0];
         if (!upcoming) { pill.style.display = 'none'; pill.dataset.entryId = ''; finish(); return; }
         const { entry } = upcoming;
-        pill.style.display = 'inline-block';
+        pill.style.display = 'inline-flex';
         pill.dataset.entryId = entry.id;
-        pill.textContent = `🎯 ${entry.title || upcoming.event.name} — ${App.utils.prettyDate(entry.start)}`;
+        const nameEl = App.els.nextVisitPillName;
+        const dateEl = App.els.nextVisitPillDate;
+        if (nameEl) nameEl.textContent = `🎯 ${entry.title || upcoming.event.name}`;
+        if (dateEl) dateEl.textContent = ` — ${App.utils.prettyDate(entry.start)}`;
         pill.title = `${entry.title || upcoming.event.name}: ${App.utils.prettyDateLong(entry.start)} — ${App.utils.prettyDateLong(entry.end)}`;
         finish();
       },
@@ -2413,6 +2423,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           ['{end_date}', 'Дата окончания визита', ukDate(new Date(today.getTime() + 5 * 86400000))],
           ['{today}', 'Сегодняшняя дата на момент составления письма', ukDate(today)],
           ['{sender}', 'Твоё имя из поля «Ваше имя» выше', senderName],
+          ['{contact_name}', 'Имя ответственного/контакта из карточки собрания/группы (поле «Имя» в разделе «Контакт») — удобно для обращения в письме группе/предгруппе', 'Иван Петренко'],
         ];
         App.els.placeholderRefBody.innerHTML = rows.map(([ph, desc, example]) => `<tr><td style="padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap"><code>${App.utils.escapeHtml(ph)}</code></td><td style="padding:6px 8px;border-bottom:1px solid var(--line)">${App.utils.escapeHtml(desc)}</td><td style="padding:6px 8px;border-bottom:1px solid var(--line);color:var(--muted)">${App.utils.escapeHtml(example)}</td></tr>`).join('');
       },
@@ -2779,8 +2790,10 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
 
         // ---- Page 1: personal letter ----
         let y = drawHeader();
-        const congNumberSuffix = event?.congNumber ? ` (${event.congNumber})` : '';
-        y = addRichParagraph(y, singleRun(`До старійшин збору ${entry?.title || event?.name || ''}${congNumberSuffix}`, { bold: true, size: 11.5 }), { size: 11.5, gap: 20 });
+        const suffixForSalutation = App.ui.letterTypeSuffix(event?.visitType);
+        const salutationTemplate = App.state.app.settings['letterSalutation' + suffixForSalutation] || DEFAULT_LETTER_SALUTATIONS[suffixForSalutation];
+        const salutationText = App.ui.substitutePlaceholders(salutationTemplate, entry, event);
+        y = addRichParagraph(y, singleRun(salutationText, { bold: true, size: 11.5 }), { size: 11.5, gap: 20 });
         doc.setFont(FONT, 'normal'); doc.setFontSize(11); doc.text(ukDate(new Date()), pageW - margin, y - 8, { align: 'right' });
         y = addRichParagraph(y, singleRun('Дорогі брати!', { bold: true }), { gap: 14 });
         const bodyHtml = draftOverride ? draftOverride.bodyHtml : App.ui.substitutePlaceholders(App.ui.getLetterTemplateFor(event?.visitType), entry, event);
@@ -2814,13 +2827,8 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           .replace(/\{start_date\}/g, ukDate(entry?.start))
           .replace(/\{end_date\}/g, ukDate(entry?.end))
           .replace(/\{today\}/g, ukDate(new Date()))
-          .replace(/\{sender\}/g, App.state.app.settings.senderName || '');
-      },
-      fillLetterTemplate(entry, event) {
-        const congNumberSuffix = event?.congNumber ? ` (${event.congNumber})` : '';
-        const html = this.substitutePlaceholders(this.getLetterTemplateFor(event?.visitType), entry, event);
-        const body = this.parseRichLetterBlocks(html).map((b) => b.runs.map((r) => r.text).join('')).join('\n\n');
-        return `До старійшин збору ${entry?.title || event?.name || ''}${congNumberSuffix}\n\nДорогі брати!\n\n${body}\n\nЯ вже з нетерпінням чекаю на цю зустріч і надсилаю вам теплі вітання братньої любові,\n\nВаш ${App.state.app.settings.senderName || ''}`;
+          .replace(/\{sender\}/g, App.state.app.settings.senderName || '')
+          .replace(/\{contact_name\}/g, event?.contactName || '');
       },
       openLetterModal(itemId) {
         const item = App.data.getCalendarItemById(itemId);
@@ -3133,7 +3141,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         }));
       },
 
-      renderSettings() { if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.letterTemplateEditor && document.activeElement !== App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = App.state.app.settings['letterTemplate' + (App.state.letterEditingType || 'Congregation')] || DEFAULT_LETTER_TEMPLATE_HTML; this.renderLetterPagesList(); this.renderPlaceholderReference(); if (App.els.emailBodyDefaultInput && document.activeElement !== App.els.emailBodyDefaultInput) App.els.emailBodyDefaultInput.value = App.state.app.settings['emailBody' + (App.state.letterEditingType || 'Congregation')] || DEFAULT_EMAIL_BODY_TEMPLATES[App.state.letterEditingType || 'Congregation']; if (App.els.senderNameInput && document.activeElement !== App.els.senderNameInput) App.els.senderNameInput.value = App.state.app.settings.senderName || ''; if (App.els.senderAddressInput && document.activeElement !== App.els.senderAddressInput) App.els.senderAddressInput.value = App.state.app.settings.senderAddress || ''; if (App.els.senderPhoneInput && document.activeElement !== App.els.senderPhoneInput) App.els.senderPhoneInput.value = App.state.app.settings.senderPhone || ''; if (App.els.senderEmailInput && document.activeElement !== App.els.senderEmailInput) App.els.senderEmailInput.value = App.state.app.settings.senderEmail || ''; if (App.els.emailMethodSelect) App.els.emailMethodSelect.value = App.state.app.settings.emailMethod || 'mailto'; if (App.els.owaUrlInput && document.activeElement !== App.els.owaUrlInput) App.els.owaUrlInput.value = App.state.app.settings.owaUrl || 'https://outlook.office.com/mail/deeplink/compose'; if (App.els.owaUrlRow) App.els.owaUrlRow.style.display = (App.state.app.settings.emailMethod === 'owa') ? '' : 'none'; if (App.els.homeAddressInput && document.activeElement !== App.els.homeAddressInput) App.els.homeAddressInput.value = App.state.app.settings.homeAddress || ''; if (App.els.homeGeocodeStatus && typeof App.state.app.settings.homeLat === 'number') App.els.homeGeocodeStatus.textContent = `📍 Координаты сохранены (${App.state.app.settings.homeLat.toFixed(3)}, ${App.state.app.settings.homeLng.toFixed(3)})`; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
+      renderSettings() { if (App.els.languageSelect) App.els.languageSelect.value = App.state.app.settings.language || 'ru'; if (App.els.accentSelect) App.els.accentSelect.value = App.state.app.settings.accentColor || 'green'; if (App.els.fontSizeSelect) App.els.fontSizeSelect.value = App.state.app.settings.fontSize || '100'; if (App.els.letterTemplateEditor && document.activeElement !== App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = App.state.app.settings['letterTemplate' + (App.state.letterEditingType || 'Congregation')] || DEFAULT_LETTER_TEMPLATE_HTML; this.renderLetterPagesList(); this.renderPlaceholderReference(); if (App.els.emailBodyDefaultInput && document.activeElement !== App.els.emailBodyDefaultInput) App.els.emailBodyDefaultInput.value = App.state.app.settings['emailBody' + (App.state.letterEditingType || 'Congregation')] || DEFAULT_EMAIL_BODY_TEMPLATES[App.state.letterEditingType || 'Congregation']; if (App.els.letterSalutationInput && document.activeElement !== App.els.letterSalutationInput) App.els.letterSalutationInput.value = App.state.app.settings['letterSalutation' + (App.state.letterEditingType || 'Congregation')] || DEFAULT_LETTER_SALUTATIONS[App.state.letterEditingType || 'Congregation']; if (App.els.senderNameInput && document.activeElement !== App.els.senderNameInput) App.els.senderNameInput.value = App.state.app.settings.senderName || ''; if (App.els.senderAddressInput && document.activeElement !== App.els.senderAddressInput) App.els.senderAddressInput.value = App.state.app.settings.senderAddress || ''; if (App.els.senderPhoneInput && document.activeElement !== App.els.senderPhoneInput) App.els.senderPhoneInput.value = App.state.app.settings.senderPhone || ''; if (App.els.senderEmailInput && document.activeElement !== App.els.senderEmailInput) App.els.senderEmailInput.value = App.state.app.settings.senderEmail || ''; if (App.els.emailMethodSelect) App.els.emailMethodSelect.value = App.state.app.settings.emailMethod || 'mailto'; if (App.els.owaUrlInput && document.activeElement !== App.els.owaUrlInput) App.els.owaUrlInput.value = App.state.app.settings.owaUrl || 'https://outlook.office.com/mail/deeplink/compose'; if (App.els.owaUrlRow) App.els.owaUrlRow.style.display = (App.state.app.settings.emailMethod === 'owa') ? '' : 'none'; if (App.els.homeAddressInput && document.activeElement !== App.els.homeAddressInput) App.els.homeAddressInput.value = App.state.app.settings.homeAddress || ''; if (App.els.homeGeocodeStatus && typeof App.state.app.settings.homeLat === 'number') App.els.homeGeocodeStatus.textContent = `📍 Координаты сохранены (${App.state.app.settings.homeLat.toFixed(3)}, ${App.state.app.settings.homeLng.toFixed(3)})`; if (App.els.addYearInput && !App.els.addYearInput.value) App.els.addYearInput.value = String(Math.max(...Object.keys(App.state.app.serviceYears).map(Number), App.utils.getServiceYearForDate(new Date())) + 1); if (App.els.syncStatus) { const meta = App.state.app.meta || {}; const fmt = (value) => value ? new Date(value).toLocaleString(App.utils.lang()) : ''; const parts = []; if (meta.lastSyncExportAt) parts.push(`${App.utils.t('sync_last_export')}: ${fmt(meta.lastSyncExportAt)}`); if (meta.lastSyncImportAt) parts.push(`${App.utils.t('sync_last_import')}: ${fmt(meta.lastSyncImportAt)}`); App.els.syncStatus.textContent = parts.join(' · ') || App.utils.t('sync_never'); } },
       closeMobileMenu() {
         if (App.els.appRoot) App.els.appRoot.classList.remove('menu-open');
         if (App.els.mobileOverlay) {
@@ -3312,6 +3320,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (App.els.letterTemplateEditor) App.els.letterTemplateEditor.innerHTML = App.state.app.settings['letterTemplate' + btn.dataset.letterType] || DEFAULT_LETTER_TEMPLATE_HTML;
         App.ui.renderLetterPagesList();
         if (App.els.emailBodyDefaultInput && document.activeElement !== App.els.emailBodyDefaultInput) App.els.emailBodyDefaultInput.value = App.state.app.settings['emailBody' + btn.dataset.letterType] || DEFAULT_EMAIL_BODY_TEMPLATES[btn.dataset.letterType];
+        if (App.els.letterSalutationInput && document.activeElement !== App.els.letterSalutationInput) App.els.letterSalutationInput.value = App.state.app.settings['letterSalutation' + btn.dataset.letterType] || DEFAULT_LETTER_SALUTATIONS[btn.dataset.letterType];
       }));
       App.els.senderNameInput?.addEventListener('input', (e) => { App.state.app.settings.senderName = e.target.value; App.store.save(); });
       App.els.emailBodyDefaultInput?.addEventListener('input', (e) => {
@@ -3325,6 +3334,18 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.store.save();
         if (App.els.emailBodyDefaultInput) App.els.emailBodyDefaultInput.value = DEFAULT_EMAIL_BODY_TEMPLATES[type];
         App.utils.toast('Текст по умолчанию восстановлен');
+      });
+      App.els.letterSalutationInput?.addEventListener('input', (e) => {
+        const type = App.state.letterEditingType || 'Congregation';
+        App.state.app.settings['letterSalutation' + type] = e.target.value;
+        App.store.save();
+      });
+      App.els.letterSalutationResetBtn?.addEventListener('click', () => {
+        const type = App.state.letterEditingType || 'Congregation';
+        App.state.app.settings['letterSalutation' + type] = DEFAULT_LETTER_SALUTATIONS[type];
+        App.store.save();
+        if (App.els.letterSalutationInput) App.els.letterSalutationInput.value = DEFAULT_LETTER_SALUTATIONS[type];
+        App.utils.toast('Обращение восстановлено к стандартному');
       });
       App.els.geocodeEventBtn?.addEventListener('click', () => App.ui.geocodeCurrentEvent());
       App.els.eventVisitTypeInput?.addEventListener('change', () => App.ui.syncEventVisitFieldsVisibility());
