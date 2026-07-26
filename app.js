@@ -330,7 +330,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.46.0',
+      version: '9.47.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -2119,53 +2119,47 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (navigator.share) { navigator.share({ text }).catch(() => {}); }
         else if (navigator.clipboard?.writeText) { navigator.clipboard.writeText(text).then(() => App.utils.toast(App.utils.t('copied'))).catch(() => {}); }
       },
-      smoothScrollTo(target, top) {
-        const before = target === window ? window.scrollY : target.scrollTop;
-        const supportsSmooth = typeof document !== 'undefined' && document.documentElement && 'scrollBehavior' in document.documentElement.style;
-        if (supportsSmooth) {
-          try { target.scrollTo({ top, behavior: 'smooth' }); } catch (err) { if (target === window) window.scrollTo(0, top); else target.scrollTop = top; }
-        } else if (target === window) { window.scrollTo(0, top); } else { target.scrollTop = top; }
-        // Belt-and-suspenders: some mobile browsers silently no-op the smooth-scroll call above
-        // instead of scrolling or throwing. If nothing actually moved shortly after, force it.
-        window.setTimeout(() => {
-          const after = target === window ? window.scrollY : target.scrollTop;
-          if (Math.abs(after - before) < 2 && Math.abs(top - before) >= 2) {
-            if (target === window) window.scrollTo(0, top); else target.scrollTop = top;
-          }
-        }, 400);
+      // Finds the element that actually scrolls for a given node. This app's <body> has a fixed
+      // 100% height with display:flex, which means the WINDOW itself is not scrollable at all —
+      // body (or an inner panel) is the real scroll container. Scrolling `window` therefore does
+      // nothing, silently. Rather than hardcoding assumptions about which element scrolls (they
+      // differ between the wide layout, the narrow layout, and modals), find it at runtime.
+      findScrollContainer(el) {
+        let node = el?.parentElement;
+        while (node && node !== document.body && node !== document.documentElement) {
+          const oy = getComputedStyle(node).overflowY;
+          if ((oy === 'auto' || oy === 'scroll') && node.scrollHeight > node.clientHeight + 1) return node;
+          node = node.parentElement;
+        }
+        if (document.body.scrollHeight > document.body.clientHeight + 1) return document.body;
+        const root = document.scrollingElement || document.documentElement;
+        if (root && root.scrollHeight > root.clientHeight + 1) return root;
+        return null;
       },
       scrollToDetailPanel() {
         const target = App.els.calendarSideTitle;
         if (!target) return;
-        // Belt-and-suspenders: try a precisely-computed scroll first (accounts for the sticky
-        // header/sidebar so the target doesn't land hidden behind them), but no matter what,
-        // ALWAYS fall through to the most basic possible scrollIntoView() call with zero options —
-        // the one API guaranteed to work in every browser — so a bug in the fancy calculation can
-        // never leave the user with no scroll at all.
-        try {
-          const side = document.querySelector('.calendar-side');
-          if (side && window.innerWidth > 1180) {
-            const sideRect = side.getBoundingClientRect();
-            const targetRect = target.getBoundingClientRect();
-            const delta = targetRect.top - sideRect.top;
-            this.smoothScrollTo(side, Math.max(0, side.scrollTop + delta - 8));
-          } else {
-            const topbar = document.querySelector('.topbar');
-            const clearance = (topbar?.offsetHeight || 88) + 16;
-            const rect = target.getBoundingClientRect();
-            const targetY = window.scrollY + rect.top - clearance;
-            this.smoothScrollTo(window, Math.max(0, targetY));
-          }
-        } catch (err) {
-          console.error('scrollToDetailPanel: precise calculation failed, falling back', err);
-        }
-        window.setTimeout(() => {
-          try {
-            const rect = target.getBoundingClientRect();
-            const stillHidden = rect.bottom < 0 || rect.top > (window.innerHeight || 800);
-            if (stillHidden) target.scrollIntoView();
-          } catch (err) { console.error('scrollToDetailPanel: fallback check failed', err); }
-        }, 500);
+        const apply = () => {
+          const container = this.findScrollContainer(target);
+          if (!container) { try { target.scrollIntoView({ block: 'start' }); } catch (err) { /* nothing scrollable */ } return; }
+          // The sticky header overlays the top of the scroll area, so leave room for it.
+          const topbar = document.querySelector('.topbar');
+          const overlap = (topbar && getComputedStyle(topbar).position === 'sticky') ? topbar.offsetHeight : 0;
+          const clearance = overlap + 16;
+          const containerTop = (container === document.body || container === document.documentElement)
+            ? 0
+            : container.getBoundingClientRect().top;
+          const delta = target.getBoundingClientRect().top - containerTop;
+          const desired = Math.max(0, container.scrollTop + delta - clearance);
+          try { container.scrollTo({ top: desired, behavior: 'smooth' }); }
+          catch (err) { container.scrollTop = desired; }
+          // If the smooth call was silently ignored (happens on some mobile browsers), force it.
+          window.setTimeout(() => {
+            if (Math.abs(container.scrollTop - desired) > 4) container.scrollTop = desired;
+          }, 450);
+        };
+        // Run after the browser has settled the layout that this click just changed.
+        window.requestAnimationFrame(() => window.requestAnimationFrame(apply));
       },
       measureTopbarHeight() {
         const topbar = document.querySelector('.topbar');
