@@ -377,17 +377,23 @@
     const allServiceTimes = [];
     const allServiceKinds = [];
     const allServicePlaces = [];
-    const allServicePartners = [];
     state.servicePlan.forEach((d) => d.rows.forEach((r) => {
       allServiceTimes.push(r.time);
       allServiceKinds.push(r.kind);
       allServicePlaces.push(r.place);
-      allServicePartners.push(r.partner);
     }));
+    // "Время" и "Место" сжимаются по содержимому, а всё оставшееся место делится
+    // между "С кем" и "Вид служения" в соотношении 70/30. Раньше "Вид служения" был
+    // единственным столбцом без явной ширины и забирал ВЕСЬ остаток, из-за чего
+    // оказывался непропорционально широким.
+    const timeWidth = fitWidth(doc, style, t('serviceTableTime'), allServiceTimes.concat(SERVICE_TIME_OPTIONS.slice(0, 1)), 16);
+    const placeWidth = fitWidth(doc, style, t('serviceTablePlace'), allServicePlaces);
+    const availableForRest = Math.max(120, pageWidth(doc) - style.margin * 2 - timeWidth - placeWidth);
     const serviceColumnStyles = {
-      0: { cellWidth: fitWidth(doc, style, t('serviceTableTime'), allServiceTimes.concat(SERVICE_TIME_OPTIONS.slice(0, 1)), 16) },
-      1: { cellWidth: fitWidth(doc, style, t('serviceTablePlace'), allServicePlaces) },
-      2: { cellWidth: fitWidth(doc, style, t('serviceTablePartner'), allServicePartners, 8, 130) },
+      0: { cellWidth: timeWidth },
+      1: { cellWidth: placeWidth },
+      2: { cellWidth: availableForRest * 0.70 },
+      3: { cellWidth: availableForRest * 0.30 },
     };
     if (state.servicePlan.length === 0) {
       y = drawTable(doc, y, serviceHead, [], style, serviceColumnStyles, 'shared_svc_empty', interactive, { 0: SERVICE_TIME_OPTIONS }, fieldPrefix, [2, 3]);
