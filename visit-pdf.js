@@ -272,7 +272,7 @@
     };
   }
 
-  function drawTable(doc, y, head, body, style, columnStyles, fieldPrefix, interactive, comboColumns) {
+  function drawTable(doc, y, head, body, style, columnStyles, fieldPrefix, interactive, comboColumns, pageKey, perPageColumns) {
     if (body.length === 0) {
       body = [head.map(() => '')];
     }
@@ -286,7 +286,13 @@
         if (data.section !== 'body') return;
         const raw = data.cell.raw;
         if (raw === '' || raw === null || raw === undefined) {
-          const fieldName = `${fieldPrefix}_r${data.row.index}_c${data.column.index}`;
+          // Columns listed in perPageColumns must NOT be shared between the two form pages —
+          // Alex and Lydia go out with different partners and often a different kind of ministry,
+          // so those cells get the page key baked into the field name (making them independent
+          // AcroForm fields). Everything else stays shared, so the schedule itself (time/place)
+          // only has to be filled in once and mirrors onto both pages automatically.
+          const isPerPage = perPageColumns && perPageColumns.indexOf(data.column.index) !== -1 && pageKey;
+          const fieldName = `${isPerPage ? pageKey + '_' : ''}${fieldPrefix}_r${data.row.index}_c${data.column.index}`;
           const comboEntry = comboColumns && comboColumns[data.column.index];
           const comboOptions = typeof comboEntry === 'function' ? comboEntry(data) : comboEntry;
           const fontSize = Math.min(style.bodyFontSize, 9);
@@ -384,7 +390,7 @@
       2: { cellWidth: fitWidth(doc, style, t('serviceTablePartner'), allServicePartners, 8, 130) },
     };
     if (state.servicePlan.length === 0) {
-      y = drawTable(doc, y, serviceHead, [], style, serviceColumnStyles, 'shared_svc_empty', interactive, { 0: SERVICE_TIME_OPTIONS });
+      y = drawTable(doc, y, serviceHead, [], style, serviceColumnStyles, 'shared_svc_empty', interactive, { 0: SERVICE_TIME_OPTIONS }, fieldPrefix, [2, 3]);
     } else {
       state.servicePlan.forEach((day) => {
         y = ensureSpace(doc, y, style.dayGap + 14, style);
@@ -401,7 +407,7 @@
           if (row && row.session === 'after') return AFTER_LUNCH_TIME_OPTIONS;
           return SERVICE_TIME_OPTIONS;
         };
-        y = drawTable(doc, y, serviceHead, body, style, serviceColumnStyles, `shared_svc_${day.id}`, interactive, { 0: timeOptionsForRow });
+        y = drawTable(doc, y, serviceHead, body, style, serviceColumnStyles, `shared_svc_${day.id}`, interactive, { 0: timeOptionsForRow }, fieldPrefix, [2, 3]);
       });
     }
 
