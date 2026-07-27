@@ -330,7 +330,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.51.0',
+      version: '9.52.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -1165,7 +1165,7 @@
           'eventCongNumberInput','eventFormLanguageSelect','eventVisitOnlyFields','geocodeEventBtn','eventDistanceStatus','homeAddressInput','geocodeHomeBtn','homeGeocodeStatus','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow','emailBodyDefaultInput','emailBodyDefaultResetBtn','placeholderRefBody','letterSalutationInput','letterSalutationResetBtn',
           'vfLanguageSelect','vfLanguageReminder',
           'visitFormModal','visitFormSub','visitFormCloseBtn','vfVisitType','vfMeetingsList','vfAddMeetingBtn','vfServiceDaysList','vfAddDayBtn','vfPastoralHeading','vfPastoralList','vfAddPastoralBtn','vfMealsList','vfAddMealBtn','vfNotesInput','vfCloseBtn2','vfGeneratePdfBtn',
-          'letterModal','letterModalSub','letterModalCloseBtn','letterEmailBodyInput','letterAttachStatus','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn',
+          'letterModal','letterModalSub','letterModalCloseBtn','letterEmailBodyInput','letterAttachStatus','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn','letterEmailBodyResetToDefaultBtn',
           'languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
           'pdfCancelBtn','pdfExportConfirmBtn','pdfRangeCard','pdfRangeStartInput','pdfRangeEndInput','pdfRangeHelp','pdfHint',
@@ -3359,6 +3359,19 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         if (!doc) return;
         const suffix = App.utils.pdfFilenameSuffix(entry, event);
         doc.save(`${App.utils.slug(entry.title || 'letter')}${suffix ? '-' + suffix : ''}-letter.pdf`);
+      });
+      App.els.letterEmailBodyResetToDefaultBtn?.addEventListener('click', () => {
+        const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);
+        if (!entry) return;
+        const event = App.data.getEventById(entry.eventId);
+        const suffix = App.ui.letterTypeSuffix(event?.visitType);
+        if (!window.confirm('Заменить текущий текст письма на актуальный шаблон по умолчанию? Текущий текст будет потерян.')) return;
+        const defaultTemplate = App.state.app.settings['emailBody' + suffix] || DEFAULT_EMAIL_BODY_TEMPLATES[suffix];
+        const fresh = App.ui.substitutePlaceholders(defaultTemplate, entry, event);
+        if (App.els.letterEmailBodyInput) App.els.letterEmailBodyInput.value = fresh;
+        entry.emailBody = fresh;
+        App.store.save();
+        App.utils.toast('Текст заменён на текущий шаблон по умолчанию.');
       });
       App.els.letterAttachPdfBtn?.addEventListener('click', () => {
         const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);

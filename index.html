@@ -556,6 +556,8 @@ body::before{display:none !important}
       <div class="small" style="margin-bottom:10px">Текст самого email-сообщения для этого визита — сохраняется вместе с ним. Само письмо (PDF) и график визита прикладываются отдельными кнопками ниже — их текст редактируется в Настройках → Письмо.</div>
       <label class="small" for="letterEmailBodyInput">Текст email-сообщения</label>
       <textarea id="letterEmailBodyInput" rows="10" style="font-family:inherit;margin-top:6px"></textarea>
+      <div class="small" style="margin-top:6px;color:var(--muted)">Этот текст сохранён именно для данной записи и с этого момента не следует за изменениями шаблона по умолчанию в Настройках. Если недавно менял шаблон по умолчанию и хочешь применить его здесь — используй кнопку ниже (текущий текст будет заменён).</div>
+      <button class="btn" id="letterEmailBodyResetToDefaultBtn" type="button" style="margin-top:6px">↺ Заменить на текущий текст по умолчанию</button>
       <div class="small" id="letterAttachStatus" style="margin-top:8px"></div>
       <div class="editor-actions"><button class="btn" id="letterPreviewPdfBtn" type="button">📄 Прикрепить PDF-документ</button><button class="btn" id="letterAttachPdfBtn" type="button">📎 Прикрепить график визитов</button><button class="btn primary" id="letterSendBtn" type="button">📤 Отправить электронное письмо</button></div>
     </div>
