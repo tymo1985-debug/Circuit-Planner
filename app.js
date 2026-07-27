@@ -334,13 +334,14 @@
     uk: { prefix: 'Відвідування районного наглядача', type: { Congregation: 'збору', Group: 'групи', Pregroup: 'передгрупи' }, from: 'з', to: 'по' },
     en: { prefix: 'Circuit overseer visit to', type: { Congregation: 'congregation', Group: 'group', Pregroup: 'pregroup' }, from: 'from', to: 'to' },
     pl: { prefix: 'Wizyta nadzorcy obwodu w', type: { Congregation: 'zborze', Group: 'grupie', Pregroup: 'przedgrupie' }, from: 'od', to: 'do' },
+    de: { prefix: 'Besuch des Kreisaufsehers in', type: { Congregation: 'der Versammlung', Group: 'der Gruppe', Pregroup: 'der Vorgruppe' }, from: 'vom', to: 'bis' },
   };
 
   const App = {
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.53.1',
+      version: '9.54.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -2462,9 +2463,50 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       letterTypeSuffix(visitType) {
         return visitType === 'group' ? 'Group' : visitType === 'pregroup' ? 'Pregroup' : 'Congregation';
       },
+      // Character-based language detection — no dictionaries/libraries needed, just letters that
+      // are unique to one language and never appear in the others we support.
+      detectTextLanguage(text) {
+        if (!text) return null;
+        const stripped = String(text).replace(/<[^>]+>/g, ' ').replace(/\{[a-z_]+\}/gi, ' ');
+        if (/[іїєґІЇЄҐ]/.test(stripped)) return 'uk'; // letters that exist in Ukrainian but not Russian
+        if (/[ąćęłńśźżĄĆĘŁŃŚŹŻ]/.test(stripped)) return 'pl'; // Polish-only diacritics
+        if (/[äöüßÄÖÜ]/.test(stripped)) return 'de'; // German-only diacritics/ligature
+        // Polish text often has no diacritics at all in short phrases — a secondary check for
+        // distinctive Polish function words, checked only after the stronger diacritic signals
+        // above (avoids e.g. "nie", which also means something in German, causing a false match).
+        if (/\b(się|czy|będzie|przez|który|która)\b/i.test(stripped)) return 'pl';
+        if (/[ыэъЫЭЪ]/.test(stripped)) return 'ru'; // letters that exist in Russian but not Ukrainian
+        if (/[а-яёА-ЯЁ]/.test(stripped)) return 'ru'; // generic Cyrillic with no distinguishing letter found — ru as the more common default
+        if (/[a-zA-Z]/.test(stripped)) return 'en';
+        return null;
+      },
+      // Determines the letter's real language from its actual text — NOT from the app's interface
+      // language — checking, in priority order, whatever text this specific letter will actually
+      // Determines the letter's real language — NOT from the app's interface language. An
+      // explicitly configured formLanguage on the event is a deliberate choice and wins outright.
+      // Otherwise, detect from whatever text this specific letter will actually contain, checked
+      // in order: the entry's own saved email body, the letter body template (Page 1, the most
+      // deliberately-authored text), the type's default email body template, and the salutation
+      // line. Only if none of that yields any signal does it fall back to the UI language.
+      detectLetterLanguage(entry, event) {
+        if (event?.formLanguage) return event.formLanguage;
+        const suffix = this.letterTypeSuffix(event?.visitType);
+        const settings = App.state.app.settings;
+        const candidates = [
+          entry?.emailBody,
+          settings['letterTemplate' + suffix],
+          settings['emailBody' + suffix],
+          settings['letterSalutation' + suffix],
+        ];
+        for (const candidate of candidates) {
+          const detected = this.detectTextLanguage(candidate);
+          if (detected) return detected;
+        }
+        return settings.language || 'ru';
+      },
       buildLetterSubject(entry, event) {
         if (!entry) return '';
-        const lang = event?.formLanguage || App.state.app.settings.language || 'ru';
+        const lang = this.detectLetterLanguage(entry, event);
         const parts = LETTER_SUBJECT_PARTS[lang] || LETTER_SUBJECT_PARTS.ru;
         const suffix = this.letterTypeSuffix(event?.visitType);
         const typeLabel = parts.type[suffix];
