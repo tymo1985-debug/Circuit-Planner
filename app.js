@@ -326,11 +326,21 @@
     Pregroup: 'Відповідальному брату передгрупи {congregation}',
   };
 
+  // Per-language pieces for auto-generating the email subject line. Chosen by the event's
+  // formLanguage (the same field that already controls the visit-form/letter language elsewhere
+  // in the app), falling back to the app's UI language.
+  const LETTER_SUBJECT_PARTS = {
+    ru: { prefix: 'Посещение районного надзирателя', type: { Congregation: 'собрания', Group: 'группы', Pregroup: 'предгруппы' }, from: 'с', to: 'по' },
+    uk: { prefix: 'Відвідування районного наглядача', type: { Congregation: 'збору', Group: 'групи', Pregroup: 'передгрупи' }, from: 'з', to: 'по' },
+    en: { prefix: 'Circuit overseer visit to', type: { Congregation: 'congregation', Group: 'group', Pregroup: 'pregroup' }, from: 'from', to: 'to' },
+    pl: { prefix: 'Wizyta nadzorcy obwodu w', type: { Congregation: 'zborze', Group: 'grupie', Pregroup: 'przedgrupie' }, from: 'od', to: 'do' },
+  };
+
   const App = {
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.52.1',
+      version: '9.53.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -641,7 +651,7 @@
         app.settings = this.ensureSettingsDefaults(app.settings || {}); if (!Array.isArray(app.events)) app.events = []; if (!Array.isArray(app.entries)) app.entries = []; if (!app.serviceYears || typeof app.serviceYears !== 'object') app.serviceYears = {}; if (!app.meta || typeof app.meta !== 'object') app.meta = { version: App.config.version };
         app.events = App.utils.uniqueBy(app.events.filter((item) => item && typeof item === 'object').map((item) => ({ id: item.id || App.utils.uid('evt'), name: item.name || 'Без названия', color: App.utils.clampColor(item.color), address: item.address || '', schedule: item.schedule || '', visitType: item.visitType || '', contactName: item.contactName || '', contactPhone: item.contactPhone || '', contactEmail: item.contactEmail || '', contactNote: item.contactNote || '', congNumber: item.congNumber || '', lat: typeof item.lat === 'number' ? item.lat : null, lng: typeof item.lng === 'number' ? item.lng : null, formLanguage: item.formLanguage || '' })), (item) => item.id);
         const eventNameById = {}; app.events.forEach((ev) => { eventNameById[ev.id] = ev.name; });
-        app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end && App.utils.iso(item.start) && App.utils.iso(item.end)).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: eventNameById[item.eventId] || item.title || '', note: item.note || '', resultNote: item.resultNote || '', emailBody: item.emailBody || '', visitForm: item.visitForm || null, notified60: !!item.notified60, flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => item.id);
+        app.entries = App.utils.uniqueBy(app.entries.filter((item) => item && item.start && item.end && App.utils.iso(item.start) && App.utils.iso(item.end)).map((item) => ({ id: item.id || App.utils.uid('entry'), eventId: item.eventId || '', start: App.utils.iso(item.start), end: App.utils.iso(item.end), title: eventNameById[item.eventId] || item.title || '', note: item.note || '', resultNote: item.resultNote || '', emailBody: item.emailBody || '', subject: item.subject || '', visitForm: item.visitForm || null, notified60: !!item.notified60, flags: { f302: !!item?.flags?.f302, letter: !!item?.flags?.letter }, source: item.source || 'entry' })), (item) => item.id);
         Object.keys(app.serviceYears).forEach((year) => {
           const sy = app.serviceYears[year] || {}; if (!sy.weeks || typeof sy.weeks !== 'object') sy.weeks = {};
           Object.keys(sy.weeks).forEach((weekId) => { const w = sy.weeks[weekId]; if (!w) return; const start = App.utils.iso(w.start || weekId); const end = App.utils.iso(w.end || App.utils.addDays(App.utils.parseLocalDate(start), 6)); sy.weeks[weekId] = { id: w.id || weekId, weekId, start, end, eventId: w.eventId || '', priority: w.priority || 'normal', flagLetter: !!w.flagLetter, flagS302: !!w.flagS302, note: w.note || '' }; });
@@ -1165,7 +1175,7 @@
           'eventCongNumberInput','eventFormLanguageSelect','eventVisitOnlyFields','geocodeEventBtn','eventDistanceStatus','homeAddressInput','geocodeHomeBtn','homeGeocodeStatus','letterTemplateEditor','letterTemplateResetBtn','letterPagesList','addLetterPageBtn','previewLetterPdfBtn','senderNameInput','senderAddressInput','senderPhoneInput','senderEmailInput','emailMethodSelect','owaUrlInput','owaUrlRow','emailBodyDefaultInput','emailBodyDefaultResetBtn','placeholderRefBody','letterSalutationInput','letterSalutationResetBtn',
           'vfLanguageSelect','vfLanguageReminder',
           'visitFormModal','visitFormSub','visitFormCloseBtn','vfVisitType','vfMeetingsList','vfAddMeetingBtn','vfServiceDaysList','vfAddDayBtn','vfPastoralHeading','vfPastoralList','vfAddPastoralBtn','vfMealsList','vfAddMealBtn','vfNotesInput','vfCloseBtn2','vfGeneratePdfBtn',
-          'letterModal','letterModalSub','letterModalCloseBtn','letterEmailBodyInput','letterAttachStatus','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn','letterEmailBodyResetToDefaultBtn',
+          'letterModal','letterModalSub','letterModalCloseBtn','letterEmailBodyInput','letterAttachStatus','letterPreviewPdfBtn','letterAttachPdfBtn','letterSendBtn','letterEmailBodyResetToDefaultBtn','letterSubjectInput',
           'languageSelect','themeSelect','accentSelect','fontSizeSelect',
           'settingsPdfBtn','backupBtn','resetAppBtn','themeBtn','exportBtn','importInput','pdfModal','pdfModalCloseBtn',
           'pdfCancelBtn','pdfExportConfirmBtn','pdfRangeCard','pdfRangeStartInput','pdfRangeEndInput','pdfRangeHelp','pdfHint',
@@ -2452,6 +2462,16 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       letterTypeSuffix(visitType) {
         return visitType === 'group' ? 'Group' : visitType === 'pregroup' ? 'Pregroup' : 'Congregation';
       },
+      buildLetterSubject(entry, event) {
+        if (!entry) return '';
+        const lang = event?.formLanguage || App.state.app.settings.language || 'ru';
+        const parts = LETTER_SUBJECT_PARTS[lang] || LETTER_SUBJECT_PARTS.ru;
+        const suffix = this.letterTypeSuffix(event?.visitType);
+        const typeLabel = parts.type[suffix];
+        const name = entry.title || event?.name || '';
+        const fmt = (iso) => { const d = App.utils.parseLocalDate(iso); return d ? d.toLocaleDateString(lang, { day: '2-digit', month: 'long', year: 'numeric' }) : ''; };
+        return `${parts.prefix} ${typeLabel} ${name} ${parts.from} ${fmt(entry.start)} ${parts.to} ${fmt(entry.end)}`.replace(/\s+/g, ' ').trim();
+      },
       getLetterTemplateFor(visitType) {
         const suffix = this.letterTypeSuffix(visitType);
         return App.state.app.settings['letterTemplate' + suffix] || DEFAULT_LETTER_TEMPLATE_HTML;
@@ -2900,6 +2920,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           const defaultTemplate = App.state.app.settings['emailBody' + suffix] || DEFAULT_EMAIL_BODY_TEMPLATES[suffix];
           App.els.letterEmailBodyInput.value = entry.emailBody || this.substitutePlaceholders(defaultTemplate, entry, event);
         }
+        if (App.els.letterSubjectInput) App.els.letterSubjectInput.value = entry.subject || this.buildLetterSubject(entry, event);
         const extraPages = App.state.app.settings.letterPages?.[suffix] || [];
         const totalPages = 1 + extraPages.length;
         if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = entry.visitForm ? `📎 Письмо (${totalPages} стр.) и график визита будут отправлены как PDF-вложения.` : `📎 Письмо будет отправлено как PDF-вложение (${totalPages} стр.). График визита ещё не заполнен — если нужен, сначала открой «Формуляр визита».`;
@@ -2989,7 +3010,7 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           } catch (err) { console.error('Schedule PDF build for sharing failed', err); }
         }
         const mailto = () => {
-          const subject = App.utils.t('letter_subject');
+          const subject = App.els.letterSubjectInput?.value || entry.subject || this.buildLetterSubject(entry, event);
           if (App.state.app.settings.emailMethod === 'owa') {
             const base = App.state.app.settings.owaUrl || 'https://outlook.office.com/mail/deeplink/compose';
             const url = `${base}?to=${encodeURIComponent(to)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
@@ -3349,6 +3370,12 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const entry = App.state.app.entries.find((en) => en.id === App.state.letterEntryId);
         if (!entry) return;
         entry.emailBody = e.target.value;
+        App.store.save();
+      });
+      App.els.letterSubjectInput?.addEventListener('input', (e) => {
+        const entry = App.state.app.entries.find((en) => en.id === App.state.letterEntryId);
+        if (!entry) return;
+        entry.subject = e.target.value;
         App.store.save();
       });
       App.els.letterPreviewPdfBtn?.addEventListener('click', () => {
