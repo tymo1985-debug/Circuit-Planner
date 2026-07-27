@@ -555,7 +555,7 @@ body::before{display:none !important}
       <div class="modal-head"><div><h3>✉ Письмо перед визитом</h3><div class="modal-sub" id="letterModalSub">—</div></div><button class="icon-btn" id="letterModalCloseBtn" type="button" aria-label="Закрыть">✕</button></div>
       <div class="small" style="margin-bottom:10px">Текст самого email-сообщения для этого визита — сохраняется вместе с ним. Само письмо (PDF) и график визита прикладываются отдельными кнопками ниже — их текст редактируется в Настройках → Письмо.</div>
       <label class="small" for="letterSubjectInput">Тема письма</label>
-      <input id="letterSubjectInput" type="text" style="margin-top:6px;margin-bottom:14px" />
+      <div style="display:flex;gap:6px;margin-top:6px;margin-bottom:14px"><input id="letterSubjectInput" type="text" style="flex:1" /><button class="icon-btn copy-btn" type="button" data-copy-input="letterSubjectInput" title="Скопировать тему" aria-label="Скопировать тему">📋</button></div>
       <label class="small" for="letterEmailBodyInput">Текст email-сообщения</label>
       <textarea id="letterEmailBodyInput" rows="10" style="font-family:inherit;margin-top:6px"></textarea>
       <div class="small" style="margin-top:6px;color:var(--muted)">Этот текст сохранён именно для данной записи и с этого момента не следует за изменениями шаблона по умолчанию в Настройках. Если недавно менял шаблон по умолчанию и хочешь применить его здесь — используй кнопку ниже (текущий текст будет заменён).</div>
