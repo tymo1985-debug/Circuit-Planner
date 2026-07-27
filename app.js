@@ -331,7 +331,7 @@
   // in the app), falling back to the app's UI language.
   const LETTER_SUBJECT_PARTS = {
     ru: { prefix: 'Посещение районного надзирателя', type: { Congregation: 'собрания', Group: 'группы', Pregroup: 'предгруппы' }, from: 'с', to: 'по' },
-    uk: { prefix: 'Відвідування районного наглядача', type: { Congregation: 'збору', Group: 'групи', Pregroup: 'передгрупи' }, from: 'з', to: 'по' },
+    uk: { prefix: 'Візит районного наглядача', type: { Congregation: 'збору', Group: 'групи', Pregroup: 'передгрупи' }, from: 'з', to: 'по' },
     en: { prefix: 'Circuit overseer visit to', type: { Congregation: 'congregation', Group: 'group', Pregroup: 'pregroup' }, from: 'from', to: 'to' },
     pl: { prefix: 'Wizyta nadzorcy obwodu w', type: { Congregation: 'zborze', Group: 'grupie', Pregroup: 'przedgrupie' }, from: 'od', to: 'do' },
     de: { prefix: 'Besuch des Kreisaufsehers in', type: { Congregation: 'der Versammlung', Group: 'der Gruppe', Pregroup: 'der Vorgruppe' }, from: 'vom', to: 'bis' },
@@ -341,7 +341,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.54.0',
+      version: '9.54.1',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
