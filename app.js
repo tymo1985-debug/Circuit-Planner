@@ -330,7 +330,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.49.0',
+      version: '9.50.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -471,6 +471,17 @@
         return this.holidaysCache[year][dateIso] || null;
       },
       serviceYearLabel(year) { return `${year}/${year + 1}`; },
+      pdfFilenameSuffix(entry, event) {
+        if (event?.visitType === 'congregation') {
+          const start = this.parseLocalDate(entry?.start);
+          const end = this.parseLocalDate(entry?.end);
+          if (!start || !end) return '';
+          const dm = (d) => `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}`;
+          return `${dm(start)}.-${dm(end)}.${end.getFullYear()}`;
+        }
+        const sy = this.getServiceYearForDate(entry?.start || new Date());
+        return this.serviceYearLabel(sy).replace('/', '-');
+      },
       serviceYearBounds(year) { return { start: new Date(year, App.config.serviceYearStartMonth, 1), end: new Date(year + 1, App.config.serviceYearStartMonth, 0) }; },
       clampColor(color, fallback = '#1f7a45') { return /^#[0-9a-f]{6}$/i.test(String(color || '')) ? color : fallback; },
 
@@ -2942,15 +2953,16 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const text = App.els.letterEmailBodyInput?.value || '';
         const to = event?.contactEmail || '';
         const files = [];
+        const filenameSuffix = App.utils.pdfFilenameSuffix(entry, event);
         try {
           const letterDoc = this.buildLetterPdfDoc(entry, event);
-          if (letterDoc) files.push(new File([letterDoc.output('blob')], `${App.utils.slug(entry?.title || 'letter')}-letter.pdf`, { type: 'application/pdf' }));
+          if (letterDoc) files.push(new File([letterDoc.output('blob')], `${App.utils.slug(entry?.title || 'letter')}${filenameSuffix ? '-' + filenameSuffix : ''}-letter.pdf`, { type: 'application/pdf' }));
         } catch (err) { console.error('Letter PDF build failed', err); }
         if (entry?.visitForm) {
           try {
             App.state.visitFormData = JSON.parse(JSON.stringify(entry.visitForm));
             const scheduleDoc = this.buildVisitPdfDoc();
-            if (scheduleDoc) files.push(new File([scheduleDoc.output('blob')], `${App.utils.slug(entry.title || 'visit')}-schedule.pdf`, { type: 'application/pdf' }));
+            if (scheduleDoc) files.push(new File([scheduleDoc.output('blob')], `${App.utils.slug(entry.title || 'visit')}${filenameSuffix ? '-' + filenameSuffix : ''}-schedule.pdf`, { type: 'application/pdf' }));
           } catch (err) { console.error('Schedule PDF build for sharing failed', err); }
         }
         const mailto = () => {
@@ -3303,7 +3315,9 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const doc = App.ui.buildVisitPdfDoc();
         if (!doc) return;
         const entry = App.state.app.entries.find((e) => e.id === App.state.visitFormEntryId);
-        doc.save(`${App.utils.slug(entry?.title || 'visit')}.pdf`);
+        const event = entry ? App.data.getEventById(entry.eventId) : null;
+        const suffix = App.utils.pdfFilenameSuffix(entry, event);
+        doc.save(`${App.utils.slug(entry?.title || 'visit')}${suffix ? '-' + suffix : ''}.pdf`);
         App.utils.toast('PDF сформирован');
       });
       // Letter modal
@@ -3320,7 +3334,8 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         const event = App.data.getEventById(entry.eventId);
         const doc = App.ui.buildLetterPdfDoc(entry, event);
         if (!doc) return;
-        doc.save(`${App.utils.slug(entry.title || 'letter')}-letter.pdf`);
+        const suffix = App.utils.pdfFilenameSuffix(entry, event);
+        doc.save(`${App.utils.slug(entry.title || 'letter')}${suffix ? '-' + suffix : ''}-letter.pdf`);
       });
       App.els.letterAttachPdfBtn?.addEventListener('click', () => {
         const entry = App.state.app.entries.find((e) => e.id === App.state.letterEntryId);
@@ -3328,7 +3343,9 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
         App.state.visitFormData = JSON.parse(JSON.stringify(entry.visitForm));
         const doc = App.ui.buildVisitPdfDoc();
         if (!doc) return;
-        doc.save(`${App.utils.slug(entry.title || 'visit')}-schedule.pdf`);
+        const event = App.data.getEventById(entry.eventId);
+        const suffix = App.utils.pdfFilenameSuffix(entry, event);
+        doc.save(`${App.utils.slug(entry.title || 'visit')}${suffix ? '-' + suffix : ''}-schedule.pdf`);
         if (App.els.letterAttachStatus) App.els.letterAttachStatus.textContent = '📎 График скачан отдельно — «Отправить» приложит письмо и график вместе, если платформа поддерживает.';
       });
       App.els.letterSendBtn?.addEventListener('click', () => App.ui.sendLetterNow());
