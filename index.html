@@ -557,7 +557,7 @@ body::before{display:none !important}
       <label class="small" for="letterEmailBodyInput">Текст email-сообщения</label>
       <textarea id="letterEmailBodyInput" rows="10" style="font-family:inherit;margin-top:6px"></textarea>
       <div class="small" style="margin-top:6px;color:var(--muted)">Этот текст сохранён именно для данной записи и с этого момента не следует за изменениями шаблона по умолчанию в Настройках. Если недавно менял шаблон по умолчанию и хочешь применить его здесь — используй кнопку ниже (текущий текст будет заменён).</div>
-      <button class="btn" id="letterEmailBodyResetToDefaultBtn" type="button" style="margin-top:6px">↺ Заменить на текущий текст по умолчанию</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn" id="letterEmailBodyResetToDefaultBtn" type="button">↺ Заменить на текущий текст по умолчанию</button><button class="btn copy-btn" type="button" data-copy-input="letterEmailBodyInput" title="Скопировать текст сообщения" aria-label="Скопировать текст сообщения">📋 Скопировать текст</button></div>
       <div class="small" id="letterAttachStatus" style="margin-top:8px"></div>
       <div class="editor-actions"><button class="btn" id="letterPreviewPdfBtn" type="button">📄 Прикрепить PDF-документ</button><button class="btn" id="letterAttachPdfBtn" type="button">📎 Прикрепить график визитов</button><button class="btn primary" id="letterSendBtn" type="button">📤 Отправить электронное письмо</button></div>
     </div>
