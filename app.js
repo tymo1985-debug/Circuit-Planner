@@ -330,7 +330,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.48.1',
+      version: '9.49.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -2379,15 +2379,40 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
           return runs.length ? runs : ((el.textContent || '').trim() ? [{ text: el.textContent.trim(), ...baseline }] : []);
         };
         const blocks = [];
-        if (!container.children.length) {
-          const runs = readBlock(container);
-          if (runs.length) blocks.push({ runs });
-          return blocks;
-        }
-        Array.from(container.children).forEach((el) => {
-          const runs = readBlock(el);
+        if (!container.childNodes.length) return blocks;
+        // Iterate childNodes (not children): a contenteditable field typically leaves the FIRST
+        // line as a bare text node and only wraps subsequent lines in <div>s. Iterating only
+        // element children silently dropped that first paragraph from the PDF, even though it
+        // displayed correctly in the settings editor.
+        const INLINE_TAGS = ['B', 'STRONG', 'I', 'EM', 'U', 'SPAN', 'A', 'FONT', 'SUB', 'SUP', 'SMALL', 'MARK'];
+        let pending = []; // runs of the current line being assembled from bare text + inline tags
+        const flushPending = () => {
+          const kept = pending.filter((r) => r.text);
+          if (kept.length && kept.some((r) => r.text.trim())) blocks.push({ runs: kept });
+          pending = [];
+        };
+        Array.from(container.childNodes).forEach((node) => {
+          if (node.nodeType === 3) {
+            if (node.textContent) pending.push({ text: node.textContent, bold: false, italic: false, underline: false, size: null });
+            return;
+          }
+          if (node.nodeType !== 1) return;
+          const tag = (node.tagName || '').toUpperCase();
+          if (tag === 'BR') { flushPending(); return; }
+          if (INLINE_TAGS.includes(tag)) {
+            // Same visual line — keep accumulating rather than starting a new paragraph.
+            // Wrap it so walkRuns sees the element as a CHILD, otherwise the element's own
+            // tag (e.g. a top-level <b>) would be ignored and its formatting lost.
+            const holder = document.createElement('div');
+            holder.appendChild(node.cloneNode(true));
+            pending.push(...walkRuns(holder, { bold: false, italic: false, underline: false, size: null }).filter((r) => r.text));
+            return;
+          }
+          flushPending(); // a block-level element ends whatever line was being assembled
+          const runs = readBlock(node);
           if (runs.length) blocks.push({ runs });
         });
+        flushPending();
         return blocks;
       },
       letterTypeSuffix(visitType) {
