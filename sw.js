@@ -8,6 +8,7 @@ const CACHE_STATIC = 'syp-static';
 const CACHE_RUNTIME = 'syp-runtime';
 const APP_SHELL_URLS = [
   './',
+  './?source=pwa',
   './index.html',
   './app.js',
   './visit-pdf.js',
@@ -24,7 +25,9 @@ const APP_SHELL_URLS = [
   // (on the very first load the SW doesn't control the page yet, so runtime
   // caching alone would miss them).
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'
+  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js',
+  'https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js',
+  'https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -167,6 +170,27 @@ async function staleWhileRevalidate(request) {
   return cached || fetchPromise.then((res) => res || Response.error());
 }
 
+// Serves from cache immediately when available — this is the core of making the app
+// reliably usable with no connection at all, not just resilient to a failed request.
+// Revalidates in the background so a connected session still picks up updates; only
+// falls through to the network (via networkFirst's own fallback chain) on the very
+// first visit, before anything has been cached yet.
+async function offlineFirst(request, fallbackUrl) {
+  const cached = await caches.match(request);
+  if (cached) {
+    fetch(request, { cache: 'no-cache' })
+      .then(async (res) => {
+        if (res && res.ok) {
+          const cache = await caches.open(CACHE_RUNTIME);
+          try { await cache.put(request, res.clone()); } catch (_) {}
+        }
+      })
+      .catch(() => {});
+    return cached;
+  }
+  return networkFirst(request, fallbackUrl);
+}
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
@@ -176,6 +200,13 @@ self.addEventListener('fetch', (event) => {
 
   if (isNavigationRequest(request)) {
     event.respondWith((async () => {
+      const cached = (await caches.match(request)) || (await caches.match('./index.html')) || (await caches.match('./'));
+      if (cached) {
+        fetch(request, { cache: 'no-cache' })
+          .then(async (res) => { if (res && res.ok) { const cache = await caches.open(CACHE_RUNTIME); try { await cache.put(request, res.clone()); } catch (_) {} } })
+          .catch(() => {});
+        return cached;
+      }
       const preload = await event.preloadResponse;
       if (preload) return preload;
       return networkFirst(request, './index.html');
@@ -184,7 +215,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Font bundles are .js files (destination === 'script'), so without this
-  // explicit path check they would fall into the app-shell network-first branch,
+  // explicit path check they would fall into the app-shell branch below,
   // contradicting the cache-first promise above and hitting the network on every
   // load for ~3.4 MB of rarely-changing assets. cacheFirst still revalidates in
   // the background, so a replaced font eventually reaches returning users.
@@ -194,7 +225,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (isAppShellRequest(request)) {
-    event.respondWith(networkFirst(request, request.destination === 'document' ? './index.html' : null));
+    event.respondWith(offlineFirst(request, request.destination === 'document' ? './index.html' : null));
     return;
   }
 
