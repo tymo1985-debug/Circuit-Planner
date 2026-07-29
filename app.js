@@ -341,7 +341,7 @@
     config: {
       // Single source of truth for the displayed/stored app version — bump this on
       // every meaningful update so the version badge always reflects what's actually live.
-      version: '9.55.0',
+      version: '9.56.0',
       // NOTE: do NOT change this to match the app version — it is the localStorage key.
       // Changing it will make existing users lose all their saved data on next load.
       storageKey: 'service-year-planner-v9-4-2',
@@ -662,14 +662,34 @@
         return app;
       },
       migrate(appData) { return this.normalizeApp(appData && appData.schema === 'sp-backup-v2' ? this.convertLegacyBackup(appData) : appData); },
-      load() { try { const saved = localStorage.getItem(App.config.storageKey); App.state.app = saved ? this.migrate(JSON.parse(saved)) : this.createDefaultData(); } catch (error) { console.error('Storage load failed', error); App.state.app = this.createDefaultData(); App.utils.toast('Storage reset.'); } },
+      load() { try { const saved = localStorage.getItem(App.config.storageKey); this.lastWrittenPayload = saved || null; App.state.app = saved ? this.migrate(JSON.parse(saved)) : this.createDefaultData(); } catch (error) { console.error('Storage load failed', error); App.state.app = this.createDefaultData(); App.utils.toast('Storage reset.'); } },
       save() {
         try {
           this.snapshotIfDue();
-          localStorage.setItem(App.config.storageKey, JSON.stringify(App.state.app));
+          const payload = JSON.stringify(App.state.app);
+          localStorage.setItem(App.config.storageKey, payload);
+          // Remember exactly what this tab wrote, so the unload-time safety net can tell
+          // "storage still holds my data" apart from "another tab has since written newer data".
+          this.lastWrittenPayload = payload;
         } catch (error) {
           console.error('Storage save failed', error);
           App.utils.toast('Ошибка сохранения! Возможно, хранилище переполнено. Сделайте backup.');
+        }
+      },
+      // Used by the unload/hide safety net only. A plain save() there is dangerous: if another tab
+      // saved newer data in the meantime, this tab's stale in-memory state would silently destroy
+      // it. So only write if storage still matches what this tab itself last wrote (or if this tab
+      // has genuinely newer unsaved changes relative to its own last write).
+      saveIfOwnStateIsCurrent() {
+        try {
+          const current = localStorage.getItem(App.config.storageKey);
+          if (current && this.lastWrittenPayload && current !== this.lastWrittenPayload) {
+            // Storage changed underneath us — another tab owns the newer data. Don't clobber it.
+            return;
+          }
+          this.save();
+        } catch (error) {
+          console.error('Guarded save failed', error);
         }
       },
       // Rolling checkpoint history so mistakes can be undone. Deliberately NOT a snapshot-per-edit
@@ -3613,13 +3633,23 @@ document.querySelectorAll('.sy-day[data-add-date]').forEach((btn) => {
       this.ui.showRemindersModalIfNeeded();
       this.ui.checkSixtyDayNotifications();
       this.ui.checkAutoBackupReminder();
-      // Safety net: persist immediately whenever the app is about to be hidden/closed/reloaded,
-      // regardless of whether every single mutation already called store.save() itself. On mobile,
-      // 'visibilitychange' -> 'hidden' fires more reliably than 'beforeunload' when the OS simply
-      // backgrounds the tab/PWA without a real page unload.
-      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') App.store.save(); });
-      window.addEventListener('pagehide', () => App.store.save());
-      window.addEventListener('beforeunload', () => App.store.save());
+      // Safety net: persist when the app is about to be hidden/closed/reloaded, in case some
+      // future code path ever mutates state without calling store.save() itself. Guarded by
+      // saveIfOwnStateIsCurrent() so it can never clobber newer data written by another tab —
+      // blindly writing here caused real data loss when the app was open in two tabs.
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') App.store.saveIfOwnStateIsCurrent(); });
+      window.addEventListener('pagehide', () => App.store.saveIfOwnStateIsCurrent());
+      window.addEventListener('beforeunload', () => App.store.saveIfOwnStateIsCurrent());
+      // Keep tabs in sync: if another tab saves, adopt its data instead of holding stale state
+      // that a later save from this tab would write back over the top of.
+      window.addEventListener('storage', (e) => {
+        if (e.key !== App.config.storageKey || !e.newValue) return;
+        try {
+          App.state.app = App.store.migrate(JSON.parse(e.newValue));
+          App.store.lastWrittenPayload = e.newValue;
+          App.ui.renderAll();
+        } catch (err) { console.error('Cross-tab sync failed', err); }
+      });
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', async () => {
           try {
